@@ -1,1 +1,1 @@
-swagger-ui from https://github.com/swagger-api/swagger-ui @v3.17.6
+swagger-ui from https://github.com/swagger-api/swagger-ui @v5.10.3
