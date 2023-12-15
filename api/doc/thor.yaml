@@ -145,20 +145,21 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Storage'
+                $ref: '#/components/schemas/GetStorageResponse'
 
   /transactions/{id}:
     get:
       parameters:
         - $ref: '#/components/parameters/TxIDInPath'
-        - $ref: '#/components/parameters/RawInQuery'
+        - $ref: '#/components/parameters/RawTxInQuery'
         - $ref: '#/components/parameters/HeadInQuery'
         - $ref: '#/components/parameters/PendingInQuery'
       tags:
         - Transactions
-      summary: Retrieve transaction
+      summary: Retrieve Transaction by ID
       description: |
-        by ID. When `pending` is true, a pending tx with null `meta` might be returned.
+        This endpoint allows you to retrieve a transaction identified by its ID. If the `pending` parameter is set to true, the response may include a pending transaction with a null `meta` field. Use this option when you want to retrieve both confirmed and pending transactions, providing flexibility in accessing real-time transaction data.
+
       responses:
         '200':
           description: OK
@@ -223,9 +224,43 @@ paths:
     post:
       tags:
         - Transactions
-      summary: Commit transaction
+      summary: Send a transaction
       description: |
-        in raw.
+        This endpoint allows you to send a transaction to the blockchain. The transaction must be signed and RLP encoded.
+        
+        The below is a TypeScript example of how to sign and RLP encode a transaction using the `thor-devkit` library:
+        
+        ```typescript
+        import { Transaction, secp256k1 } from 'thor-devkit'
+
+        const clauses =  [{
+            to: '0x7567d83b7b8d80addcb281a71d54fc7b3364ffed',
+            value: 10000,
+            data: '0x'
+        }]
+
+        let body: Transaction.Body = {
+            chainTag: 0x9a,
+            blockRef: '0x0000000000000000',
+            expiration: 32,
+            clauses: clauses,
+            gasPriceCoef: 128,
+            gas: Transaction.intrinsicGas(clauses),
+            dependsOn: null,
+            nonce: 12345678
+        }
+
+        const tx = new Transaction(body)
+        const signingHash = tx.signingHash()
+        tx.signature = secp256k1.sign(signingHash, Buffer.from("99f0500549792796c14fed62011a51081dc5b5e68fe8bd8a13b86be829c4fd36", "hex"))
+
+        const raw = tx.encode()
+        const decoded = Transaction.decode(raw)
+        
+        axios.post('http://localhost:8669/transactions', {
+          raw: '0x' + raw.toString('hex')
+        })
+        ```
       requestBody:
         required: true
         content:
@@ -618,12 +653,15 @@ components:
         balance:
           type: string
           description: VET balance in wei, presented as a hexadecimal string.
+          example: '0x47ff1f90327aa0f8e'
         energy:
           type: string
           description: Energy (VTHO) in wei, presented as a hexadecimal string.
+          example: '0xcf624158d591398'
         hasCode:
           type: boolean
           description: Indicates whether the account is a contract (true) or not (false).
+          example: false
       example:
         balance: '0x47ff1f90327aa0f8e'
         energy: '0xcf624158d591398'
@@ -702,54 +740,57 @@ components:
           description: Contract bytecode, presented as a hexadecimal string.
           example: '0x6060604052600080fd00a165627a7a72305820c23d3ae2dc86ad130561a2829d87c7cb8435365492bd1548eb7e7fc0f3632be90029'
 
-    Storage:
+    GetStorageResponse:
       properties:
         value:
           type: string
+          description: The value stored at the given storage position.
           example: '0x0000000000000000000000000000000000000000000000000000000000000001'
 
     TxMeta:
-      description: transaction meta info
+      description: Transaction metadata such as block number, block timestamp, etc.
       properties:
         blockID:
           type: string
-          description: block identifier (bytes32)
+          description: The block identifier (bytes32) in which the transaction was included.
           example: '0x0004f6cc88bb4626a92907718e82f255b8fa511453a78e8797eb8cea3393b215'
         blockNumber:
           type: integer
           format: uint32
-          description: block number (height)
+          description: The block number (height) of the block in which the transaction was included.
           example: 325324
         blockTimestamp:
           type: integer
           format: uint64
-          description: block unix timestamp
+          description: The UNIX timestamp of the block in which the transaction was included.
           example: 1533267900
 
     ReceiptMeta:
-      description: tx receipt meta info
+      description: The transaction receipt metadata such as block number, block timestamp, etc.
       properties:
         blockID:
           type: string
-          description: block identifier (bytes32)
+          description: The block identifier in which the transaction was included.
+          pattern: '^0x[0-9a-fA-F]{64}$'
           example: '0x0004f6cc88bb4626a92907718e82f255b8fa511453a78e8797eb8cea3393b215'
         blockNumber:
           type: integer
           format: uint32
-          description: block number (height)
+          description: The block number (height) of the block in which the transaction was included.
           example: 325324
         blockTimestamp:
           type: integer
           format: uint64
-          description: block unix timestamp
+          description: The UNIX timestamp of the block in which the transaction was included.
           example: 1533267900
         txID:
           type: string
-          description: transaction identifier
+          description: The transaction identifier.
+          pattern: '^0x[0-9a-fA-F]{64}$'
           example: '0x284bba50ef777889ff1a367ed0b38d5e5626714477c40de38d71cedd6f9fa477'
         txOrigin:
           type: string
-          description: transaction origin (signer)
+          description: The account from which the transaction was sent.
           example: '0xdb4027477b2a8fe4c83c6dafe7f86678bb1b8a8d'
 
     LogMeta:
@@ -864,48 +905,54 @@ components:
         to:
           type: string
           description: |
-            The recipient of the clause. Null indicates contract deployment (bytes32).
+            The recipient of the clause. Null indicates contract deployment.
+          example: '0x0000000000000000000000000000456e65726779'
         value:
           type: string
           description: |
             The hexadecimal representation of the token to be transferred.
+          example: '0x47ff1f90327aa0f8e'
         data:
           type: string
           description: |
             The input data for the clause (in bytes).
+          example: '0xa9059cbb0000000000000000000000000f872421dc479f3c11edd89512731814d0598db5000000000000'
 
     Tx:
       properties:
         id:
           type: string
-          description: identifier of the transaction
+          description: The transaction identifier.
           example: '0x284bba50ef777889ff1a367ed0b38d5e5626714477c40de38d71cedd6f9fa477'
+          pattern: '^0x[0-9a-fA-F]{64}$'
         origin:
           type: string
-          description: the one who signed the transaction
+          description: The address of the origin account.
+          pattern: '^0x[0-9a-fA-F]{40}$'
           example: '0xdb4027477b2a8fe4c83c6dafe7f86678bb1b8a8d'
         delegator:
           type: string
-          description: the delegator who paid the gas fee
+          pattern: '^0x[0-9a-fA-F]{40}$'
+          description: The address of the sponsor / delegator account.
           example: null
         size:
           type: integer
           format: uint32
-          description: byte size of the transaction that is RLP encoded
+          description: Byte size of the transaction that is RLP encoded.
           example: 130
         chainTag:
           type: integer
           format: uint8
-          description: last byte of genesis block ID
+          description: The last byte of the genesis block ID.
           example: 39
         blockRef:
           type: string
-          description: 8 bytes prefix of some block ID
+          description: The first 8 bytes of a referenced block ID.
           example: '0x0004f6cb730dbd90'
         expiration:
           type: integer
           format: uint32
-          description: 'expiration relative to blockRef, in unit block'
+          description: The expiration of the transaction, represented as the number of blocks after the `blockRef`
           example: 720
         clauses:
           type: array
@@ -914,28 +961,30 @@ components:
         gasPriceCoef:
           type: integer
           format: uint8
-          description: coefficient used to calculate the final gas price
+          description: The coefficient used to calculate the final gas price of the transaction.
           example: 0
         gas:
           type: integer
           format: uint64
-          description: max amount of gas can be consumed to execute this transaction
+          description: The max amount of gas that can be used by the transaction.
           example: 21000
         dependsOn:
           type: string
           format: bytes32
-          description: ID of the transaction on which the current transaction depends on. can be null.
+          description: <b>Optional</b>:The transaction ID that this transaction depends on.
           example: null
         nonce:
           type: string
           example: '0x29c257e36ea6e72a'
+          description: |
+            The transaction `nonce` is a 64-bit unsigned integer that is determined by the transaction sender.
 
 
     RawTx:
       properties:
         raw:
           type: string
-          description: hex form of encoded transaction
+          description: The raw RLP encoded transaction.
           example: '0xf86981ba800adad994000000000000000000000000000000000000746f82271080018252088001c0b8414792c9439594098323900e6470742cd877ec9f9906bca05510e421f3b013ed221324e77ca10d3466b32b1800c72e12719b213f1d4c370305399dd27af962626400'
 
     Event:
@@ -944,16 +993,22 @@ components:
           type: string
           description: |
             The address of the contract that produces the event (bytes20).
+          example: '0x0000000000000000000000000000456e65726779'
         topics:
           type: array
+          description: |
+            Topics are indexed parameters to an event. The first topic is always the event signature.
           items:
             type: string
             description: |
-              An array of topics associated with the event.
+          example:
+            - '0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef'
+            - '0x000000000000000000000000435933c8064b4ae76be665428e0307ef2ccfbd68'
         data:
           type: string
           description: |
             The data associated with the event.
+          example: '0x4de71f2d588aa8a1ea00fe8312d92966da424d9939a511fc0be81e65fad52af8'
 
     Transfer:
       properties:
@@ -961,36 +1016,43 @@ components:
           type: string
           description: |
             The address sent the tokens.
+          example: '0x5034aa590125b64023a0262112b98d72e3c8e40e'
         recipient:
           type: string
           description: |
             The address that received tokens.
+          example: '0x6d95e6dca01d109882fe1726a2fb9865fa41e7aa'
         amount:
           type: string
           description: |
             The amount of tokens transferred.
+          example: '0x47fdb3c3f456c0000'
 
     Receipt:
       properties:
         gasUsed:
           type: integer
           format: uint64
+          description: |
+            The amount of gas used by the transaction.
           example: 21000
         gasPayer:
           type: string
-          description: address of account who paid used gas
+          description: |
+            The address of the account that paid the gas fee.
           example: '0xdb4027477b2a8fe4c83c6dafe7f86678bb1b8a8d'
         paid:
           type: string
-          description: hex form of amount of paid energy
+          description: The amount of energy (VTHO) in wei, used to pay for the gas.
           example: '0x1236efcbcbb340000'
         reward:
           type: string
-          description: hex form of amount of reward
+          description: The amount of energy (VTHO) in wei, paid to the block signer as a reward.
           example: '0x576e189f04f60000'
         reverted:
           type: boolean
-          description: true means the transaction was reverted
+          description: |
+            Indicates whether the transaction was reverted (true means reverted).
           example: false
         outputs:
           type: array
@@ -999,9 +1061,9 @@ components:
               contractAddress:
                 type: string
                 description: |
-                  deployed contract address, if the corresponding clause is a
-                  contract deployment clause
-                example: null
+                    The address of the deployed contract, if the corresponding clause is a
+                    contract deployment clause.
+                example: '0x0000000000000000000000000000456e65726779'
               events:
                 type: array
                 items:
@@ -1041,19 +1103,23 @@ components:
           type: string
           description: |
             The transaction's proved work (for extension contract).
+          example: "1000"
         gasPayer:
           type: string
           description: |
             The address of the gas payer (for extension contract).
+          example: "0xd3ae78222beadb038203be21ed5ce7c9b1bff602"
         expiration:
           type: integer
           format: uint32
           description: |
             The transaction expiration (for extension contract).
+          example: 1000
         blockRef:
           type: string
           description: |
             The block reference (for extension contract).
+          example: "0x00000000851caf3c"
 
     CallResult:
       properties:
@@ -1061,6 +1127,7 @@ components:
           type: string
           description: |
             The output data produced by the contract execution.
+          example: '0x0000000000000000000000000000000000000000000000000000000000000001'
         events:
           type: array
           items:
@@ -1078,14 +1145,17 @@ components:
           format: uint64
           description: |
             The amount of gas used during execution.
+          example: 21000
         reverted:
           type: boolean
           description: |
             Indicates whether the transaction was reverted (true means reverted).
+          example: false
         vmError:
           type: string
           description: |
             The virtual machine error message if the execution encountered an error.
+          example: 'insufficient balance for transfer'
 
     BatchCallData:
       properties:
@@ -1100,14 +1170,17 @@ components:
           format: uint64
           description: |
             The maximum allowed gas for the execution of the batch call.
+          example: 50000
         gasPrice:
           type: string
           description: |
             The absolute gas price for the batch call.
+          example: 1000000000000000
         caller:
           type: string
           description: |
             The caller's address (msg.sender) for the batch call.
+          example: 0x6d95e6dca01d109882fe1726a2fb9865fa41e7aa
 
       example:
         clauses:
@@ -1462,13 +1535,14 @@ components:
           pattern: '^(0x)?[0-9a-fA-F]{40}$'
       example: '0x93Ae8aab337E58A6978E166f8132F59652cA6C56'
 
-    RawInQuery:
+    RawTxInQuery:
       name: raw
       in: query
-      description: whether retrieve a raw transaction.
+      description: Whether the response should include a raw transaction represented in hexadecimal format.
       required: false
       schema:
         type: boolean
+      example: false
 
     RevisionInQuery:
       name: revision
@@ -1491,7 +1565,7 @@ components:
     HeadInQuery:
       name: head
       in: query
-      description: ID of head block. best block is assumed if omitted
+      description: Explicitly define the ID of the head block. Best block is assumed if omitted.
       schema:
         type: string
 
@@ -1531,12 +1605,12 @@ components:
 
     TxIDInPath:
       in: path
-      description: ID of transaction
+      description: The transaction ID
       required: true
       name: id
       schema:
         type: string
-      example: '0x9bcc6526a76ae560244f698805cc001977246cb92c2b4f1e2b7a204e445409ea'
+      example: '0xb6b5b47a5eee8b14e5222ac1bb957c0bbdc3d489850b033e3e544d9ca0cef934'
 
     PositionInQuery:
       name: pos
@@ -1554,12 +1628,14 @@ components:
         whether the returned block is expanded.
       schema:
         type: boolean
+      example: false
 
     PendingInQuery:
       name: pending
       in: query
       required: false
       description: |
-        whether to return tx, even it's pending
+        Allows you to indicate whether the response should include transactions that are still pending
       schema:
         type: boolean
+      example: false
