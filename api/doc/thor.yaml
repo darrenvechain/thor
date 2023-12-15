@@ -1,89 +1,74 @@
 openapi: 3.0.3
 info:
-  title: Thorest
+  title: Thorest API
   description: |
-    RESTful API to access VeChain Thor Network
-
+    
+    RESTful API to access VechainThor Network
+    
     [Project Home](https://github.com/vechain/thor)
-    
-    [Open API Specification](/doc/thor.yaml)
-    
-    [Swagger UI](/doc/swagger-ui)
-    
-    [Stoplight Docs](/doc/api-docs)
 
   license:
     name: LGPL 3.0
-    url: 'https://www.gnu.org/licenses/lgpl-3.0.en.html'
+    url: https://www.gnu.org/licenses/lgpl-3.0.en.html
   version: 2.1.0
-
 servers:
-  - url: '/'
-    description: local thor node
-
+  - url: /
+    description: Current Node
+    # TODO: Remove Other Nodes (Testing purposes only)
+  - url: https://mainnet.vechain.org
+    description: Mainnet
+  - url: https://testnet.vechain.org
+    description: Testnet
 tags:
   - name: Accounts
-    description: Access to account objects
+    description: |
+      Provides access to on-chain account and contract information.  This includes details about account balances, contract states, and related functionalities.
   - name: Transactions
-    description: Access to transactions
+    description: |
+      Manages blockchain transactions, enabling the creation, retrieval, and verification  of transactions on the blockchain.
   - name: Blocks
-    description: Access to blocks
+    description: |
+      Retrieves information about on-chain blocks
   - name: Logs
-    description: Access to event & transfer logs
+    description: |
+      Query on-chain logs stemming from transaction outputs.  This feature empowers users to delve into the intricacies of transaction history,  providing a comprehensive view of on-chain activities.
   - name: Node
-    description: Access to node status info
+    description: |
+      Provides information about the node's status
   - name: Subscriptions
-    description: Subscribe interested subjects
+    description: |
+      Facilitates WebSocket-based interactions with the blockchain, allowing users to subscribe  to real-time events, updates, or notifications related to specific blockchain activities.
   - name: Debug
-    description: Debug utilities
+    description: |
+      Offers a set of debugging utilities
 
 paths:
   /accounts/{address}:
     get:
       parameters:
-        - $ref: '#/components/parameters/AddressInPath'
+        - $ref: '#/components/parameters/GetAccountAddressInPath'
         - $ref: '#/components/parameters/RevisionInQuery'
       tags:
         - Accounts
-      summary: Retrieve account detail
+      summary: Retrieve account details
       description: |
-        includes `balance`, `energy` and `hasCode`, by account `address`. An account with `hasCode` be *true* is a contract.
+        Retrieve information about an account or a contract identified by its `address`.
 
-        Historical account detail can be queried by specifying `revision` query string.
+        To access historical details, you can specify a `revision` as a query parameter.
       responses:
         '200':
           description: OK
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Account'
-
-    post:
-      parameters:
-        - $ref: '#/components/parameters/AddressInPath'
-        - $ref: '#/components/parameters/RevisionInQuery'
-      deprecated: true
-      tags:
-        - Accounts
-      summary: Execute account code
-      description: |
-        to simulate contract method call, without sending transaction to block chain.
-        
-        It's useful to estimate gas usage and execution result of a clause.
-      requestBody:
-        description: arguments and environment
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/CallData'
-      responses:
-        '200':
-          description: OK
+                $ref: '#/components/schemas/GetAccountResponse'
+        '400':
+          description: Bad Request
           content:
-            application/json:
+            text/plain:
               schema:
-                $ref: '#/components/schemas/CallResult'
+                type: string
+                example: 'Invalid address'
   /accounts/*:
     post:
       parameters:
@@ -92,60 +77,42 @@ paths:
         - Accounts
       summary: Execute a batch of codes
       description: |
-        to simulate execution of a transaction.
-      requestBody:
-        description: arguments and environment
-        required: true
-        content:
-          application/json:
-            schema:
-              allOf:
-                - $ref: '#/components/schemas/BatchCallData'
-                - $ref: '#/components/schemas/ExtendedCallData'
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/BatchCallResult'
+        This endpoint can be used for various purposes:
+        
+          - Read contract state.
+          - Simulate the execution of a transaction. This can be useful to determine if your transaction may revert before submitting it.
+          - Inspect the outputs of a transaction before executing it.
+          - Estimate the gas consumption of a transaction.
 
-  /accounts:
-    post:
-      deprecated: true
-      parameters:
-        - $ref: '#/components/parameters/RevisionInQuery'
-      tags:
-        - Accounts
-      summary: Execute bytecodes
-      description: |
-        to simulate contract deployment without sending transaction to block chain.
-        
-        It's useful to estimate gas usage and contract deployment result of a clause.
-        
-        ### TIPS:
-          - `data` in request body is the bytecodes of a contract
-          - `data` in response body is the runtime bytecodes assigned to account which the contract to be deployed
+        The fields `gasPayer`, `provedWork`, `blockRef` and `expiration` are for built-in contract purposes only. For example, no error is returned if the transaction is technically expired. For more information about built-in contracts, please refer to the vechain documentation.
+
+        To access historical details, you can specify a `revision` as a query parameter.
       requestBody:
-        description: arguments and environment
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/CallData'
+              $ref : '#/components/schemas/PostAccountRequest'
       responses:
         '200':
           description: OK
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/CallResult'
+                $ref: '#/components/schemas/PostAccountResponse'
+        '400':
+          description: Bad Request
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: 'Invalid address'
 
   /accounts/{address}/code:
+    parameters:
+      - $ref: '#/components/parameters/GetCodeAddressInPath'
+      - $ref: '#/components/parameters/RevisionInQuery'
     get:
-      parameters:
-        - $ref: '#/components/parameters/AddressInPath'
-        - $ref: '#/components/parameters/RevisionInQuery'
       tags:
         - Accounts
       summary: Retrieve account code
@@ -160,11 +127,11 @@ paths:
                 $ref: '#/components/schemas/Code'
 
   /accounts/{address}/storage/{key}:
+    parameters:
+      - $ref: '#/components/parameters/GetStorageAddressInPath'
+      - $ref: '#/components/parameters/StorageKeyInPath'
+      - $ref: '#/components/parameters/RevisionInQuery'
     get:
-      parameters:
-        - $ref: '#/components/parameters/AddressInPath'
-        - $ref: '#/components/parameters/StorageKeyInPath'
-        - $ref: '#/components/parameters/RevisionInQuery'
       tags:
         - Accounts
       summary: Retrieve account storage value
@@ -557,7 +524,7 @@ paths:
                   - $ref: '#/components/schemas/Beat2'
                   - $ref: '#/components/schemas/Obsolete'
 
-  /subscritpions/txpool:
+  /subscriptions/txpool:
     get:
       tags:
         - Subscriptions
@@ -644,20 +611,87 @@ paths:
 
 components:
   schemas:
-    Account:
+    GetAccountResponse:
       properties:
         balance:
           type: string
-          description: balance in unit WEI, presented with hex string
-          example: '0x47ff1f90327aa0f8e'
+          description: VET balance in wei, presented as a hexadecimal string.
         energy:
           type: string
-          description: energy in uint WEI, presented with hex string
-          example: '0xcf624158d591398'
+          description: Energy (VTHO) in wei, presented as a hexadecimal string.
         hasCode:
           type: boolean
-          description: whether the account has code
-          example: false
+          description: Indicates whether the account is a contract (true) or not (false).
+      example:
+        balance: '0x47ff1f90327aa0f8e'
+        energy: '0xcf624158d591398'
+        hasCode: false
+
+    PostAccountRequest:
+      allOf:
+        - $ref: '#/components/schemas/ExtendedCallData'
+        - $ref: '#/components/schemas/BatchCallData'
+      example:
+        gas: 50000
+        gasPrice: '1000000000000000'
+        caller: '0x6d95e6dca01d109882fe1726a2fb9865fa41e7aa'
+        provedWork: "1000"
+        gasPayer: "0xd3ae78222beadb038203be21ed5ce7c9b1bff602"
+        expiration: 1000
+        blockRef: "0x00000000851caf3c"
+        clauses:
+          # Contract Call (VTHO Transfer)
+          - to: '0x0000000000000000000000000000456E65726779'
+            value: '0x0'
+            data: '0xa9059cbb0000000000000000000000000f872421dc479f3c11edd89512731814d0598db50000000000000000000000000000000000000000000000013f306a2409fc0000'
+          # VET Transfer
+          - to: '0xf077b491b355E64048cE21E3A6Fc4751eEeA77fa'
+            value: '0x6124fee993bc00000'
+            data: '0x'
+          # Contract Deployment
+          - to: null
+            value: '0x0'
+            data: '0x6080604052348015600f57600080fd5b50609f8061001e6000396000f300608060405260043610603f576000357c0100000000000000000000000000000000000000000000000000000000900463ffffffff1680631820cabb146044575b600080fd5b348015604f57600080fd5b506056606c565b6040518082815260200191505060405180910390f35b62015180815600a165627a7a723058200ac7475da248e2fc26c057319e296e90c24d5f8b9bf956fb3b77545642cad3b10029'
+
+    PostAccountResponse:
+      type: array
+      items:
+        $ref: '#/components/schemas/CallResult'
+      example:
+        # Contract Call (VTHO Transfer)
+        - data: "0x0000000000000000000000000000000000000000000000000000000000000001"
+          events:
+            - address: "0x0000000000000000000000000000456e65726779"
+              topics:
+                - "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef"
+                - "0x000000000000000000000000435933c8064b4ae76be665428e0307ef2ccfbd68"
+                - "0x0000000000000000000000000f872421dc479f3c11edd89512731814d0598db5"
+              data: "0x0000000000000000000000000000000000000000000000013f306a2409fc0000"
+          transfers: []
+          gasUsed: 13326
+          reverted: false
+          vmError: ""
+        # VET Transfer
+        - data: "0x"
+          events: []
+          transfers:
+            - sender: "0x435933c8064b4ae76be665428e0307ef2ccfbd68"
+              recipient: "0xf077b491b355e64048ce21e3a6fc4751eeea77fa"
+              amount: "0x6124fee993bc00000"
+          gasUsed: 0
+          reverted: false
+          vmError: ""
+        # Contract Deployment
+        - data: "0x608060405260043610603f576000357c0100000000000000000000000000000000000000000000000000000000900463ffffffff1680631820cabb146044575b600080fd5b348015604f57600080fd5b506056606c565b6040518082815260200191505060405180910390f35b62015180815600a165627a7a723058200ac7475da248e2fc26c057319e296e90c24d5f8b9bf956fb3b77545642cad3b10029"
+          events:
+            - address: "0xecadd5492c1fa085e40e2c17e79f1a03f38f86ca"
+              topics:
+                - "0xb35bf4274d4295009f1ec66ed3f579db287889444366c03d3a695539372e8951"
+              data: "0x000000000000000000000000435933c8064b4ae76be665428e0307ef2ccfbd68"
+          transfers: []
+          gasUsed: 31881
+          reverted: false
+          vmError: ""
 
     Code:
       properties:
@@ -826,16 +860,16 @@ components:
       properties:
         to:
           type: string
-          description: 'recipient of clause, null for contract deployment (bytes32)'
-          example: '0x5034aa590125b64023a0262112b98d72e3c8e40e'
+          description: |
+            The recipient of the clause. Null indicates contract deployment (bytes32).
         value:
           type: string
-          description: hex form of token to be transferred
-          example: '0x47fdb3c3f456c0000'
+          description: |
+            The hexadecimal representation of the token to be transferred.
         data:
           type: string
-          description: input data (bytes)
-          example: '0x'
+          description: |
+            The input data for the clause (in bytes).
 
     Tx:
       properties:
@@ -905,31 +939,33 @@ components:
       properties:
         address:
           type: string
-          description: the address of contract which produces the event (bytes20)
-          example: '0x7567d83b7b8d80addcb281a71d54fc7b3364ffed'
+          description: |
+            The address of the contract that produces the event (bytes20).
         topics:
           type: array
           items:
             type: string
-            example: '0x4de71f2d588aa8a1ea00fe8312d92966da424d9939a511fc0be81e65fad52af8'
+            description: |
+              An array of topics associated with the event.
         data:
           type: string
-          example: '0x4de71f2d588aa8a1ea00fe8312d92966da424d9939a511fc0be81e65fad52af8'
+          description: |
+            The data associated with the event.
 
     Transfer:
       properties:
         sender:
           type: string
-          description: address that sends tokens
-          example: '0xdb4027477b2a8fe4c83c6dafe7f86678bb1b8a8d'
+          description: |
+            The address sent the tokens.
         recipient:
           type: string
-          description: address that receives tokens
-          example: '0x5034aa590125b64023a0262112b98d72e3c8e40e'
+          description: |
+            The address that received tokens.
         amount:
           type: string
-          description: amount of tokens
-          example: '0x47fdb3c3f456c0000'
+          description: |
+            The amount of tokens transferred.
 
     Receipt:
       properties:
@@ -976,73 +1012,77 @@ components:
       properties:
         value:
           type: string
-          description: amount of token to be transferred
+          description: |
+            The amount of token to be transferred.
         data:
           type: string
-          description: input data for contract call
+          description: |
+            The input data for the contract call.
         gas:
           type: integer
           format: uint64
-          description: max allowed gas for execution
+          description: |
+            The maximum allowed gas for execution.
         gasPrice:
           type: string
-          description: absolute gas price
+          description: |
+            The absolute gas price.
         caller:
           type: string
-          description: caller address (msg.sender)
-      example:
-        value: '0xde0b6b3a7640000'
-        data: '0x5665436861696e2054686f72'
-        gas: 50000
-        gasPrice: '1000000000000000'
-        caller: '0x7567d83b7b8d80addcb281a71d54fc7b3364ffed'
+          description: |
+            The caller's address (msg.sender).
 
     ExtendedCallData:
       properties:
         provedWork:
           type: string
-          description: tx proved work(for extension contract)
+          description: |
+            The transaction's proved work (for extension contract).
         gasPayer:
           type: string
-          description: gas payer(for extension contract)
+          description: |
+            The address of the gas payer (for extension contract).
         expiration:
           type: integer
           format: uint32
-          description: tx expiration(for extension contract)
+          description: |
+            The transaction expiration (for extension contract).
         blockRef:
           type: string
-          description: block reference(for extension contract)
-      example:
-        provedWork: '1000'
-        gasPayer: '0xd3ae78222beadb038203be21ed5ce7c9b1bff602'
-        expiration: 1000
-        blockRef: '0x00000000851caf3c'
+          description: |
+            The block reference (for extension contract).
 
     CallResult:
       properties:
         data:
           type: string
-          description: the output data
-          example: '0x103556a73c10e38ffe2fc4aa50fc9d46ad0148f07e26417e117bd1ece9d948b5'
+          description: |
+            The output data produced by the contract execution.
         events:
           type: array
           items:
             $ref: '#/components/schemas/Event'
+          description: |
+            An array of events generated during contract execution.
         transfers:
           type: array
           items:
             $ref: '#/components/schemas/Transfer'
+          description: |
+            An array of transfers that occurred during contract execution.
         gasUsed:
           type: integer
           format: uint64
-          description: gas used during execution
-          example: 21000
+          description: |
+            The amount of gas used during execution.
         reverted:
           type: boolean
-          example: false
+          description: |
+            Indicates whether the transaction was reverted (true means reverted).
         vmError:
           type: string
-          example: ''
+          description: |
+            The virtual machine error message if the execution encountered an error.
 
     BatchCallData:
       properties:
@@ -1050,16 +1090,21 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/Clause'
+          description: |
+            An array of clauses to be executed.
         gas:
           type: integer
           format: uint64
-          description: max allowed gas for execution
+          description: |
+            The maximum allowed gas for the execution of the batch call.
         gasPrice:
           type: string
-          description: absolute gas price
+          description: |
+            The absolute gas price for the batch call.
         caller:
           type: string
-          description: caller address (msg.sender)
+          description: |
+            The caller's address (msg.sender) for the batch call.
 
       example:
         clauses:
@@ -1381,15 +1426,38 @@ components:
           description: whether the block is finalized
 
   parameters:
-    AddressInPath:
+    GetAccountAddressInPath:
       name: address
       in: path
-      description: address of account
+      description: The address of the account/ contract
       required: true
       schema:
         type: string
-        format: bytes20
-      example: '0x5034aa590125b64023a0262112b98d72e3c8e40e'
+        format: hex
+        pattern: '^(0x)?[0-9a-fA-F]{40}$'
+      example: '0x6d95e6dca01d109882fe1726a2fb9865fa41e7aa'
+
+    GetCodeAddressInPath:
+      name: address
+      in: path
+      description: The address of the account/ contract
+      required: true
+      schema:
+          type: string
+          format: hex
+          pattern: '^(0x)?[0-9a-fA-F]{40}$'
+      example: '0x0000000000000000000000000000456E65726779'
+
+    GetStorageAddressInPath:
+      name: address
+      in: path
+      description: The address of the account/ contract
+      required: true
+      schema:
+          type: string
+          format: hex
+          pattern: '^(0x)?[0-9a-fA-F]{40}$'
+      example: '0x93Ae8aab337E58A6978E166f8132F59652cA6C56'
 
     RawInQuery:
       name: raw
@@ -1402,9 +1470,10 @@ components:
     RevisionInQuery:
       name: revision
       in: query
-      description: can be block number or ID. best block is assumed if omitted.
+      description: Specify either a block number or ID. If omitted, the best block is assumed.
       schema:
         type: string
+        pattern: '^(0x)?([0-9a-fA-F]{64}|[0-9]+)$'
 
     RevisionInPath:
       name: revision
