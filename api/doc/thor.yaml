@@ -115,16 +115,16 @@ paths:
     get:
       tags:
         - Accounts
-      summary: Retrieve account code
+      summary: Retrieve a contract's bytecode
       description: |
-        if any. Here the code is runtime bytecodes.
+        If the provided address is not a contract, empty bytecode is returned.
       responses:
         '200':
           description: OK
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Code'
+                $ref: '#/components/schemas/GetAccountCodeResponse'
 
   /accounts/{address}/storage/{key}:
     parameters:
@@ -134,9 +134,11 @@ paths:
     get:
       tags:
         - Accounts
-      summary: Retrieve account storage value
+      summary: Retrieve the value of a storage position.
       description: |
-        for given key.
+        This endpoint allows you to retrieve the value stored at a specific storage position (`{key}`) of a Vechain smart contract associated with the provided address (`{address}`). The response will contain information about the stored value for the given key.
+        
+        To access historical details, you can specify a `revision` as a query parameter.
       responses:
         '200':
           description: OK
@@ -693,10 +695,11 @@ components:
           reverted: false
           vmError: ""
 
-    Code:
+    GetAccountCodeResponse:
       properties:
         code:
           type: string
+          description: Contract bytecode, presented as a hexadecimal string.
           example: '0x6060604052600080fd00a165627a7a72305820c23d3ae2dc86ad130561a2829d87c7cb8435365492bd1548eb7e7fc0f3632be90029'
 
     Storage:
@@ -1494,11 +1497,14 @@ components:
 
     StorageKeyInPath:
       in: path
-      description: the key(position) to access account storage
+      description: |
+        The unique identifier (key) representing the specific position in the account storage.
+        This key is used to access and retrieve data stored at a particular storage position.
       required: true
       name: key
       schema:
         type: string
+        pattern: '^(0x)?[0-9a-fA-F]{64}$'
       example: '0x0000000000000000000000000000000000000000000000000000000000000001'
 
     FilterAddressInQuery:
