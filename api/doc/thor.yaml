@@ -66,6 +66,7 @@ paths:
               schema:
                 type: string
                 example: 'Invalid address'
+
   /accounts/*:
     post:
       parameters:
@@ -1370,11 +1371,11 @@ components:
           format: uint64
           description: |
             Defines the starting block number or timestamp for the specified range.
-          example: 15000000
+          example: 17240365
         to:
           type: integer
           format: uint64
-          example: 18000000
+          example: 17289864
           description: |
             Specifies the ending block number or timestamp for the specified range.
       description: |
