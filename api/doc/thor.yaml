@@ -12,10 +12,8 @@ info:
     url: https://www.gnu.org/licenses/lgpl-3.0.en.html
   version: 2.1.0
 servers:
-  - url: https://mainnet.vechain.org
-    description: Mainnet
-  - url: https://testnet.vechain.org
-    description: Testnet
+  - url: /
+    description: Current Node
 tags:
   - name: Accounts
     description: |
@@ -164,37 +162,7 @@ paths:
           content:
             application/json:
               schema:
-                oneOf:
-                  - allOf:
-                      - $ref: '#/components/schemas/Tx'
-                    properties:
-                      meta:
-                        required: false
-                        $ref: '#/components/schemas/TxMeta'
-                  - allOf:
-                      - $ref: '#/components/schemas/RawTx'
-                    properties:
-                      meta:
-                        required: false
-                        $ref: '#/components/schemas/TxMeta'
-                    description: raw transaction
-                example:
-                  id: '0x4de71f2d588aa8a1ea00fe8312d92966da424d9939a511fc0be81e65fad52af8'
-                  chainTag: 1
-                  blockRef: '0x00000001511fc0be'
-                  expiration: 30
-                  clauses: []
-                  gasPriceCoef: 128
-                  gas: 21000
-                  origin: '0x7567d83b7b8d80addcb281a71d54fc7b3364ffed'
-                  delegator: null
-                  nonce: '0xd92966da424d9939'
-                  dependsOn: null
-                  size: 180
-                  meta:
-                    blockID: '0x00000001c458949985a6d86b7139690b8811dd3b4647c02d4f41cdefb7d32327'
-                    blockNumber: 1
-                    blockTimestamp: 1523156271
+                $ref: '#/components/schemas/GetTxResponse'
 
   /transactions/{id}/receipt:
     get:
@@ -212,11 +180,7 @@ paths:
           content:
             application/json:
               schema:
-                allOf:
-                  - $ref: '#/components/schemas/Receipt'
-                properties:
-                  meta:
-                    $ref: '#/components/schemas/ReceiptMeta'
+                $ref: '#/components/schemas/GetTxReceiptResponse'
 
   /transactions:
     post:
@@ -286,58 +250,13 @@ paths:
         Retrieve information about a block identified by its `revision`.
         
         If the provided `revision` is not found, the response will be `null`
-
       responses:
         '200':
           description: OK
           content:
             application/json:
               schema:
-                oneOf:
-                  - allOf:
-                      - $ref: '#/components/schemas/Block'
-                      - $ref: '#/components/schemas/IsTrunk'
-                      - $ref: '#/components/schemas/IsFinalized'
-                    properties:
-                      transactions:
-                        description: An array of transaction IDs
-                        type: array
-                        items:
-                          type: string
-                          example: '0x284bba50ef777889ff1a367ed0b38d5e5626714477c40de38d71cedd6f9fa477'
-                  - allOf:
-                      - $ref: '#/components/schemas/Block'
-                      - $ref: '#/components/schemas/IsTrunk'
-                      - $ref: '#/components/schemas/IsFinalized'
-                    properties:
-                      transactions:
-                        description: All included transactions, expanded, to include their receipts
-                        type: array
-                        items:
-                          allOf:
-                            - $ref: '#/components/schemas/Tx'
-                            - $ref: '#/components/schemas/Receipt'
-
-              example:
-                number: 325324
-                id: '0x0004f6cc88bb4626a92907718e82f255b8fa511453a78e8797eb8cea3393b215'
-                size: 373
-                parentID: '0x0004f6cb730dbd90fed09d165bfdf33cc0eed47ec068938f6ee7b7c12a4ea98d'
-                timestamp: 1533267900
-                gasLimit: 11253579
-                beneficiary: '0xb4094c25f86d628fdd571afc4077f0d0196afb48'
-                gasUsed: 21000
-                totalScore: 1029988
-                txsRoot: '0x89dfd9fcd10c9e53d68592cf8b540b280b72d381b868523223992f3e09a806bb'
-                txsFeatures: 0
-                stateRoot: '0x86bcc6d214bc9d8d0dedba1012a63c8317d19ce97f60c8a2ef5c59bbd40d4261'
-                receiptsRoot: '0x15787e2533c470e8a688e6cd17a1ee12d8457778d5f82d2c109e2d6226d8e54e'
-                com: true
-                signer: '0xab7b27fc9e7d29f9f2e5bd361747a5515d0cc2d1'
-                isTrunk: true
-                isFinalized: false
-                transactions:
-                  - '0x284bba50ef777889ff1a367ed0b38d5e5626714477c40de38d71cedd6f9fa477'
+                $ref: '#/components/schemas/GetBlockResponse'
 
   /logs/event:
     post:
@@ -361,13 +280,7 @@ paths:
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  allOf:
-                    - $ref: '#/components/schemas/Event'
-                  properties:
-                    meta:
-                      $ref: '#/components/schemas/LogMeta'
+                $ref: '#/components/schemas/PostLogsEventResponse'
 
   /logs/transfer:
     post:
@@ -388,13 +301,7 @@ paths:
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  allOf:
-                    - $ref: '#/components/schemas/Transfer'
-                  properties:
-                    meta:
-                      $ref: '#/components/schemas/LogMeta'
+                $ref: '#/components/schemas/PostLogsTransferResponse'
 
   /node/network/peers:
     get:
@@ -409,8 +316,7 @@ paths:
           content:
             application/json:
               schema:
-                items:
-                  $ref: '#/components/schemas/PeerStats'
+                $ref: '#/components/schemas/GetPeersResponse'
 
   /subscriptions/block:
     get:
@@ -440,18 +346,8 @@ paths:
           content:
             application/json:
               schema:
-                allOf:
-                  - $ref: '#/components/schemas/Block'
-                  - $ref: '#/components/schemas/Obsolete'
-                properties:
-                  transactions:
-                    description: "An array of transaction IDs associated with the block."
-                    type: array
-                    items:
-                      type: string
-                      example:
-                        - '0x284bba50ef777889ff1a367ed0b38d5e5626714477c40de38d71cedd6f9fa477'
-                        -
+                $ref: '#/components/schemas/SubscriptionBlockResponse'
+
   /subscriptions/event:
     get:
       tags:
@@ -459,7 +355,6 @@ paths:
       summary: (Websocket) Subscribe new events
       description: |
         Subscribe to events generated by vechain smart contracts. Events are created using the `LOG` opcode in the Ethereum Virtual Machine (EVM).
-        
         
         Example:
         
@@ -472,80 +367,20 @@ paths:
           console.log(event.data)
         }
         ```
-
       parameters:
         - $ref: '#/components/parameters/PositionInQuery'
-        - name: addr
-          in: query
-          schema:
-            type: string
-          description: |
-            The address of the contract that emits the event.
-          example: '0x0000000000000000000000000000456E65726779'
-        - name: t0
-          in: query
-          schema:
-            type: string
-          example: '0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef'
-          description: |
-            The keccak256 hash representing the event signature. 
-            For example, the signature for the `Transfer` event is `keccak256("Transfer(address,address,uint256)")`.
-        - name: t1
-          in: query
-          schema:
-            type: string
-          example: '0x0000000000000000000000006d95e6dca01d109882fe1726a2fb9865fa41e7aa'
-          description: |
-            Filters events based on the 1st parameter in the event. 
-
-            <b>Note</b>: The parameter must be padded to 32 bytes.
-
-            For example, for the event `MySolidityEvent(address,uint256)`, use `t1` to match the `address` parameter.
-        - name: t2
-          in: query
-          schema:
-            type: string
-          example: '0x0000000000000000000000006d95e6dca01d109882fe1726a2fb9865fa41e7aa'
-          description: |
-            Filters events based on the 2nd parameter in the event. 
-
-            <b>Note</b>: The parameter must be padded to 32 bytes.
-
-            For example, for the event `MySolidityEvent(address,uint256)`, use `t2` to match the `uint256` parameter.
-        - name: t3
-          in: query
-          schema:
-            type: string
-          example: '0x0000000000000000000000006d95e6dca01d109882fe1726a2fb9865fa41e7aa'
-          description: |
-            Filters events based on the 3rd parameter in the event. 
-
-            <b>Note</b>: The parameter must be padded to 32 bytes.
-
-            For example, for the event `MySolidityEvent(address,address,uint256)`, use `t3` to match the `uint256` parameter.
-        - name: t4
-          in: query
-          schema:
-            type: string
-          example: '0x0000000000000000000000006d95e6dca01d109882fe1726a2fb9865fa41e7aa'
-          description: |
-            Filters events based on the 4th parameter in the event. 
-
-            <b>Note</b>: The parameter must be padded to 32 bytes.
-
-            For example, for the event `MySolidityEvent(address,address,address,uint256)`, use `t4` to match the `uint256` parameter.
+        - $ref: '#/components/parameters/AddrInQuery'
+        - $ref: '#/components/parameters/Topic0InQuery'
+        - $ref: '#/components/parameters/Topic1InQuery'
+        - $ref: '#/components/parameters/Topic2InQuery'
+        - $ref: '#/components/parameters/Topic3InQuery'
       responses:
         '200':
           description: OK
           content:
             application/json:
               schema:
-                allOf:
-                  - $ref: '#/components/schemas/Event'
-                  - $ref: '#/components/schemas/Obsolete'
-                properties:
-                  meta:
-                    $ref: '#/components/schemas/LogMeta'
+                $ref: '#/components/schemas/SubscriptionEventResponse'
 
   /subscriptions/transfer:
     get:
@@ -566,39 +401,16 @@ paths:
         ```
       parameters:
         - $ref: '#/components/parameters/PositionInQuery'
-        - name: txOrigin
-          in: query
-          schema:
-            type: string
-          description: |
-            The address from which the transaction was sent.
-          example: '0x6d95e6dca01d109882fe1726a2fb9865fa41e7aa'
-        - name: sender
-          in: query
-          schema:
-            type: string
-          description: |
-            The address that sent the VET. In most cases this is the same as `txOrigin`, but it may be different if the VET was sent by a contract.
-          example: '0x6d95e6dca01d109882fe1726a2fb9865fa41e7aa'
-        - name: recipient
-          in: query
-          schema:
-            type: string
-          description: |
-            The address that received the VET.
-          example: '0x45429a2255e7248e57fce99e7239aed3f84b7a53'
+        - $ref: '#/components/parameters/TxOriginInQuery'
+        - $ref: '#/components/parameters/TransferRecipientInQuery'
+        - $ref: '#/components/parameters/TransferSenderInQuery'
       responses:
         '200':
           description: OK
           content:
             application/json:
               schema:
-                allOf:
-                  - $ref: '#/components/schemas/Transfer'
-                  - $ref: '#/components/schemas/Obsolete'
-                properties:
-                  meta:
-                    $ref: '#/components/schemas/LogMeta'
+                $ref: '#/components/schemas/SubscriptionEventResponse'
 
   /subscriptions/beat2:
     get:
@@ -626,8 +438,7 @@ paths:
             application/json:
               schema:
                 allOf:
-                  - $ref: '#/components/schemas/Beat2'
-                  - $ref: '#/components/schemas/Obsolete'
+                  - $ref: '#/components/schemas/SubscriptionBeat2Response'
 
   /subscriptions/txpool:
     get:
@@ -681,8 +492,7 @@ paths:
             application/json:
               schema:
                 allOf:
-                  - $ref: '#/components/schemas/Beat'
-                  - $ref: '#/components/schemas/Obsolete'
+                  - $ref: '#/components/schemas/SubscriptionBeatResponse'
 
   /debug/tracers:
     post:
@@ -861,6 +671,230 @@ components:
           example: '0x0000000000000000000000000000000000000000000000000000000000000001'
       example:
         value: '0x0000000000000000000000000000000000000000000000000000000000000001'
+
+    GetTxResponse:
+      oneOf:
+          - allOf:
+              - $ref: '#/components/schemas/Tx'
+            properties:
+              meta:
+                required: false
+                $ref: '#/components/schemas/TxMeta'
+          - allOf:
+              - $ref: '#/components/schemas/RawTx'
+            properties:
+              meta:
+                required: false
+                $ref: '#/components/schemas/TxMeta'
+            description: raw transaction
+      example:
+          id: '0x4de71f2d588aa8a1ea00fe8312d92966da424d9939a511fc0be81e65fad52af8'
+          chainTag: 1
+          blockRef: '0x00000001511fc0be'
+          expiration: 30
+          clauses: [ ]
+          gasPriceCoef: 128
+          gas: 21000
+          origin: '0x7567d83b7b8d80addcb281a71d54fc7b3364ffed'
+          delegator: null
+          nonce: '0xd92966da424d9939'
+          dependsOn: null
+          size: 180
+          meta:
+            blockID: '0x00000001c458949985a6d86b7139690b8811dd3b4647c02d4f41cdefb7d32327'
+            blockNumber: 1
+            blockTimestamp: 1523156271
+
+    GetTxReceiptResponse:
+      allOf:
+        - $ref: '#/components/schemas/Receipt'
+      properties:
+        meta:
+          $ref: '#/components/schemas/ReceiptMeta'
+
+    GetBlockResponse:
+      oneOf:
+        - allOf:
+            - $ref: '#/components/schemas/Block'
+            - $ref: '#/components/schemas/IsTrunk'
+            - $ref: '#/components/schemas/IsFinalized'
+          properties:
+            transactions:
+              description: An array of transaction IDs
+              type: array
+              items:
+                type: string
+                example: '0x284bba50ef777889ff1a367ed0b38d5e5626714477c40de38d71cedd6f9fa477'
+        - allOf:
+            - $ref: '#/components/schemas/Block'
+            - $ref: '#/components/schemas/IsTrunk'
+            - $ref: '#/components/schemas/IsFinalized'
+          properties:
+            transactions:
+              description: All included transactions, expanded, to include their receipts
+              type: array
+              items:
+                allOf:
+                  - $ref: '#/components/schemas/Tx'
+                  - $ref: '#/components/schemas/Receipt'
+      example:
+        number: 325324
+        id: '0x0004f6cc88bb4626a92907718e82f255b8fa511453a78e8797eb8cea3393b215'
+        size: 373
+        parentID: '0x0004f6cb730dbd90fed09d165bfdf33cc0eed47ec068938f6ee7b7c12a4ea98d'
+        timestamp: 1533267900
+        gasLimit: 11253579
+        beneficiary: '0xb4094c25f86d628fdd571afc4077f0d0196afb48'
+        gasUsed: 21000
+        totalScore: 1029988
+        txsRoot: '0x89dfd9fcd10c9e53d68592cf8b540b280b72d381b868523223992f3e09a806bb'
+        txsFeatures: 0
+        stateRoot: '0x86bcc6d214bc9d8d0dedba1012a63c8317d19ce97f60c8a2ef5c59bbd40d4261'
+        receiptsRoot: '0x15787e2533c470e8a688e6cd17a1ee12d8457778d5f82d2c109e2d6226d8e54e'
+        com: true
+        signer: '0xab7b27fc9e7d29f9f2e5bd361747a5515d0cc2d1'
+        isTrunk: true
+        isFinalized: false
+        transactions:
+          - '0x284bba50ef777889ff1a367ed0b38d5e5626714477c40de38d71cedd6f9fa477'
+
+    PostLogsEventResponse:
+      type: array
+      items:
+        allOf:
+          - $ref: '#/components/schemas/Event'
+        properties:
+          meta:
+            $ref: '#/components/schemas/LogMeta'
+
+    PostLogsTransferResponse:
+      type: array
+      items:
+        allOf:
+          - $ref: '#/components/schemas/Transfer'
+        properties:
+          meta:
+            $ref: '#/components/schemas/LogMeta'
+
+    GetPeersResponse:
+      items:
+        $ref: '#/components/schemas/PeerStats'
+
+    SubscriptionBlockResponse:
+      allOf:
+        - $ref: '#/components/schemas/Block'
+        - $ref: '#/components/schemas/Obsolete'
+      properties:
+        transactions:
+          description: "An array of transaction IDs associated with the block."
+          type: array
+          items:
+            type: string
+            example:
+              - '0x284bba50ef777889ff1a367ed0b38d5e5626714477c40de38d71cedd6f9fa477'
+
+    SubscriptionEventResponse:
+      allOf:
+        - $ref: '#/components/schemas/Event'
+        - $ref: '#/components/schemas/Obsolete'
+      properties:
+        meta:
+          $ref: '#/components/schemas/LogMeta'
+
+    SubscriptionTransferResponse:
+      allOf:
+        - $ref: '#/components/schemas/Transfer'
+        - $ref: '#/components/schemas/Obsolete'
+      properties:
+        meta:
+          $ref: '#/components/schemas/LogMeta'
+
+    SubscriptionBeat2Response:
+      allOf:
+        - $ref: '#/components/schemas/SubscriptionBeatResponse'
+      properties:
+        gasLimit:
+          type: integer
+          format: uint64
+          description: |
+            The gas limit of the block
+          example: 12000000
+
+    SubscriptionBeatResponse:
+      allOf:
+        - $ref: '#/components/schemas/Obsolete'
+      properties:
+        number:
+          type: integer
+          format: uint32
+          description: |
+            The block number (height)
+          example: 325324
+        id:
+          type: string
+          format: bytes32
+          description: |
+            The block identifier
+          example: '0x0004f6cc88bb4626a92907718e82f255b8fa511453a78e8797eb8cea3393b215'
+        parentID:
+          type: string
+          format: bytes32
+          description: |
+            The parent block identifier
+          example: '0x0004f6cb730dbd90fed09d165bfdf33cc0eed47ec068938f6ee7b7c12a4ea98d'
+        timestamp:
+          type: integer
+          format: uint64
+          description: |
+            The UNIX timestamp of the block
+          example: 1533267900
+        txsFeatures:
+          type: integer
+          format: uint32
+          description: |
+            The supported transaction features bitset
+          example: 0
+        bloom:
+          type: string
+          format: hex
+          description: |
+            A hexadecimal representation of the bloom filter composed with affected addresses & topics.
+
+            The bloom filter is used to efficiently check whether an element is a member of a set,
+            providing a summary of affected addresses related to new blocks.
+          example: '0x0424c1ff47029280'
+        k:
+          type: integer
+          format: uint32
+          description: |
+            The number of hash functions for bloom filter
+          example: 13
+
+    PostDebugTracerRequest:
+      allOf:
+        - $ref: '#/components/schemas/TracerOption'
+        - $ref: '#/components/schemas/ClauseTracerOption'
+      example:
+        target: '0x010709463c1f0c9aa66a31182fb36d1977d99bfb6526bae0564a0eac4006c31a/0/0'
+        name: "prestate"
+        config: {}
+
+    PostDebugTracerCallRequest:
+      allOf:
+        - $ref: '#/components/schemas/TracerOption'
+        - $ref: '#/components/schemas/CallData'
+        - $ref: '#/components/schemas/ExtendedCallData'
+      example:
+        value: "0x0"
+        to: "0x0000000000000000000000000000456E65726779"
+        data: "0xa9059cbb0000000000000000000000000f872421dc479f3c11edd89512731814d0598db50000000000"
+        gas: 50000
+        gasPrice: "1000000000000000"
+        caller: "0x7567d83b7b8d80addcb281a71d54fc7b3364ffed"
+        provedWork: "1000"
+        gasPayer: "0xd3ae78222beadb038203be21ed5ce7c9b1bff602"
+        expiration: 1000
+        blockRef: "0x00000000851caf3c"
 
     TxMeta:
       description: Transaction metadata such as block number, block timestamp, etc.
@@ -1106,6 +1140,7 @@ components:
             The transaction `nonce` is a 64-bit unsigned integer that is determined by the transaction sender.
 
 
+
     RawTx:
       properties:
         raw:
@@ -1228,7 +1263,7 @@ components:
           type: string
           description: |
             The caller's address (msg.sender).
-          example: 0x6d95e6dca01d109882fe1726a2fb9865fa41e7aa
+          example: '0x6d95e6dca01d109882fe1726a2fb9865fa41e7aa'
 
     ExtendedCallData:
       properties:
@@ -1313,7 +1348,7 @@ components:
           type: string
           description: |
             The caller's address (msg.sender) for the batch call.
-          example: 0x6d95e6dca01d109882fe1726a2fb9865fa41e7aa
+          example: '0x6d95e6dca01d109882fe1726a2fb9865fa41e7aa'
 
       example:
         clauses:
@@ -1355,6 +1390,7 @@ components:
         In this example, the page offset is 0, and the page size is 10.
         Pass options as `null` if you do not require demand paging.
 
+
     FilterRange:
       properties:
         unit:
@@ -1391,6 +1427,7 @@ components:
         ```
         This refers to the range from block 10 to block 1000.
         Setting values to `null` indicates the entire range.
+
 
     EventCriteria:
       properties:
@@ -1565,32 +1602,6 @@ components:
       example:
         obsolete: false
 
-    PostDebugTracerRequest:
-      allOf:
-        - $ref: '#/components/schemas/TracerOption'
-        - $ref: '#/components/schemas/ClauseTracerOption'
-      example:
-        target: '0x010709463c1f0c9aa66a31182fb36d1977d99bfb6526bae0564a0eac4006c31a/0/0'
-        name: "prestate"
-        config: {}
-
-    PostDebugTracerCallRequest:
-      allOf:
-        - $ref: '#/components/schemas/TracerOption'
-        - $ref: '#/components/schemas/CallData'
-        - $ref: '#/components/schemas/ExtendedCallData'
-      example:
-        value: "0x0"
-        to: "0x0000000000000000000000000000456E65726779"
-        data: "0xa9059cbb0000000000000000000000000f872421dc479f3c11edd89512731814d0598db50000000000"
-        gas: 50000
-        gasPrice: "1000000000000000"
-        caller: "0x7567d83b7b8d80addcb281a71d54fc7b3364ffed"
-        provedWork: "1000"
-        gasPayer: "0xd3ae78222beadb038203be21ed5ce7c9b1bff602"
-        expiration: 1000
-        blockRef: "0x00000000851caf3c"
-
     ClauseTracerOption:
       properties:
         target:
@@ -1663,64 +1674,6 @@ components:
                 '0x0000000000000000000000000000000000000000000000000000000000000001'
               value:
                 '0x00000000000000000000000000000000000000000000000000000000000000c8'
-    Beat:
-      properties:
-        number:
-          type: integer
-          format: uint32
-          description: |
-            The block number (height)
-          example: 325324
-        id:
-          type: string
-          format: bytes32
-          description: |
-            The block identifier
-          example: '0x0004f6cc88bb4626a92907718e82f255b8fa511453a78e8797eb8cea3393b215'
-        parentID:
-          type: string
-          format: bytes32
-          description: |
-            The parent block identifier
-          example: '0x0004f6cb730dbd90fed09d165bfdf33cc0eed47ec068938f6ee7b7c12a4ea98d'
-        timestamp:
-          type: integer
-          format: uint64
-          description: |
-            The UNIX timestamp of the block
-          example: 1533267900
-        txsFeatures:
-          type: integer
-          format: uint32
-          description: |
-            The supported transaction features bitset
-          example: 0
-        bloom:
-          type: string
-          format: hex
-          description: |
-            A hexadecimal representation of the bloom filter composed with affected addresses & topics.
-            
-            The bloom filter is used to efficiently check whether an element is a member of a set,
-            providing a summary of affected addresses related to new blocks.
-          example: '0x0424c1ff47029280'
-        k:
-          type: integer
-          format: uint32
-          description: |
-            The number of hash functions for bloom filter
-          example: 13
-
-    Beat2:
-      allOf:
-        - $ref: '#/components/schemas/Beat'
-      properties:
-        gasLimit:
-          type: integer
-          format: uint64
-          description: |
-            The gas limit of the block
-          example: 12000000
 
     IsTrunk:
       properties:
@@ -1797,7 +1750,6 @@ components:
         - a block number (integer)
         - `best` stands for latest block
         - `finalized` stands for the finalized block
-
       required: true
       schema:
         type: string
@@ -1878,3 +1830,105 @@ components:
       schema:
         type: boolean
       example: false
+
+    AddrInQuery:
+      name: addr
+      in: query
+      schema:
+        type: string
+      description: |
+        The address of the contract that emits the event.
+      example: '0x0000000000000000000000000000456E65726779'
+
+    Topic0InQuery:
+      name: t0
+      in: query
+      schema:
+        type: string
+      example: '0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef'
+      description: |
+        The keccak256 hash representing the event signature. 
+        For example, the signature for the `Transfer` event is `keccak256("Transfer(address,address,uint256)")`.
+
+
+    Topic1InQuery:
+      name: t1
+      in: query
+      schema:
+        type: string
+      example: '0x0000000000000000000000006d95e6dca01d109882fe1726a2fb9865fa41e7aa'
+      description: |
+        Filters events based on the 1st parameter in the event. 
+
+        <b>Note</b>: The parameter must be padded to 32 bytes.
+
+        For example, for the event `MySolidityEvent(address,uint256)`, use `t1` to match the `address` parameter.
+
+    Topic2InQuery:
+      name: t2
+      in: query
+      schema:
+        type: string
+      example: '0x0000000000000000000000006d95e6dca01d109882fe1726a2fb9865fa41e7aa'
+      description: |
+        Filters events based on the 2nd parameter in the event. 
+
+        <b>Note</b>: The parameter must be padded to 32 bytes.
+
+        For example, for the event `MySolidityEvent(address,uint256)`, use `t2` to match the `uint256` parameter.
+
+
+    Topic3InQuery:
+      name: t3
+      in: query
+      schema:
+        type: string
+      example: '0x0000000000000000000000006d95e6dca01d109882fe1726a2fb9865fa41e7aa'
+      description: |
+        Filters events based on the 3rd parameter in the event. 
+
+        <b>Note</b>: The parameter must be padded to 32 bytes.
+
+        For example, for the event `MySolidityEvent(address,address,uint256)`, use `t3` to match the `uint256` parameter.
+
+
+    Topic4InQuery:
+      name: t4
+      in: query
+      schema:
+        type: string
+      example: '0x0000000000000000000000006d95e6dca01d109882fe1726a2fb9865fa41e7aa'
+      description: |
+        Filters events based on the 4th parameter in the event. 
+
+        <b>Note</b>: The parameter must be padded to 32 bytes.
+
+        For example, for the event `MySolidityEvent(address,address,address,uint256)`, use `t4` to match the `uint256` parameter.
+
+
+    TxOriginInQuery:
+      name: txOrigin
+      in: query
+      schema:
+          type: string
+      description: |
+          The address from which the transaction was sent.
+      example: '0x6d95e6dca01d109882fe1726a2fb9865fa41e7aa'
+
+    TransferSenderInQuery:
+      name: sender
+      in: query
+      schema:
+          type: string
+      description: |
+          The address that sent the VET. In most cases this is the same as `txOrigin`, but it may be different if the VET was sent by a contract.
+      example: '0x6d95e6dca01d109882fe1726a2fb9865fa41e7aa'
+
+    TransferRecipientInQuery:
+      name: recipient
+      in: query
+      schema:
+          type: string
+      description: |
+          The address that received the VET.
+      example: '0x45429a2255e7248e57fce99e7239aed3f84b7a53'
