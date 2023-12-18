@@ -12,9 +12,6 @@ info:
     url: https://www.gnu.org/licenses/lgpl-3.0.en.html
   version: 2.1.0
 servers:
-  - url: /
-    description: Current Node
-    # TODO: Remove Other Nodes (Testing purposes only)
   - url: https://mainnet.vechain.org
     description: Mainnet
   - url: https://testnet.vechain.org
@@ -496,7 +493,7 @@ paths:
           in: query
           schema:
             type: string
-          example: '0x0000000000000000000000005034aa590125b64023a0262112b98d72e3c8e40e'
+          example: '0x0000000000000000000000006d95e6dca01d109882fe1726a2fb9865fa41e7aa'
           description: |
             Filters events based on the 1st parameter in the event. 
 
@@ -507,7 +504,7 @@ paths:
           in: query
           schema:
             type: string
-          example: '0x0000000000000000000000005034aa590125b64023a0262112b98d72e3c8e40e'
+          example: '0x0000000000000000000000006d95e6dca01d109882fe1726a2fb9865fa41e7aa'
           description: |
             Filters events based on the 2nd parameter in the event. 
 
@@ -518,7 +515,7 @@ paths:
           in: query
           schema:
             type: string
-          example: '0x0000000000000000000000005034aa590125b64023a0262112b98d72e3c8e40e'
+          example: '0x0000000000000000000000006d95e6dca01d109882fe1726a2fb9865fa41e7aa'
           description: |
             Filters events based on the 3rd parameter in the event. 
 
@@ -529,7 +526,7 @@ paths:
           in: query
           schema:
             type: string
-          example: '0x0000000000000000000000005034aa590125b64023a0262112b98d72e3c8e40e'
+          example: '0x0000000000000000000000006d95e6dca01d109882fe1726a2fb9865fa41e7aa'
           description: |
             Filters events based on the 4th parameter in the event. 
 
@@ -560,7 +557,7 @@ paths:
         Example:
         
         ```javascript
-        const ws = new WebSocket('ws://localhost:8669/subscriptions/transfer?sender=0xe59d475abe695c7f67a8a2321f33a856b0b4c71d')
+        const ws = new WebSocket('ws://localhost:8669/subscriptions/transfer?sender=0x6d95e6dca01d109882fe1726a2fb9865fa41e7aa')
         
         ws.onmessage = (event) => {
           console.log(event.data)
@@ -574,21 +571,21 @@ paths:
             type: string
           description: |
             The address from which the transaction was sent.
-          example: '0xe59d475abe695c7f67a8a2321f33a856b0b4c71d'
+          example: '0x6d95e6dca01d109882fe1726a2fb9865fa41e7aa'
         - name: sender
           in: query
           schema:
             type: string
           description: |
             The address that sent the VET. In most cases this is the same as `txOrigin`, but it may be different if the VET was sent by a contract.
-          example: '0xe59d475abe695c7f67a8a2321f33a856b0b4c71d'
+          example: '0x6d95e6dca01d109882fe1726a2fb9865fa41e7aa'
         - name: recipient
           in: query
           schema:
             type: string
           description: |
             The address that received the VET.
-          example: '0x7567d83b7b8d80addcb281a71d54fc7b3364ffed'
+          example: '0x45429a2255e7248e57fce99e7239aed3f84b7a53'
       responses:
         '200':
           description: OK
@@ -1331,7 +1328,6 @@ components:
       items:
         $ref: '#/components/schemas/CallResult'
 
-
     FilterOptions:
       properties:
         offset:
@@ -1341,7 +1337,7 @@ components:
             The offset in the matched record set. Use this parameter for pagination.
         limit:
           type: integer
-          example: 10
+          example: 100
           description: |
             The limit of records to be included in the output. Use this parameter for pagination.
       description: |
@@ -1374,11 +1370,11 @@ components:
           format: uint64
           description: |
             Defines the starting block number or timestamp for the specified range.
-          example: 0
+          example: 15000000
         to:
           type: integer
           format: uint64
-          example: 100000
+          example: 18000000
           description: |
             Specifies the ending block number or timestamp for the specified range.
       description: |
@@ -1410,7 +1406,7 @@ components:
             For example, the signature for the `Transfer` event is `keccak256("Transfer(address,address,uint256)")`.
         topic1:
           type: string
-          example: '0x0000000000000000000000005034aa590125b64023a0262112b98d72e3c8e40e'
+          example: '0x0000000000000000000000006d95e6dca01d109882fe1726a2fb9865fa41e7aa'
           description: |
             Filters events based on the 1st parameter in the event. 
             
@@ -1419,7 +1415,7 @@ components:
             For example, for the event `MySolidityEvent(address,uint256)`, use `topic1` to match the `address` parameter.
         topic2:
           type: string
-          example: '0x0000000000000000000000005034aa590125b64023a0262112b98d72e3c8e40e'
+          example: '0x0000000000000000000000006d95e6dca01d109882fe1726a2fb9865fa41e7aa'
           description: |
             Filters events based on the 2nd parameter in the event. 
             
@@ -1428,7 +1424,7 @@ components:
             For example, for the event `MySolidityEvent(address,uint256)`, use `topic2` to match the `uint256` parameter.
         topic3:
           type: string
-          example: '0x0000000000000000000000005034aa590125b64023a0262112b98d72e3c8e40e'
+          example: '0x0000000000000000000000006d95e6dca01d109882fe1726a2fb9865fa41e7aa'
           description: |
             Filters events based on the 3rd parameter in the event. 
             
@@ -1437,7 +1433,7 @@ components:
             For example, for the event `MySolidityEvent(address,address,uint256)`, use `topic3` to match the `uint256` parameter.
         topic4:
           type: string
-          example: '0x0000000000000000000000005034aa590125b64023a0262112b98d72e3c8e40e'
+          example: '0x0000000000000000000000006d95e6dca01d109882fe1726a2fb9865fa41e7aa'
           description: |
             Filters events based on the 4th parameter in the event. 
             
@@ -1456,11 +1452,11 @@ components:
         }
         ```
         
-        This matches events emitted by `0xe59d475abe695c7f67a8a2321f33a856b0b4c71d` with `topic0` equal to `0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef`.
+        This matches events emitted by `0x6d95e6dca01d109882fe1726a2fb9865fa41e7aa` with `topic0` equal to `0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef`.
       example:
         address: "0x0000000000000000000000000000456E65726779"
         topic0: '0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef'
-        topic1: '0x0000000000000000000000005034aa590125b64023a0262112b98d72e3c8e40e'
+        topic1: '0x0000000000000000000000006d95e6dca01d109882fe1726a2fb9865fa41e7aa'
 
     EventFilter:
       properties:
@@ -1486,17 +1482,17 @@ components:
           description: |
             The address from which the transaction was sent.
           type: string
-          example: '0xe59d475abe695c7f67a8a2321f33a856b0b4c71d'
+          example: '0x6d95e6dca01d109882fe1726a2fb9865fa41e7aa'
         sender:
           description: |
             The address that sent the VET. In most cases this is the same as `txOrigin`, but it may be different if the VET was sent by a contract.
           type: string
-          example: '0xe59d475abe695c7f67a8a2321f33a856b0b4c71d'
+          example: '0x6d95e6dca01d109882fe1726a2fb9865fa41e7aa'
         recipient:
           description: |
               The address that received the VET.
           type: string
-          example: '0x7567d83b7b8d80addcb281a71d54fc7b3364ffed'
+          example: '0x45429a2255e7248e57fce99e7239aed3f84b7a53'
 
     TransferFilter:
       properties:
