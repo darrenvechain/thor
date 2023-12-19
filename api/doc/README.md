@@ -1,10 +1,3 @@
-
-## Swagger
-
-swagger-ui from https://github.com/swagger-api/swagger-ui @v5.10.3
-- Created [window-observer.js](swagger-ui/window-observer.js) to remove `Try it out` functionality for subscription endpoints
-
-
 ## Stoplight
 Spotlight UI from https://github.com/stoplightio/elements
  - Modified [web-components.min.js](api-docs/web-components.min.js) so that websocket endpoints do not show examples.
