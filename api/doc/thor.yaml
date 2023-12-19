@@ -121,6 +121,13 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/GetAccountCodeResponse'
+        '400':
+          description: Bad Request
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: 'Invalid address'
 
   /accounts/{address}/storage/{key}:
     parameters:
@@ -142,6 +149,13 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/GetStorageResponse'
+        '400':
+          description: Bad Request
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: 'Invalid address'
 
   /transactions/{id}:
     get:
@@ -154,7 +168,10 @@ paths:
         - Transactions
       summary: Retrieve a transaction by ID
       description: |
-        This endpoint allows you to retrieve a transaction identified by its ID. If the `pending` parameter is set to true, the response may include a pending transaction with a null `meta` field. Use this option when you want to retrieve both confirmed and pending transactions, providing flexibility in accessing real-time transaction data.
+        This endpoint allows you to retrieve a transaction identified by its ID. If the `pending` parameter is set to true, the response may include a pending transaction with a null `meta` field. Use this option when you want to retrieve pending transactions, providing flexibility in accessing real-time transaction data.
+        
+      
+        If no transaction is found, the response will be be a `200` with a `null` body.
 
       responses:
         '200':
@@ -163,6 +180,13 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/GetTxResponse'
+        '400':
+          description: Bad Request
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: 'Invalid transaction ID'
 
   /transactions/{id}/receipt:
     get:
@@ -173,7 +197,7 @@ paths:
         - Transactions
       summary: Retrieve transaction receipt
       description: |
-        by ID.
+        This endpoint allows you to retrieve the receipt of a transaction identified by its ID. If the transaction is not found, the response will be `null`.
       responses:
         '200':
           description: OK
@@ -181,6 +205,13 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/GetTxReceiptResponse'
+        '400':
+          description: Bad Request
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: 'Invalid transaction ID'
 
   /transactions:
     post:
@@ -236,6 +267,20 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/TXID'
+        '400':
+          description: Bad Request
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: 'Invalid transaction'
+        '403':
+          description: Forbidden
+          content:
+            text/plain:
+              schema:
+                  type: string
+                  example: 'Insufficient energy'
 
   /blocks/{revision}:
     get:
@@ -257,6 +302,13 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/GetBlockResponse'
+        '400':
+          description: Bad Request
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: 'Invalid revision'
 
   /logs/event:
     post:
@@ -281,6 +333,13 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/EventLogsResponse'
+        '400':
+          description: Bad Request
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: 'Invalid request body'
 
   /logs/transfer:
     post:
@@ -302,6 +361,13 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/TransferLogsResponse'
+        '400':
+          description: Bad Request
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: 'Invalid request body'
 
   /node/network/peers:
     get:
@@ -347,6 +413,20 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/SubscriptionBlockResponse'
+        '400':
+          description: Bad Request
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: 'Invalid position'
+        '403':
+          description: Forbidden
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: '"pos" is out of range'
 
   /subscriptions/event:
     get:
@@ -381,6 +461,20 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/SubscriptionEventResponse'
+        '400':
+          description: Bad Request
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: 'Invalid position'
+        '403':
+          description: Forbidden
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: '"pos" is out of range'
 
   /subscriptions/transfer:
     get:
@@ -411,6 +505,20 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/SubscriptionEventResponse'
+        '400':
+          description: Bad Request
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: 'Invalid position'
+        '403':
+          description: Forbidden
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: '"pos" is out of range'
 
   /subscriptions/beat2:
     get:
@@ -437,8 +545,21 @@ paths:
           content:
             application/json:
               schema:
-                allOf:
-                  - $ref: '#/components/schemas/SubscriptionBeat2Response'
+                $ref: '#/components/schemas/SubscriptionBeat2Response'
+        '400':
+          description: Bad Request
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: 'Invalid position'
+        '403':
+          description: Forbidden
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: '"pos" is out of range'
 
   /subscriptions/txpool:
     get:
@@ -464,6 +585,20 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/TXID'
+        '400':
+          description: Bad Request
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: 'Invalid position'
+        '403':
+          description: Forbidden
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: '"pos" is out of range'
 
   /subscriptions/beat:
     get:
@@ -491,8 +626,21 @@ paths:
           content:
             application/json:
               schema:
-                allOf:
-                  - $ref: '#/components/schemas/SubscriptionBeatResponse'
+                $ref: '#/components/schemas/SubscriptionBeatResponse'
+        '400':
+          description: Bad Request
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: 'Invalid position'
+        '403':
+          description: Forbidden
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: '"pos" is out of range'
 
   /debug/tracers:
     post:
@@ -518,6 +666,13 @@ paths:
                 description: |
                   The response will depend on the type of tracer you have created.
                 type: object
+        '400':
+          description: Bad Request
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: 'Invalid target'
 
   /debug/tracers/call:
     post:
@@ -545,6 +700,13 @@ paths:
                 description: |
                   The response will depend on the type of tracer you have created.
                 type: object
+        '400':
+          description: Bad Request
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: 'Invalid request body'
 
   /debug/storage-range:
     post:
@@ -566,6 +728,13 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/StorageRange'
+        '400':
+          description: Bad Request
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: 'Invalid address'
 
 components:
   schemas:
