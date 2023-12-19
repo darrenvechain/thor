@@ -88,14 +88,14 @@ paths:
         content:
           application/json:
             schema:
-              $ref : '#/components/schemas/PostAccountRequest'
+              $ref : '#/components/schemas/ExecuteCodesRequest'
       responses:
         '200':
           description: OK
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/PostAccountResponse'
+                $ref: '#/components/schemas/ExecuteCodesResponse'
         '400':
           description: Bad Request
           content:
@@ -273,14 +273,14 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/EventFilter'
+              $ref: '#/components/schemas/EventLogFilterRequest'
       responses:
         '200':
           description: OK
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/PostLogsEventResponse'
+                $ref: '#/components/schemas/EventLogsResponse'
 
   /logs/transfer:
     post:
@@ -294,14 +294,14 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/TransferFilter'
+              $ref: '#/components/schemas/TransferLogFilterRequest'
       responses:
         '200':
           description: OK
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/PostLogsTransferResponse'
+                $ref: '#/components/schemas/TransferLogsResponse'
 
   /node/network/peers:
     get:
@@ -588,7 +588,7 @@ components:
         energy: '0xcf624158d591398'
         hasCode: false
 
-    PostAccountRequest:
+    ExecuteCodesRequest:
       allOf:
         - $ref: '#/components/schemas/ExtendedCallData'
         - $ref: '#/components/schemas/BatchCallData'
@@ -614,7 +614,7 @@ components:
             value: '0x0'
             data: '0x6080604052348015600f57600080fd5b50609f8061001e6000396000f300608060405260043610603f576000357c0100000000000000000000000000000000000000000000000000000000900463ffffffff1680631820cabb146044575b600080fd5b348015604f57600080fd5b506056606c565b6040518082815260200191505060405180910390f35b62015180815600a165627a7a723058200ac7475da248e2fc26c057319e296e90c24d5f8b9bf956fb3b77545642cad3b10029'
 
-    PostAccountResponse:
+    ExecuteCodesResponse:
       type: array
       items:
         $ref: '#/components/schemas/CallResult'
@@ -758,7 +758,25 @@ components:
         transactions:
           - '0x284bba50ef777889ff1a367ed0b38d5e5626714477c40de38d71cedd6f9fa477'
 
-    PostLogsEventResponse:
+    EventLogFilterRequest:
+      properties:
+        range:
+          $ref: '#/components/schemas/FilterRange'
+        options:
+          $ref: '#/components/schemas/FilterOptions'
+        criteriaSet:
+          type: array
+          items:
+            $ref: '#/components/schemas/EventCriteria'
+        order:
+          description: |
+            Specifies the order of the results. Use `asc` for ascending order, and `desc` for descending order.
+          type: string
+          enum:
+            - asc
+            - desc
+
+    EventLogsResponse:
       type: array
       items:
         allOf:
@@ -767,7 +785,25 @@ components:
           meta:
             $ref: '#/components/schemas/LogMeta'
 
-    PostLogsTransferResponse:
+    TransferLogFilterRequest:
+      properties:
+        range:
+          $ref: '#/components/schemas/FilterRange'
+        options:
+          $ref: '#/components/schemas/FilterOptions'
+        criteriaSet:
+          type: array
+          items:
+            $ref: '#/components/schemas/TransferCriteria'
+        order:
+          description: |
+            Specifies the order of the results. Use `asc` for ascending order, and `desc` for descending order.
+          type: string
+          enum:
+            - asc
+            - desc
+
+    TransferLogsResponse:
       type: array
       items:
         allOf:
@@ -1496,24 +1532,6 @@ components:
         topic0: '0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef'
         topic1: '0x0000000000000000000000006d95e6dca01d109882fe1726a2fb9865fa41e7aa'
 
-    EventFilter:
-      properties:
-        range:
-          $ref: '#/components/schemas/FilterRange'
-        options:
-          $ref: '#/components/schemas/FilterOptions'
-        criteriaSet:
-          type: array
-          items:
-            $ref: '#/components/schemas/EventCriteria'
-        order:
-          description: |
-            Specifies the order of the results. Use `asc` for ascending order, and `desc` for descending order.
-          type: string
-          enum:
-            - asc
-            - desc
-
     TransferCriteria:
       properties:
         txOrigin:
@@ -1531,24 +1549,6 @@ components:
               The address that received the VET.
           type: string
           example: '0x45429a2255e7248e57fce99e7239aed3f84b7a53'
-
-    TransferFilter:
-      properties:
-        range:
-          $ref: '#/components/schemas/FilterRange'
-        options:
-          $ref: '#/components/schemas/FilterOptions'
-        criteriaSet:
-          type: array
-          items:
-            $ref: '#/components/schemas/TransferCriteria'
-        order:
-          description: |
-            Specifies the order of the results. Use `asc` for ascending order, and `desc` for descending order.
-          type: string
-          enum:
-            - asc
-            - desc
 
     PeerStats:
       type: object
