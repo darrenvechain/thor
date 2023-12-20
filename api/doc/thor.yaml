@@ -29,7 +29,7 @@ tags:
     description: Subscribe interested subjects
   - name: Debug
     description: Debug utilities
-    
+
 paths:
   /accounts/{address}:
     parameters:
@@ -236,7 +236,7 @@ paths:
               schema:
                 allOf:
                   - $ref: '#/components/schemas/Receipt'
-                properties:            
+                properties:
                   meta:
                     $ref: '#/components/schemas/ReceiptMeta'
 
@@ -285,7 +285,7 @@ paths:
                     - $ref: '#/components/schemas/IsFinalized'
                     properties:
                       transactions:
-                        description: transaction IDs                          
+                        description: transaction IDs
                         type: array
                         items:
                           type: string
@@ -400,7 +400,7 @@ paths:
       summary: (Websocket) Subscribe new blocks
       parameters:
         - $ref: '#/components/parameters/PositionInQuery'
-      
+
       responses:
         '200':
           description: OK
@@ -425,7 +425,7 @@ paths:
       summary: (Websocket) Subscribe new events
       description: |
         which satisfy criteria in query.
-        
+
       parameters:
         - $ref: '#/components/parameters/PositionInQuery'
         - name: addr
@@ -470,8 +470,8 @@ paths:
                 properties:
                   meta:
                     $ref: '#/components/schemas/LogMeta'
-                
-          
+
+
   /subscriptions/transfer:
     get:
       tags:
@@ -576,7 +576,7 @@ paths:
             schema:
               allOf:
                 - $ref: '#/components/schemas/ClauseTracerOption'
-                - $ref: '#/components/schemas/TracerOption'     
+                - $ref: '#/components/schemas/TracerOption'
       responses:
         '200':
           description: OK
@@ -586,7 +586,7 @@ paths:
                 type: object
 
   /debug/tracers/call:
-    post: 
+    post:
       tags:
         - Debug
       summary: Create a tracer
@@ -786,7 +786,7 @@ components:
         txsRoot:
           type: string
           format: bytes32
-          description: root hash of transactions in the block 
+          description: root hash of transactions in the block
           example: '0x89dfd9fcd10c9e53d68592cf8b540b280b72d381b868523223992f3e09a806bb'
         txsFeatures:
           type: integer
@@ -986,7 +986,7 @@ components:
         gas: 50000
         gasPrice: '1000000000000000'
         caller: '0x7567d83b7b8d80addcb281a71d54fc7b3364ffed'
-  
+
     ExtendedCallData:
       properties:
         provedWork:
@@ -1055,11 +1055,11 @@ components:
         clauses:
           - to: '0x5034aa590125b64023a0262112b98d72e3c8e40e'
             value: '0xde0b6b3a7640000'
-            data: '0x5665436861696e2054686f72' 
+            data: '0x5665436861696e2054686f72'
         gas: 50000
         gasPrice: '1000000000000000'
         caller: '0x7567d83b7b8d80addcb281a71d54fc7b3364ffed'
-        
+
     BatchCallResult:
       type: array
       items:
@@ -1103,12 +1103,12 @@ components:
           description: |
             defines the unit of `from` and `to`.
             `block` means block number, `time` means block timestamp, default to `block`.
-            
+
         from:
           type: integer
           format: uint64
           example: 0
-          
+
         to:
           type: integer
           format: uint64
@@ -1127,7 +1127,7 @@ components:
         ```
         refers to the range from block 10 to block 1000.
         `null` stands for the full range.
-            
+
     EventCriteria:
       properties:
         address:
@@ -1156,7 +1156,7 @@ components:
         address: "0x0000000000000000000000000000456E65726779"
         topic0: '0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef'
         topic1: '0x0000000000000000000000005034aa590125b64023a0262112b98d72e3c8e40e'
-            
+
     EventFilter:
       properties:
         range:
@@ -1174,7 +1174,7 @@ components:
           enum:
             - asc
             - desc
-            
+
     TransferCriteria:
       properties:
         txOrigin:
@@ -1204,7 +1204,7 @@ components:
           enum:
             - asc
             - desc
-    
+
     PeerStats:
       properties:
         name:
@@ -1235,15 +1235,15 @@ components:
           type: string
       example:
         id: '0x4de71f2d588aa8a1ea00fe8312d92966da424d9939a511fc0be81e65fad52af8'
-    
-    
+
+
     Obsolete:
       properties:
         obsolete:
           type: boolean
           description: |
             indicates whether the block containing this data become branch block
-    
+
     ClauseTracerOption:
       properties:
         target:
@@ -1346,7 +1346,7 @@ components:
           format: uint32
           description: |
             the number of hash functions for bloom filter
-          example: 3          
+          example: 3
 
     Beat2:
       allOf:
@@ -1363,7 +1363,7 @@ components:
         isTrunk:
           type: boolean
           description: whether the block is on the trunk
-    
+
     IsFinalized:
       properties:
         isFinalized:
@@ -1452,7 +1452,7 @@ components:
       schema:
         type: string
       example: '0x9bcc6526a76ae560244f698805cc001977246cb92c2b4f1e2b7a204e445409ea'
-      
+
     PositionInQuery:
       name: pos
       in: query
