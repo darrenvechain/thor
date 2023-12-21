@@ -1,4 +1,5 @@
 name: Qodana
+
 on:
   pull_request:
 
@@ -19,6 +20,9 @@ jobs:
 
       - name: Make Coverage
         run: make test-coverage
+
+      - name: Setup
+        run: mkdir -p .qodana/code-coverage
 
       - name: 'Qodana Scan'
         uses: JetBrains/qodana-action@v2023.3
