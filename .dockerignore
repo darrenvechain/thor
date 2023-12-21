@@ -1,0 +1,5 @@
+.github
+*.md
+thorest.png
+coverage.out
+integration_tests

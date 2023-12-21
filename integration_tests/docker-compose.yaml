@@ -1,0 +1,76 @@
+version: "3.8"
+
+services:
+
+  thor-disco:
+    build:
+      context: ..
+      dockerfile: Dockerfile
+    container_name: thor-disco
+    entrypoint: "disco --keyhex=99f0500549792796c14fed62011a51081dc5b5e68fe8bd8a13b86be829c4fd36"
+    volumes:
+      - ./config:/node/config
+      - ./keys/f077b491b355e64048ce21e3a6fc4751eeea77fa:/node/config
+    networks:
+      - thor
+    ports:
+      - "55556:55555"
+
+  authority-node-1:
+    build:
+      context: ..
+      dockerfile: Dockerfile
+    container_name: authority-node-1
+    entrypoint: "thor --config-dir=/node/keys --network /node/config/genesis.json --bootnode enode://e32e5960781ce0b43d8c2952eeea4b95e286b1bb5f8c1f0c9f09983ba7141d2fdd7dfbec798aefb30dcd8c3b9b7cda8e9a94396a0192bfa54ab285c2cec515ab@172.22.0.2:55555"
+    volumes:
+      - type: bind
+        source: ./config
+        target: /node/config
+      - type: bind
+        source: ./keys/435933c8064b4ae76be665428e0307ef2ccfbd68
+        target: /node/keys
+    networks:
+      - thor
+    ports:
+      - "8669:8669"
+
+  authority-node-2:
+    build:
+      context: ..
+      dockerfile: Dockerfile
+    container_name: authority-node-2
+    entrypoint: "thor --config-dir=/node/keys --network /node/config/genesis.json --bootnode enode://e32e5960781ce0b43d8c2952eeea4b95e286b1bb5f8c1f0c9f09983ba7141d2fdd7dfbec798aefb30dcd8c3b9b7cda8e9a94396a0192bfa54ab285c2cec515ab@172.22.0.2:55555"
+    volumes:
+      - type: bind
+        source: ./config
+        target: /node/config
+      - type: bind
+        source: ./keys/f370940abdbd2583bc80bfc19d19bc216c88ccf0
+        target: /node/keys
+    networks:
+      - thor
+    ports:
+      - "8679:8669"
+
+  authority-node-3:
+    build:
+      context: ..
+      dockerfile: Dockerfile
+    container_name: authority-node-3
+    entrypoint: "thor --config-dir=/node/keys --network /node/config/genesis.json --bootnode enode://e32e5960781ce0b43d8c2952eeea4b95e286b1bb5f8c1f0c9f09983ba7141d2fdd7dfbec798aefb30dcd8c3b9b7cda8e9a94396a0192bfa54ab285c2cec515ab@172.22.0.2:55555"
+    volumes:
+      - type: bind
+        source: ./config
+        target: /node/config
+      - type: bind
+        source: ./keys/0f872421dc479f3c11edd89512731814d0598db5
+        target: /node/keys
+    networks:
+      - thor
+    ports:
+      - "8689:8669"
+
+networks:
+  thor:
+    driver: bridge
+    name: thor

@@ -1,0 +1,67 @@
+{
+    "launchTime": 1703180212,
+    "gasLimit": 10000000,
+    "extraData": "My custom VeChain",
+    "accounts": [
+        {
+            "address": "0x7567d83b7b8d80addcb281a71d54fc7b3364ffed",
+            "balance": 25000000000000000000000000,
+            "energy": 0,
+            "code": "0x6060604052600256",
+            "storage": {
+                "0x0000000000000000000000000000000000000000000000000000000000000001": "0x0000000000000000000000000000000000000000000000000000000000000002"
+            }
+        },
+        {
+            "address": "0x435933c8064b4ae76be665428e0307ef2ccfbd68",
+            "balance": 21046908616500000000000000000,
+            "energy": 0
+        },
+        {
+            "address": "0xf370940abdbd2583bc80bfc19d19bc216c88ccf0",
+            "balance": 21046908616500000000000000000,
+            "energy": 0
+        },
+        {
+            "address": "0x0f872421dc479f3c11edd89512731814d0598db5",
+            "balance": 21046908616500000000000000000,
+            "energy": 0
+        },
+        {
+            "address": "0x0bd7b06debd1522e75e4b91ff598f107fd826c8a",
+            "balance": 21046908616500000000000000000,
+            "energy": 0
+        }
+    ],
+    "authority": [
+        {
+            "masterAddress": "0x435933c8064b4ae76be665428e0307ef2ccfbd68",
+            "endorsorAddress": "0x7567d83b7b8d80addcb281a71d54fc7b3364ffed",
+            "identity": "0x000000000000000068747470733a2f2f636f6e6e65782e76656368612e696e2f"
+        },
+        {
+            "masterAddress": "0xf370940abdbd2583bc80bfc19d19bc216c88ccf0",
+            "endorsorAddress": "0x7567d83b7b8d80addcb281a71d54fc7b3364ffed",
+            "identity": "0x000000000000000068747470733a2f2f656e762e7665636861696e2e6f72672f"
+        },
+        {
+            "masterAddress": "0x0f872421dc479f3c11edd89512731814d0598db5",
+            "endorsorAddress": "0x7567d83b7b8d80addcb281a71d54fc7b3364ffed",
+            "identity": "0x0000000000000068747470733a2f2f617070732e7665636861696e2e6f72672f"
+        }
+    ],
+    "params": {
+        "rewardRatio": 300000000000000000,
+        "baseGasPrice": 1000000000000000,
+        "proposerEndorsement": 25000000000000000000000000,
+        "executorAddress": "0x0000000000000000000000004578656375746f72"
+    },
+    "executor": {
+        "approvers": [
+            {
+                "address": "0x199b836d8a57365baccd4f371c1fabb7be77d389",
+                "identity": "0x00000000000067656e6572616c20707572706f736520626c6f636b636861696e"
+            }
+        ]
+    }
+}
