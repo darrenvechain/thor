@@ -18,11 +18,11 @@ jobs:
       - name: Make all
         run: make all
 
-      - name: Make Coverage
-        run: make test-coverage
-
       - name: Setup
         run: mkdir -p .qodana/code-coverage
+
+      - name: Make Coverage
+        run: make test-coverage
 
       - name: 'Qodana Scan'
         uses: JetBrains/qodana-action@v2023.3
