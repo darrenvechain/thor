@@ -122,6 +122,22 @@ func (a *Accounts) handleGetAccount(w http.ResponseWriter, req *http.Request) er
 	return utils.WriteJSON(w, acc)
 }
 
+func (a *Accounts) handleGetAccountDuplicate(w http.ResponseWriter, req *http.Request) error {
+	addr, err := thor.ParseAddress(mux.Vars(req)["address"])
+	if err != nil {
+		return utils.BadRequest(errors.WithMessage(err, "address"))
+	}
+	summary, err := a.handleRevision(req.URL.Query().Get("revision"))
+	if err != nil {
+		return err
+	}
+	acc, err := a.getAccount(addr, summary)
+	if err != nil {
+		return err
+	}
+	return utils.WriteJSON(w, acc)
+}
+
 func (a *Accounts) handleGetStorage(w http.ResponseWriter, req *http.Request) error {
 	addr, err := thor.ParseAddress(mux.Vars(req)["address"])
 	if err != nil {
@@ -351,6 +367,7 @@ func (a *Accounts) Mount(root *mux.Router, pathPrefix string) {
 
 	sub.Path("/*").Methods("POST").HandlerFunc(utils.WrapHandlerFunc(a.handleCallBatchCode))
 	sub.Path("/{address}").Methods(http.MethodGet).HandlerFunc(utils.WrapHandlerFunc(a.handleGetAccount))
+	sub.Path("/{address}/duplicate").Methods(http.MethodGet).HandlerFunc(utils.WrapHandlerFunc(a.handleGetAccountDuplicate))
 	sub.Path("/{address}/code").Methods(http.MethodGet).HandlerFunc(utils.WrapHandlerFunc(a.handleGetCode))
 	sub.Path("/{address}/storage/{key}").Methods("GET").HandlerFunc(utils.WrapHandlerFunc(a.handleGetStorage))
 	sub.Path("").Methods("POST").HandlerFunc(utils.WrapHandlerFunc(a.handleCallContract))
