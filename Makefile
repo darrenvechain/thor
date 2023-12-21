@@ -42,8 +42,10 @@ all: thor disco
 clean:
 	-rm -rf \
 $(CURDIR)/bin/thor \
-$(CURDIR)/bin/disco 
+$(CURDIR)/bin/disco
 
 test:| go_version_check
 	@go test -cover $(PACKAGES)
 
+test-coverage:| go_version_check
+	@go test -race -coverprofile=.qodana/code-coverage/coverage.out -covermode=atomic $(PACKAGES)

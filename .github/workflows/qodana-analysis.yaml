@@ -1,0 +1,60 @@
+name: Test
+
+on: [push, pull_request]
+
+concurrency:
+    group: ${{ github.workflow }}-${{ github.ref }}
+    cancel-in-progress: true
+
+jobs:
+  unit_tests:
+    strategy:
+      matrix:
+        go-version: [1.21.x]
+        os: [ubuntu-latest, macos-latest, windows-latest]
+        include:
+          - go-version: 1.19.x
+            os: ubuntu-latest
+          - go-version: 1.20.x
+            os: ubuntu-latest
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Install Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: ${{ matrix.go-version }}
+
+      - name: Make all
+        run: make all
+
+      - name: Make Test
+        run: make test
+  test_coverage:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Install Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: 1.21.x
+
+      - name: Make all
+        run: make all
+
+      - name: Setup
+        run: mkdir -p .qodana/code-coverage
+
+      - name: Make Coverage
+        run: make test-coverage
+
+      - name: 'Qodana Scan'
+        uses: JetBrains/qodana-action@v2023.3
+        env:
+          QODANA_TOKEN: ${{ secrets.QODANA_TOKEN }}
+        with:
+          pr-mode: true
