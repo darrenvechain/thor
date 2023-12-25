@@ -11,4 +11,15 @@ jobs:
 
       - name: Run Compose
         run: |
-          docker-compose -f integration_tests/docker-compose.yaml up
+          docker-compose -f integration_tests/network/docker-compose.yaml up -d --wait 
+
+      - name: Setup Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+
+      - name: Run Tests
+        run: |
+          cd integration_tests
+          yarn install
+          yarn test

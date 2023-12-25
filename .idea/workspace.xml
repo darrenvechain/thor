@@ -5,21 +5,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="fc9fa7d4-7002-40c6-9627-57bd3c454974" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/integration_tests/network/config/start.sh" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.github/workflows/integration-tests.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/.github/workflows/integration-tests.yaml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/integration_tests/config/genesis.json" beforeDir="false" afterPath="$PROJECT_DIR$/integration_tests/network/config/genesis.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/integration_tests/config/start.sh" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/integration_tests/docker-compose-base.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/integration_tests/network/docker-compose-base.yaml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/integration_tests/docker-compose.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/integration_tests/network/docker-compose.yaml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/integration_tests/keys/0f872421dc479f3c11edd89512731814d0598db5/keystore.json" beforeDir="false" afterPath="$PROJECT_DIR$/integration_tests/network/keys/0f872421dc479f3c11edd89512731814d0598db5/keystore.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/integration_tests/keys/0f872421dc479f3c11edd89512731814d0598db5/master.key" beforeDir="false" afterPath="$PROJECT_DIR$/integration_tests/network/keys/0f872421dc479f3c11edd89512731814d0598db5/master.key" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/integration_tests/keys/435933c8064b4ae76be665428e0307ef2ccfbd68/keystore.json" beforeDir="false" afterPath="$PROJECT_DIR$/integration_tests/network/keys/435933c8064b4ae76be665428e0307ef2ccfbd68/keystore.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/integration_tests/keys/435933c8064b4ae76be665428e0307ef2ccfbd68/master.key" beforeDir="false" afterPath="$PROJECT_DIR$/integration_tests/network/keys/435933c8064b4ae76be665428e0307ef2ccfbd68/master.key" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/integration_tests/keys/f077b491b355e64048ce21e3a6fc4751eeea77fa/keystore.json" beforeDir="false" afterPath="$PROJECT_DIR$/integration_tests/network/keys/f077b491b355e64048ce21e3a6fc4751eeea77fa/keystore.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/integration_tests/keys/f077b491b355e64048ce21e3a6fc4751eeea77fa/master.key" beforeDir="false" afterPath="$PROJECT_DIR$/integration_tests/network/keys/f077b491b355e64048ce21e3a6fc4751eeea77fa/master.key" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/integration_tests/keys/f370940abdbd2583bc80bfc19d19bc216c88ccf0/keystore.json" beforeDir="false" afterPath="$PROJECT_DIR$/integration_tests/network/keys/f370940abdbd2583bc80bfc19d19bc216c88ccf0/keystore.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/integration_tests/keys/f370940abdbd2583bc80bfc19d19bc216c88ccf0/master.key" beforeDir="false" afterPath="$PROJECT_DIR$/integration_tests/network/keys/f370940abdbd2583bc80bfc19d19bc216c88ccf0/master.key" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/integration_tests/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/integration_tests/package.json" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -86,6 +74,7 @@
     <setting file="jar://$APPLICATION_HOME_DIR$/plugins/qodana/lib/qodana.jar!/schemas/qodana-yaml-schema.json" root0="SKIP_INSPECTION" />
     <setting file="file://$PROJECT_DIR$/integration_tests/node_modules/@types/mocha/index.d.ts" root0="SKIP_INSPECTION" />
     <setting file="file://$PROJECT_DIR$/integration_tests/node_modules/@vechain/connex-driver/dist/driver-no-vendor.d.ts" root0="SKIP_INSPECTION" />
+    <setting file="file://$PROJECT_DIR$/integration_tests/node_modules/@vechain/connex-types/vm.d.ts" root0="SKIP_INSPECTION" />
     <setting file="file://$PROJECT_DIR$/integration_tests/node_modules/hardhat/src/types/config.ts" root0="SKIP_INSPECTION" />
     <setting file="file:///usr/local/go/src/math/rand/rand.go" root0="SKIP_INSPECTION" />
     <setting file="file:///usr/local/go/src/net/http/server.go" root0="SKIP_INSPECTION" />
@@ -111,6 +100,7 @@
     "Jest.Blocks.executor": "Debug",
     "Jest.Blocks.should be able to get the latest block.executor": "Debug",
     "Makefile Target.test-coverage.executor": "Run",
+    "Mocha.Accounts.should be able to get a fungible token balance.executor": "Debug",
     "Mocha.Blocks.executor": "Debug",
     "Mocha.Contracts.executor": "Run",
     "Mocha.Contracts.should be able to deploy contract.executor": "Run",
@@ -160,25 +150,27 @@
       <recent name="$PROJECT_DIR$/integration_tests" />
     </key>
   </component>
-  <component name="RunManager" selected="Mocha.Contracts">
-    <configuration name="Contracts.should be able to deploy contract" type="JavaScriptTestRunnerVitest" temporary="true" nameIsGenerated="true">
-      <node-interpreter value="project" />
-      <vitest-package value="$PROJECT_DIR$/integration_tests/node_modules/vitest" />
-      <working-dir value="$PROJECT_DIR$/integration_tests" />
-      <vitest-options value="--run" />
-      <envs />
-      <scope-kind value="TEST" />
-      <test-file value="$PROJECT_DIR$/integration_tests/tests/contracts.test.ts" />
-      <test-names>
-        <test-name value="Contracts" />
-        <test-name value="should be able to deploy contract" />
-      </test-names>
-      <method v="2" />
-    </configuration>
+  <component name="RunManager" selected="Mocha.Accounts.should be able to get a fungible token balance">
     <configuration default="true" type="docker-deploy" factoryName="docker-compose.yml" temporary="true">
       <deployment type="docker-compose.yml">
         <settings />
       </deployment>
+      <method v="2" />
+    </configuration>
+    <configuration name="Accounts.should be able to get a fungible token balance" type="mocha-javascript-test-runner" temporary="true" nameIsGenerated="true">
+      <node-interpreter>project</node-interpreter>
+      <node-options />
+      <mocha-package>$PROJECT_DIR$/integration_tests/node_modules/mocha</mocha-package>
+      <working-directory>$PROJECT_DIR$/integration_tests</working-directory>
+      <pass-parent-env>true</pass-parent-env>
+      <ui>bdd</ui>
+      <extra-mocha-options />
+      <test-kind>TEST</test-kind>
+      <test-file>$PROJECT_DIR$/integration_tests/test/accounts.test.ts</test-file>
+      <test-names>
+        <name value="Accounts" />
+        <name value="should be able to get a fungible token balance" />
+      </test-names>
       <method v="2" />
     </configuration>
     <configuration name="Blocks" type="mocha-javascript-test-runner" temporary="true" nameIsGenerated="true">
@@ -244,19 +236,19 @@
       <method v="2" />
     </configuration>
     <list>
+      <item itemvalue="Mocha.Accounts.should be able to get a fungible token balance" />
       <item itemvalue="Mocha.Blocks" />
       <item itemvalue="Mocha.Blocks.should be able to fetch finalized block (1)" />
       <item itemvalue="Mocha.Contracts" />
       <item itemvalue="Mocha.Contracts.should be able to deploy contract" />
-      <item itemvalue="Vitest.Contracts.should be able to deploy contract" />
     </list>
     <recent_temporary>
       <list>
+        <item itemvalue="Mocha.Accounts.should be able to get a fungible token balance" />
         <item itemvalue="Mocha.Contracts" />
         <item itemvalue="Mocha.Contracts.should be able to deploy contract" />
         <item itemvalue="Mocha.Blocks" />
         <item itemvalue="Mocha.Blocks.should be able to fetch finalized block (1)" />
-        <item itemvalue="Vitest.Contracts.should be able to deploy contract" />
       </list>
     </recent_temporary>
   </component>
