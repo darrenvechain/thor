@@ -3,11 +3,9 @@ version: "3.8"
 services:
   base-authority-node:
     build:
-      context: ..
+      context: ../..
       dockerfile: Dockerfile
     entrypoint: "/node/config/start.sh"
-    networks:
-      - thor
     volumes:
       - type: bind
         source: ./config
@@ -15,7 +13,8 @@ services:
       - type: bind
         source: ./keys
         target: /node/keys
-
-networks:
-  thor:
-    external: true
+    healthcheck:
+      test: ["CMD", "/node/config/health_check.sh"]
+      interval: 1s
+      timeout: 5s
+      retries: 120

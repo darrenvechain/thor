@@ -4,14 +4,10 @@ services:
 
   thor-disco:
     build:
-      context: ..
+      context: ../..
       dockerfile: Dockerfile
     container_name: thor-disco
     entrypoint: "disco --keyhex=99f0500549792796c14fed62011a51081dc5b5e68fe8bd8a13b86be829c4fd36"
-    networks:
-      - thor
-    ports:
-      - "55556:55555"
 
   authority-node-1:
     extends:
@@ -19,7 +15,7 @@ services:
       service: base-authority-node
     container_name: authority-node-1
     environment:
-      - MASTER_KEY_ADDRESS=435933c8064b4ae76be665428e0307ef2ccfbd68
+      MASTER_KEY_ADDRESS: "435933c8064b4ae76be665428e0307ef2ccfbd68"
     ports:
       - "8669:8669"
 
@@ -29,7 +25,7 @@ services:
       service: base-authority-node
     container_name: authority-node-2
     environment:
-      - MASTER_KEY_ADDRESS=f370940abdbd2583bc80bfc19d19bc216c88ccf0
+      MASTER_KEY_ADDRESS: "f370940abdbd2583bc80bfc19d19bc216c88ccf0"
     ports:
       - "8679:8669"
 
@@ -39,10 +35,6 @@ services:
       service: base-authority-node
     container_name: authority-node-3
     environment:
-      - MASTER_KEY_ADDRESS=0f872421dc479f3c11edd89512731814d0598db5
+      MASTER_KEY_ADDRESS: "0f872421dc479f3c11edd89512731814d0598db5"
     ports:
       - "8689:8669"
-
-networks:
-  thor:
-    driver: bridge

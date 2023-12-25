@@ -5,8 +5,21 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="fc9fa7d4-7002-40c6-9627-57bd3c454974" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/integration_tests/network/config/start.sh" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/integration_tests/config/start.sh" beforeDir="false" afterPath="$PROJECT_DIR$/integration_tests/config/start.sh" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/integration_tests/config/genesis.json" beforeDir="false" afterPath="$PROJECT_DIR$/integration_tests/network/config/genesis.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/integration_tests/config/start.sh" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/integration_tests/docker-compose-base.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/integration_tests/network/docker-compose-base.yaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/integration_tests/docker-compose.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/integration_tests/network/docker-compose.yaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/integration_tests/keys/0f872421dc479f3c11edd89512731814d0598db5/keystore.json" beforeDir="false" afterPath="$PROJECT_DIR$/integration_tests/network/keys/0f872421dc479f3c11edd89512731814d0598db5/keystore.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/integration_tests/keys/0f872421dc479f3c11edd89512731814d0598db5/master.key" beforeDir="false" afterPath="$PROJECT_DIR$/integration_tests/network/keys/0f872421dc479f3c11edd89512731814d0598db5/master.key" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/integration_tests/keys/435933c8064b4ae76be665428e0307ef2ccfbd68/keystore.json" beforeDir="false" afterPath="$PROJECT_DIR$/integration_tests/network/keys/435933c8064b4ae76be665428e0307ef2ccfbd68/keystore.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/integration_tests/keys/435933c8064b4ae76be665428e0307ef2ccfbd68/master.key" beforeDir="false" afterPath="$PROJECT_DIR$/integration_tests/network/keys/435933c8064b4ae76be665428e0307ef2ccfbd68/master.key" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/integration_tests/keys/f077b491b355e64048ce21e3a6fc4751eeea77fa/keystore.json" beforeDir="false" afterPath="$PROJECT_DIR$/integration_tests/network/keys/f077b491b355e64048ce21e3a6fc4751eeea77fa/keystore.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/integration_tests/keys/f077b491b355e64048ce21e3a6fc4751eeea77fa/master.key" beforeDir="false" afterPath="$PROJECT_DIR$/integration_tests/network/keys/f077b491b355e64048ce21e3a6fc4751eeea77fa/master.key" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/integration_tests/keys/f370940abdbd2583bc80bfc19d19bc216c88ccf0/keystore.json" beforeDir="false" afterPath="$PROJECT_DIR$/integration_tests/network/keys/f370940abdbd2583bc80bfc19d19bc216c88ccf0/keystore.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/integration_tests/keys/f370940abdbd2583bc80bfc19d19bc216c88ccf0/master.key" beforeDir="false" afterPath="$PROJECT_DIR$/integration_tests/network/keys/f370940abdbd2583bc80bfc19d19bc216c88ccf0/master.key" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -71,9 +84,13 @@
   </component>
   <component name="HighlightingSettingsPerFile">
     <setting file="jar://$APPLICATION_HOME_DIR$/plugins/qodana/lib/qodana.jar!/schemas/qodana-yaml-schema.json" root0="SKIP_INSPECTION" />
+    <setting file="file://$PROJECT_DIR$/integration_tests/node_modules/@types/mocha/index.d.ts" root0="SKIP_INSPECTION" />
+    <setting file="file://$PROJECT_DIR$/integration_tests/node_modules/@vechain/connex-driver/dist/driver-no-vendor.d.ts" root0="SKIP_INSPECTION" />
+    <setting file="file://$PROJECT_DIR$/integration_tests/node_modules/hardhat/src/types/config.ts" root0="SKIP_INSPECTION" />
     <setting file="file:///usr/local/go/src/math/rand/rand.go" root0="SKIP_INSPECTION" />
     <setting file="file:///usr/local/go/src/net/http/server.go" root0="SKIP_INSPECTION" />
     <setting file="file:///usr/local/go/src/runtime/panic.go" root0="SKIP_INSPECTION" />
+    <setting file="https://json.schemastore.org/mocharc.json" root0="SKIP_INSPECTION" />
   </component>
   <component name="MarkdownSettingsMigration">
     <option name="stateVersion" value="1" />
@@ -91,21 +108,31 @@
     "Docker.integration_tests/docker-compose.yaml: Compose Deployment.executor": "Run",
     "Go Build.go build github.com/vechain/thor/cmd/thor.executor": "Debug",
     "Go Test.TestSeeder_Generate in github.com/vechain/thor/poa.executor": "Run",
+    "Jest.Blocks.executor": "Debug",
+    "Jest.Blocks.should be able to get the latest block.executor": "Debug",
     "Makefile Target.test-coverage.executor": "Run",
+    "Mocha.Blocks.executor": "Debug",
+    "Mocha.Contracts.executor": "Run",
+    "Mocha.Contracts.should be able to deploy contract.executor": "Run",
     "RunOnceActivity.OpenProjectViewOnStart": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "RunOnceActivity.go.formatter.settings.were.checked": "true",
     "RunOnceActivity.go.migrated.go.modules.settings": "true",
     "RunOnceActivity.go.modules.automatic.dependencies.download": "true",
     "RunOnceActivity.go.modules.go.list.on.any.changes.was.set": "true",
+    "Vitest.Contracts.should be able to deploy contract.executor": "Debug",
     "git-widget-placeholder": "integration-tests",
     "go.import.settings.migrated": "true",
     "go.sdk.automatically.set": "true",
-    "last_opened_file_path": "/Users/darren/workspace/vechain/thor/integration_tests/keys",
+    "last_opened_file_path": "/Users/darren",
     "node.js.detected.package.eslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
+    "nodejs.jest.jest_package": "/Users/darren/workspace/vechain/thor/integration_tests/node_modules/jest",
+    "nodejs.mocha.mocha_node_package_dir": "/Users/darren/workspace/vechain/thor/integration_tests/node_modules/mocha",
     "nodejs_package_manager_path": "npm",
-    "settings.editor.selected.configurable": "preferences.pluginManager"
+    "npm.test.executor": "Debug",
+    "settings.editor.selected.configurable": "preferences.pluginManager",
+    "ts.external.directory.path": "/Users/darren/workspace/vechain/thor/integration_tests/node_modules/typescript/lib"
   }
 }]]></component>
   <component name="QodanaHighlightedReportService">
@@ -117,6 +144,9 @@
       </OpenInIdeCloudReportPersistedInfo>
     </option>
   </component>
+  <component name="QodanaIsSelectedPersistenceService">
+    <option name="selectedOrLoading" value="true" />
+  </component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$/integration_tests/keys" />
@@ -125,90 +155,126 @@
       <recent name="$PROJECT_DIR$/api/doc/swagger-ui" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/integration_tests/network" />
       <recent name="$PROJECT_DIR$/integration_tests/config" />
       <recent name="$PROJECT_DIR$/integration_tests" />
     </key>
   </component>
-  <component name="RunManager" selected="Docker.integration_tests/docker-compose.yaml: Compose Deployment">
-    <configuration name="go build github.com/vechain/thor/cmd/thor" type="GoApplicationRunConfiguration" factoryName="Go Application" temporary="true" nameIsGenerated="true">
-      <module name="thor" />
-      <working_directory value="$PROJECT_DIR$" />
-      <parameters value="solo --data-dir ~/workspace/vechain/testing/thor-swagger --api-addr localhost:8669 --api-cors=&quot;*&quot; " />
-      <EXTENSION ID="net.ashald.envfile">
-        <option name="IS_ENABLED" value="false" />
-        <option name="IS_SUBST" value="false" />
-        <option name="IS_PATH_MACRO_SUPPORTED" value="false" />
-        <option name="IS_IGNORE_MISSING_FILES" value="false" />
-        <option name="IS_ENABLE_EXPERIMENTAL_INTEGRATIONS" value="false" />
-        <ENTRIES>
-          <ENTRY IS_ENABLED="true" PARSER="runconfig" IS_EXECUTABLE="false" />
-        </ENTRIES>
-      </EXTENSION>
-      <EXTENSION ID="software.aws.toolkits.jetbrains.core.execution.GoAwsConnectionRunConfigurationExtension">
-        <option name="credential" />
-        <option name="region" />
-        <option name="useCurrentConnection" value="false" />
-      </EXTENSION>
-      <kind value="PACKAGE" />
-      <package value="github.com/vechain/thor/cmd/thor" />
-      <directory value="$PROJECT_DIR$" />
-      <filePath value="$PROJECT_DIR$/cmd/thor/main.go" />
-      <method v="2" />
-    </configuration>
-    <configuration name="TestSeeder_Generate in github.com/vechain/thor/poa" type="GoTestRunConfiguration" factoryName="Go Test" temporary="true" nameIsGenerated="true">
-      <module name="thor" />
-      <working_directory value="$PROJECT_DIR$/poa" />
-      <root_directory value="$PROJECT_DIR$" />
-      <kind value="PACKAGE" />
-      <package value="github.com/vechain/thor/poa" />
-      <directory value="$PROJECT_DIR$" />
-      <filePath value="$PROJECT_DIR$" />
-      <framework value="gotest" />
-      <pattern value="^\QTestSeeder_Generate\E$" />
-      <method v="2" />
-    </configuration>
-    <configuration name="test-coverage" type="MAKEFILE_TARGET_RUN_CONFIGURATION" factoryName="Makefile" temporary="true">
-      <makefile filename="$PROJECT_DIR$/Makefile" target="test-coverage" workingDirectory="" arguments="">
-        <envs />
-      </makefile>
+  <component name="RunManager" selected="Mocha.Contracts">
+    <configuration name="Contracts.should be able to deploy contract" type="JavaScriptTestRunnerVitest" temporary="true" nameIsGenerated="true">
+      <node-interpreter value="project" />
+      <vitest-package value="$PROJECT_DIR$/integration_tests/node_modules/vitest" />
+      <working-dir value="$PROJECT_DIR$/integration_tests" />
+      <vitest-options value="--run" />
+      <envs />
+      <scope-kind value="TEST" />
+      <test-file value="$PROJECT_DIR$/integration_tests/tests/contracts.test.ts" />
+      <test-names>
+        <test-name value="Contracts" />
+        <test-name value="should be able to deploy contract" />
+      </test-names>
       <method v="2" />
     </configuration>
     <configuration default="true" type="docker-deploy" factoryName="docker-compose.yml" temporary="true">
-      <deployment type="docker-compose.yml" />
-      <method v="2" />
-    </configuration>
-    <configuration name="integration_tests/docker-compose.yaml: Compose Deployment" type="docker-deploy" factoryName="docker-compose.yml" temporary="true" server-name="Docker">
       <deployment type="docker-compose.yml">
-        <settings>
-          <option name="sourceFilePath" value="integration_tests/docker-compose.yaml" />
-        </settings>
+        <settings />
       </deployment>
       <method v="2" />
     </configuration>
+    <configuration name="Blocks" type="mocha-javascript-test-runner" temporary="true" nameIsGenerated="true">
+      <node-interpreter>project</node-interpreter>
+      <node-options />
+      <mocha-package>$PROJECT_DIR$/integration_tests/node_modules/mocha</mocha-package>
+      <working-directory>$PROJECT_DIR$/integration_tests</working-directory>
+      <pass-parent-env>true</pass-parent-env>
+      <ui>bdd</ui>
+      <extra-mocha-options />
+      <test-kind>SUITE</test-kind>
+      <test-file>$PROJECT_DIR$/integration_tests/test/blocks.test.ts</test-file>
+      <test-names>
+        <name value="Blocks" />
+      </test-names>
+      <method v="2" />
+    </configuration>
+    <configuration name="Blocks.should be able to fetch finalized block (1)" type="mocha-javascript-test-runner" temporary="true" nameIsGenerated="true">
+      <node-interpreter>project</node-interpreter>
+      <node-options />
+      <mocha-package />
+      <working-directory>$PROJECT_DIR$/integration_tests</working-directory>
+      <pass-parent-env>true</pass-parent-env>
+      <ui>bdd</ui>
+      <extra-mocha-options>--require ts-node/register</extra-mocha-options>
+      <test-kind>TEST</test-kind>
+      <test-file>$PROJECT_DIR$/integration_tests/test/blocks.test.ts</test-file>
+      <test-names>
+        <name value="Blocks" />
+        <name value="should be able to fetch finalized block" />
+      </test-names>
+      <method v="2" />
+    </configuration>
+    <configuration name="Contracts" type="mocha-javascript-test-runner" temporary="true" nameIsGenerated="true">
+      <node-interpreter>project</node-interpreter>
+      <node-options />
+      <mocha-package>$PROJECT_DIR$/integration_tests/node_modules/mocha</mocha-package>
+      <working-directory>$PROJECT_DIR$/integration_tests</working-directory>
+      <pass-parent-env>true</pass-parent-env>
+      <ui>bdd</ui>
+      <extra-mocha-options />
+      <test-kind>SUITE</test-kind>
+      <test-file>$PROJECT_DIR$/integration_tests/test/contracts.test.ts</test-file>
+      <test-names>
+        <name value="Contracts" />
+      </test-names>
+      <method v="2" />
+    </configuration>
+    <configuration name="Contracts.should be able to deploy contract" type="mocha-javascript-test-runner" temporary="true" nameIsGenerated="true">
+      <node-interpreter>project</node-interpreter>
+      <node-options />
+      <mocha-package>$PROJECT_DIR$/integration_tests/node_modules/mocha</mocha-package>
+      <working-directory>$PROJECT_DIR$/integration_tests</working-directory>
+      <pass-parent-env>true</pass-parent-env>
+      <ui>bdd</ui>
+      <extra-mocha-options />
+      <test-kind>TEST</test-kind>
+      <test-file>$PROJECT_DIR$/integration_tests/test/contracts.test.ts</test-file>
+      <test-names>
+        <name value="Contracts" />
+        <name value="should be able to deploy contract" />
+      </test-names>
+      <method v="2" />
+    </configuration>
     <list>
-      <item itemvalue="Docker.integration_tests/docker-compose.yaml: Compose Deployment" />
-      <item itemvalue="Go Build.go build github.com/vechain/thor/cmd/thor" />
-      <item itemvalue="Go Test.TestSeeder_Generate in github.com/vechain/thor/poa" />
-      <item itemvalue="Makefile Target.test-coverage" />
+      <item itemvalue="Mocha.Blocks" />
+      <item itemvalue="Mocha.Blocks.should be able to fetch finalized block (1)" />
+      <item itemvalue="Mocha.Contracts" />
+      <item itemvalue="Mocha.Contracts.should be able to deploy contract" />
+      <item itemvalue="Vitest.Contracts.should be able to deploy contract" />
     </list>
     <recent_temporary>
       <list>
-        <item itemvalue="Docker.integration_tests/docker-compose.yaml: Compose Deployment" />
-        <item itemvalue="Go Test.TestSeeder_Generate in github.com/vechain/thor/poa" />
-        <item itemvalue="Go Build.go build github.com/vechain/thor/cmd/thor" />
+        <item itemvalue="Mocha.Contracts" />
+        <item itemvalue="Mocha.Contracts.should be able to deploy contract" />
+        <item itemvalue="Mocha.Blocks" />
+        <item itemvalue="Mocha.Blocks.should be able to fetch finalized block (1)" />
+        <item itemvalue="Vitest.Contracts.should be able to deploy contract" />
       </list>
     </recent_temporary>
   </component>
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
-        <option value="bundled-gosdk-467a64f6063b-ee0e143f3e2b-org.jetbrains.plugins.go.sharedIndexes.bundled-GO-233.11799.228" />
+        <option value="bundled-gosdk-266795519c66-911b893a1778-org.jetbrains.plugins.go.sharedIndexes.bundled-GO-233.13135.104" />
       </set>
     </attachedChunks>
   </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
+    <option name="exactExcludedFiles">
+      <list>
+        <option value="$PROJECT_DIR$/integration_tests/test/Lock.js" />
+      </list>
+    </option>
   </component>
   <component name="Vcs.Log.Tabs.Properties">
     <option name="TAB_STATES">
@@ -246,6 +312,11 @@
           <url>file://$PROJECT_DIR$/api/api.go</url>
           <line>61</line>
           <option name="timeStamp" value="22" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="javascript">
+          <url>file://$PROJECT_DIR$/integration_tests/test/setup/connex.ts</url>
+          <line>49</line>
+          <option name="timeStamp" value="28" />
         </line-breakpoint>
       </breakpoints>
       <default-breakpoints>
