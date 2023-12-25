@@ -8,7 +8,10 @@
   "private": false,
   "scripts": {
     "postinstall": "hardhat compile",
-    "test": "yarn mocha --exit",
+    "docker:up": "docker compose -f network/docker-compose.yaml up -d --wait",
+    "docker:down": "docker compose -f network/docker-compose.yaml down",
+    "docker:restart": "yarn docker:down && yarn docker:up",
+    "test": "yarn docker:restart && yarn mocha --exit; yarn docker:down",
     "generate:accounts": "ts-node scripts/generate-account.ts"
   },
   "devDependencies": {

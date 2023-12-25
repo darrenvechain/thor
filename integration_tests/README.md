@@ -1,13 +1,12 @@
-# Sample Hardhat Project
+# VechainThor Integration Tests
 
-This project demonstrates a basic Hardhat use case. It comes with a sample contract, a test for that contract, and a script that deploys that contract.
+## Prerequisites
+- [Docker](https://docs.docker.com/install/)
+- [Yarn](https://yarnpkg.com/en/docs/install)
+- [Node.js](https://nodejs.org/en/download/)
 
-Try running some of the following tasks:
-
+## Runnig the tests
 ```shell
-npx hardhat help
-npx hardhat test
-REPORT_GAS=true npx hardhat test
-npx hardhat node
-npx hardhat run scripts/deploy.ts
+yarn install
+yarn test
 ```
