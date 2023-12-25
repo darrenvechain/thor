@@ -11,7 +11,7 @@ jobs:
 
       - name: Run Compose
         run: |
-          docker-compose -f integration_tests/network/docker-compose.yaml up -d --wait 
+          docker compose -f integration_tests/network/docker-compose.yaml up -d --wait 
 
       - name: Setup Node
         uses: actions/setup-node@v3
