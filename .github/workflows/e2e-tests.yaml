@@ -33,6 +33,8 @@ jobs:
   run-tests:
     runs-on: ubuntu-latest
     needs: build-docker-image
+    env:
+      THOR_IMAGE: vechain/thor:${{ github.sha }}
     name: Run E2E tests
     steps:
 
@@ -56,3 +58,28 @@ jobs:
         run: |
           docker load --input /tmp/vechain-thor.tar
           docker image ls -a   
+
+      - name: Run Tests
+        run: |
+          yarn install
+          yarn test
+
+      - name: Publish Results
+        uses: dorny/test-reporter@v1
+        id: test-reporter
+        if: success() || failure()
+        with:
+          name: Integration Tests
+          only-summary: 'false'
+          list-suites: 'all'
+          list-tests: 'all'
+          fail-on-error: 'true'
+          reporter: 'mocha-json'
+          path: |
+            results.json
+
+        # TODO: Add PR Comment
+      - name: Add PR Comment
+        run: |
+          echo ${{steps.test-reporter.outputs.url_html}}
+          
