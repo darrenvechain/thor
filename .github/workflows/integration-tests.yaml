@@ -45,5 +45,6 @@ jobs:
 
       - name: Echo 'test-reporter' outputs
         run: |
-          echo ${{join(steps.test-reporter.outputs.*, '\n')}}
+          echo ${{steps.test-reporter.outputs}}
           
+
