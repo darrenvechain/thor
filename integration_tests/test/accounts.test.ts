@@ -8,8 +8,6 @@ describe("Accounts", function () {
   it("should be able to get a fungible token balance", async function () {
       const balance = await contracts.VTHO.balanceOf("0x7567d83b7b8d80addcb281a71d54fc7b3364ffed")
 
-      console.log("Balance:", balance.toString())
-
       expect(balance).to.be.greaterThan(0)
     })
 })

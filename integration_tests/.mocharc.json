@@ -3,5 +3,9 @@
   "timeout": 40000,
   "slow": 20000,
   "parallel": true,
+  "reporter": "json",
+  "reporterOptions": [
+    "output=./results.json"
+  ],
   "_": ["test/**/*.ts"]
 }

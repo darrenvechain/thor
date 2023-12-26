@@ -19,7 +19,14 @@ jobs:
           node-version: 18
 
       - name: Run Tests
+        working-directory: integration_tests
         run: |
-          cd integration_tests
           yarn install
           yarn test
+
+      - name: Publish Test Results
+        uses: EnricoMi/publish-unit-test-result-action@v2
+        if: always()
+        with:
+          files: |
+           integration_tests/results.json

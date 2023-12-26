@@ -41,5 +41,8 @@
     "typechain": "^8.3.0",
     "typescript": ">=4.5.0",
     "yarn": "^1.22.21"
+  },
+  "dependencies": {
+    "mocha-junit-reporter": "^2.2.1"
   }
 }
