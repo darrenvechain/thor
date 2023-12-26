@@ -28,5 +28,11 @@ jobs:
         uses: EnricoMi/publish-unit-test-result-action@v2
         if: always()
         with:
+          only-summary: 'false'
+          list-suites: 'all'
+          list-tests: 'all'
+          fail-on-error: 'true'
           files: |
            integration_tests/results.json
+
+          
