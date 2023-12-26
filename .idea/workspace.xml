@@ -6,7 +6,7 @@
   <component name="ChangeListManager">
     <list default="true" id="fc9fa7d4-7002-40c6-9627-57bd3c454974" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.github/workflows/e2e-tests.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/.github/workflows/e2e-tests.yaml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Dockerfile" beforeDir="false" afterPath="$PROJECT_DIR$/Dockerfile" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
