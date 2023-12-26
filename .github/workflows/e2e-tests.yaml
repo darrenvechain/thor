@@ -1,4 +1,4 @@
-name: ci
+name: E2E Tests
 
 on: [push]
 
@@ -19,7 +19,7 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           context: .
-          tags: vechain/thor:{{github.sha}}
+          tags: vechain/thor:${{ github.sha }}
           outputs: type=docker,dest=/tmp/vechain-thor.tar
 
       - name: Upload artifact
