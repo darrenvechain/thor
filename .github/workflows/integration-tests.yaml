@@ -30,6 +30,7 @@ jobs:
 
       - name: Publish to Action
         uses: dorny/test-reporter@v1
+        id: test-reporter
         if: success() || failure()    # run this step even if previous step failed
         with:
             name: Integration Tests
@@ -40,3 +41,9 @@ jobs:
             reporter: 'mocha-json'
             path: |
              integration_tests/results.json
+
+
+      - name: Echo 'test-reporter' outputs
+        run: |
+          echo ${{join(steps.test-reporter.outputs.*, '\n')}}
+          
