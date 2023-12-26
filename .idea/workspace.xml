@@ -1,0 +1,318 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="ALL" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="fc9fa7d4-7002-40c6-9627-57bd3c454974" name="Changes" comment="" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="GOROOT" url="file:///usr/local/go" />
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="GitHubPullRequestSearchHistory">{
+  &quot;lastFilter&quot;: {
+    &quot;state&quot;: &quot;OPEN&quot;,
+    &quot;assignee&quot;: &quot;darrenvechain&quot;
+  }
+}</component>
+  <component name="GitToolBoxStore">
+    <option name="projectConfigVersion" value="5" />
+    <option name="recentBranches">
+      <RecentBranches>
+        <option name="branchesForRepo">
+          <list>
+            <RecentBranchesForRepo>
+              <option name="branches">
+                <list>
+                  <RecentBranch>
+                    <option name="branchName" value="integration-tests-2" />
+                    <option name="lastUsedInstant" value="1703588404" />
+                  </RecentBranch>
+                  <RecentBranch>
+                    <option name="branchName" value="master" />
+                    <option name="lastUsedInstant" value="1703588398" />
+                  </RecentBranch>
+                  <RecentBranch>
+                    <option name="branchName" value="integration-tests" />
+                    <option name="lastUsedInstant" value="1703181116" />
+                  </RecentBranch>
+                  <RecentBranch>
+                    <option name="branchName" value="contributing-md-file" />
+                    <option name="lastUsedInstant" value="1703166619" />
+                  </RecentBranch>
+                  <RecentBranch>
+                    <option name="branchName" value="docker-security-fix" />
+                    <option name="lastUsedInstant" value="1703163726" />
+                  </RecentBranch>
+                </list>
+              </option>
+              <option name="repositoryRootUrl" value="file://$PROJECT_DIR$" />
+            </RecentBranchesForRepo>
+          </list>
+        </option>
+      </RecentBranches>
+    </option>
+  </component>
+  <component name="GithubPullRequestsUISettings">
+    <option name="selectedUrlAndAccountId">
+      <UrlAndAccount>
+        <option name="accountId" value="8094f00e-5c99-4dd7-bdfc-2622f1944a8a" />
+        <option name="url" value="git@github.com:darrenvechain/thor.git" />
+      </UrlAndAccount>
+    </option>
+  </component>
+  <component name="HighlightingSettingsPerFile">
+    <setting file="jar://$APPLICATION_HOME_DIR$/plugins/qodana/lib/qodana.jar!/schemas/qodana-yaml-schema.json" root0="SKIP_INSPECTION" />
+    <setting file="file://$PROJECT_DIR$/integration_tests/node_modules/@types/mocha/index.d.ts" root0="SKIP_INSPECTION" />
+    <setting file="file://$PROJECT_DIR$/integration_tests/node_modules/@vechain/connex-driver/dist/driver-no-vendor.d.ts" root0="SKIP_INSPECTION" />
+    <setting file="file://$PROJECT_DIR$/integration_tests/node_modules/@vechain/connex-types/vm.d.ts" root0="SKIP_INSPECTION" />
+    <setting file="file://$PROJECT_DIR$/integration_tests/node_modules/hardhat/src/types/config.ts" root0="SKIP_INSPECTION" />
+    <setting file="file:///usr/local/go/src/math/rand/rand.go" root0="SKIP_INSPECTION" />
+    <setting file="file:///usr/local/go/src/net/http/server.go" root0="SKIP_INSPECTION" />
+    <setting file="file:///usr/local/go/src/runtime/panic.go" root0="SKIP_INSPECTION" />
+    <setting file="https://json.schemastore.org/mocharc.json" root0="SKIP_INSPECTION" />
+  </component>
+  <component name="MarkdownSettingsMigration">
+    <option name="stateVersion" value="1" />
+  </component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 7
+}</component>
+  <component name="ProjectId" id="2ZOmMW6q4kcwVekgm2Vb5QieGkH" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "Docker.integration_tests/docker-compose.yaml: Compose Deployment.executor": "Run",
+    "Go Build.go build github.com/vechain/thor/cmd/thor.executor": "Debug",
+    "Go Test.TestSeeder_Generate in github.com/vechain/thor/poa.executor": "Run",
+    "Jest.Blocks.executor": "Debug",
+    "Jest.Blocks.should be able to get the latest block.executor": "Debug",
+    "Makefile Target.test-coverage.executor": "Run",
+    "Mocha.Accounts.should be able to get a fungible token balance.executor": "Debug",
+    "Mocha.Blocks.executor": "Debug",
+    "Mocha.Contracts.executor": "Run",
+    "Mocha.Contracts.should be able to deploy contract.executor": "Run",
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.go.formatter.settings.were.checked": "true",
+    "RunOnceActivity.go.migrated.go.modules.settings": "true",
+    "RunOnceActivity.go.modules.automatic.dependencies.download": "true",
+    "RunOnceActivity.go.modules.go.list.on.any.changes.was.set": "true",
+    "Vitest.Contracts.should be able to deploy contract.executor": "Debug",
+    "git-widget-placeholder": "integration-tests-2",
+    "go.import.settings.migrated": "true",
+    "go.sdk.automatically.set": "true",
+    "last_opened_file_path": "/Users/darren",
+    "node.js.detected.package.eslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "nodejs.jest.jest_package": "/Users/darren/workspace/vechain/thor/integration_tests/node_modules/jest",
+    "nodejs.mocha.mocha_node_package_dir": "/Users/darren/workspace/vechain/thor/integration_tests/node_modules/mocha",
+    "nodejs_package_manager_path": "npm",
+    "npm.test.executor": "Debug",
+    "settings.editor.selected.configurable": "preferences.pluginManager",
+    "ts.external.directory.path": "/Users/darren/workspace/vechain/thor/integration_tests/node_modules/typescript/lib"
+  }
+}]]></component>
+  <component name="QodanaHighlightedReportService">
+    <option name="openInIdeCloudReportPersistedInfo">
+      <OpenInIdeCloudReportPersistedInfo>
+        <option name="projectId" value="3yod2" />
+        <option name="projectName" value="thor" />
+        <option name="reportId" value="VgrM7" />
+      </OpenInIdeCloudReportPersistedInfo>
+    </option>
+  </component>
+  <component name="QodanaIsSelectedPersistenceService">
+    <option name="selectedOrLoading" value="true" />
+  </component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/integration_tests/keys" />
+      <recent name="$PROJECT_DIR$/.github" />
+      <recent name="$PROJECT_DIR$/api/doc/api-docs" />
+      <recent name="$PROJECT_DIR$/api/doc/swagger-ui" />
+    </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/integration_tests/network" />
+      <recent name="$PROJECT_DIR$/integration_tests/config" />
+      <recent name="$PROJECT_DIR$/integration_tests" />
+    </key>
+  </component>
+  <component name="RunManager" selected="Mocha.Accounts.should be able to get a fungible token balance">
+    <configuration default="true" type="docker-deploy" factoryName="docker-compose.yml" temporary="true">
+      <deployment type="docker-compose.yml">
+        <settings />
+      </deployment>
+      <method v="2" />
+    </configuration>
+    <configuration name="Accounts.should be able to get a fungible token balance" type="mocha-javascript-test-runner" temporary="true" nameIsGenerated="true">
+      <node-interpreter>project</node-interpreter>
+      <node-options />
+      <mocha-package>$PROJECT_DIR$/integration_tests/node_modules/mocha</mocha-package>
+      <working-directory>$PROJECT_DIR$/integration_tests</working-directory>
+      <pass-parent-env>true</pass-parent-env>
+      <ui>bdd</ui>
+      <extra-mocha-options />
+      <test-kind>TEST</test-kind>
+      <test-file>$PROJECT_DIR$/integration_tests/test/accounts.test.ts</test-file>
+      <test-names>
+        <name value="Accounts" />
+        <name value="should be able to get a fungible token balance" />
+      </test-names>
+      <method v="2" />
+    </configuration>
+    <configuration name="Blocks" type="mocha-javascript-test-runner" temporary="true" nameIsGenerated="true">
+      <node-interpreter>project</node-interpreter>
+      <node-options />
+      <mocha-package>$PROJECT_DIR$/integration_tests/node_modules/mocha</mocha-package>
+      <working-directory>$PROJECT_DIR$/integration_tests</working-directory>
+      <pass-parent-env>true</pass-parent-env>
+      <ui>bdd</ui>
+      <extra-mocha-options />
+      <test-kind>SUITE</test-kind>
+      <test-file>$PROJECT_DIR$/integration_tests/test/blocks.test.ts</test-file>
+      <test-names>
+        <name value="Blocks" />
+      </test-names>
+      <method v="2" />
+    </configuration>
+    <configuration name="Blocks.should be able to fetch finalized block (1)" type="mocha-javascript-test-runner" temporary="true" nameIsGenerated="true">
+      <node-interpreter>project</node-interpreter>
+      <node-options />
+      <mocha-package />
+      <working-directory>$PROJECT_DIR$/integration_tests</working-directory>
+      <pass-parent-env>true</pass-parent-env>
+      <ui>bdd</ui>
+      <extra-mocha-options>--require ts-node/register</extra-mocha-options>
+      <test-kind>TEST</test-kind>
+      <test-file>$PROJECT_DIR$/integration_tests/test/blocks.test.ts</test-file>
+      <test-names>
+        <name value="Blocks" />
+        <name value="should be able to fetch finalized block" />
+      </test-names>
+      <method v="2" />
+    </configuration>
+    <configuration name="Contracts" type="mocha-javascript-test-runner" temporary="true" nameIsGenerated="true">
+      <node-interpreter>project</node-interpreter>
+      <node-options />
+      <mocha-package>$PROJECT_DIR$/integration_tests/node_modules/mocha</mocha-package>
+      <working-directory>$PROJECT_DIR$/integration_tests</working-directory>
+      <pass-parent-env>true</pass-parent-env>
+      <ui>bdd</ui>
+      <extra-mocha-options />
+      <test-kind>SUITE</test-kind>
+      <test-file>$PROJECT_DIR$/integration_tests/test/contracts.test.ts</test-file>
+      <test-names>
+        <name value="Contracts" />
+      </test-names>
+      <method v="2" />
+    </configuration>
+    <configuration name="Contracts.should be able to deploy contract" type="mocha-javascript-test-runner" temporary="true" nameIsGenerated="true">
+      <node-interpreter>project</node-interpreter>
+      <node-options />
+      <mocha-package>$PROJECT_DIR$/integration_tests/node_modules/mocha</mocha-package>
+      <working-directory>$PROJECT_DIR$/integration_tests</working-directory>
+      <pass-parent-env>true</pass-parent-env>
+      <ui>bdd</ui>
+      <extra-mocha-options />
+      <test-kind>TEST</test-kind>
+      <test-file>$PROJECT_DIR$/integration_tests/test/contracts.test.ts</test-file>
+      <test-names>
+        <name value="Contracts" />
+        <name value="should be able to deploy contract" />
+      </test-names>
+      <method v="2" />
+    </configuration>
+    <list>
+      <item itemvalue="Mocha.Accounts.should be able to get a fungible token balance" />
+      <item itemvalue="Mocha.Blocks" />
+      <item itemvalue="Mocha.Blocks.should be able to fetch finalized block (1)" />
+      <item itemvalue="Mocha.Contracts" />
+      <item itemvalue="Mocha.Contracts.should be able to deploy contract" />
+    </list>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Mocha.Accounts.should be able to get a fungible token balance" />
+        <item itemvalue="Mocha.Contracts" />
+        <item itemvalue="Mocha.Contracts.should be able to deploy contract" />
+        <item itemvalue="Mocha.Blocks" />
+        <item itemvalue="Mocha.Blocks.should be able to fetch finalized block (1)" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="SharedIndexes">
+    <attachedChunks>
+      <set>
+        <option value="bundled-gosdk-266795519c66-911b893a1778-org.jetbrains.plugins.go.sharedIndexes.bundled-GO-233.13135.104" />
+      </set>
+    </attachedChunks>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+    <option name="exactExcludedFiles">
+      <list>
+        <option value="$PROJECT_DIR$/integration_tests/test/Lock.js" />
+      </list>
+    </option>
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+  <component name="VgoProject">
+    <settings-migrated>true</settings-migrated>
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="DlvLineBreakpoint">
+          <url>file://$PROJECT_DIR$/api/blocks/blocks.go</url>
+          <line>121</line>
+          <option name="timeStamp" value="12" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="DlvLineBreakpoint">
+          <url>file://$PROJECT_DIR$/cmd/thor/flags.go</url>
+          <line>62</line>
+          <option name="timeStamp" value="14" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="DlvLineBreakpoint">
+          <url>file://$PROJECT_DIR$/api/api.go</url>
+          <line>62</line>
+          <option name="timeStamp" value="21" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="DlvLineBreakpoint">
+          <url>file://$PROJECT_DIR$/api/api.go</url>
+          <line>61</line>
+          <option name="timeStamp" value="22" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="javascript">
+          <url>file://$PROJECT_DIR$/integration_tests/test/setup/connex.ts</url>
+          <line>49</line>
+          <option name="timeStamp" value="28" />
+        </line-breakpoint>
+      </breakpoints>
+      <default-breakpoints>
+        <breakpoint type="DlvErrorBreakpoint" />
+      </default-breakpoints>
+    </breakpoint-manager>
+  </component>
+  <component name="com.intellij.coverage.CoverageDataManagerImpl">
+    <SUITE FILE_PATH="../../../../workspace/vechain/thor/coverage.out" NAME="coverage.out" MODIFIED="1703150194183" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="GoCoverage" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" />
+  </component>
+</project>
