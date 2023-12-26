@@ -45,6 +45,6 @@ jobs:
 
       - name: Echo 'test-reporter' outputs
         run: |
-          echo ${{steps.test-reporter.outputs}}
+          echo ${{toJSON(steps.test-reporter.outputs)}}
           
 
