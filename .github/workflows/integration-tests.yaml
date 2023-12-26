@@ -40,12 +40,3 @@ jobs:
             reporter: 'mocha-json'
             path: |
              integration_tests/results.json
-
-      - name: Publish PR Comment
-        uses: EnricoMi/publish-unit-test-result-action/composite@v2
-        if: always()
-        with:
-          check_name: Integration Tests
-          files: |
-            integration_tests/results.json
-
