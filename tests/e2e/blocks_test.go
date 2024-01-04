@@ -1,18 +1,26 @@
 package e2e
 
 import (
-	"github.com/vechain/thor/v2/tests/e2e/client"
-	"github.com/vechain/thor/v2/tests/e2e/network"
-	"testing"
-
+	"github.com/steinfletcher/apitest"
 	"github.com/stretchr/testify/assert"
+	"github.com/vechain/thor/v2/api/blocks"
+	"github.com/vechain/thor/v2/tests/e2e/endpoints"
+	"testing"
 )
 
 func TestGetBlock(t *testing.T) {
-	network.StartCompose(t)
+	block := new(blocks.JSONCollapsedBlock)
 
-	block, err := client.Default.GetCompressedBlock(1)
+	blockNum := int32(1)
 
-	assert.NoError(t, err, "GetCompressedBlock()")
-	assert.Greater(t, block.Number, uint32(0), "GetCompressedBlock()")
+	res := apitest.New().
+		EnableNetworking().
+		Get(endpoints.Node1.GetCompressedBlock(blockNum)).
+		Expect(t).
+		Status(200).
+		End()
+
+	res.JSON(block)
+
+	assert.Equal(t, block.Number, uint32(blockNum), "GetCompressedBlock()")
 }

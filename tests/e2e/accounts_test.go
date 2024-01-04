@@ -2,23 +2,30 @@ package e2e
 
 import (
 	"github.com/ethereum/go-ethereum/common/hexutil"
-	"github.com/vechain/thor/v2/tests/e2e/client"
-	"github.com/vechain/thor/v2/tests/e2e/network"
-	"testing"
-
+	"github.com/steinfletcher/apitest"
 	"github.com/stretchr/testify/assert"
+	"github.com/vechain/thor/v2/api/accounts"
+	"github.com/vechain/thor/v2/tests/e2e/endpoints"
+	"testing"
 )
 
 func TestAccountBalance(t *testing.T) {
-	network.StartCompose(t)
+	acc := new(accounts.Account)
 
-	account, err := client.Default.GetAccount("0xf077b491b355E64048cE21E3A6Fc4751eEeA77fa")
+	res := apitest.New().
+		EnableNetworking().
+		Get(endpoints.Node1.GetAccount("0xf077b491b355E64048cE21E3A6Fc4751eEeA77fa")).
+		Expect(t).
+		Status(200).
+		End()
 
-	assert.NoError(t, err, "GetAccount()")
+	res.JSON(acc)
 
-	balance, err := account.Balance.MarshalText()
+	balance, err := acc.Balance.MarshalText()
 
 	assert.NoError(t, err, "MarshalText()")
 
-	assert.Equal(t, hexutil.Encode(balance), "0x307831346164663462373332303333346239303030303030")
+	balanceHex := hexutil.Encode(balance)
+
+	assert.Equal(t, balanceHex, "0x307831346164663462373332303333346239303030303030")
 }
