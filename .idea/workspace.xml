@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="ALL" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="fd869787-1cc7-4b34-9987-6a4dd92749ee" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/tests/e2e/network/config/start.sh" beforeDir="false" afterPath="$PROJECT_DIR$/tests/e2e/network/config/start.sh" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/e2e/network/docker-compose-base.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/tests/e2e/network/docker-compose-base.yaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/e2e/network/docker-compose.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/tests/e2e/network/docker-compose.yaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/e2e/network/keys/0f872421dc479f3c11edd89512731814d0598db5/keystore.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/e2e/network/keys/0f872421dc479f3c11edd89512731814d0598db5/master.key" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/e2e/network/keys/435933c8064b4ae76be665428e0307ef2ccfbd68/keystore.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/e2e/network/keys/435933c8064b4ae76be665428e0307ef2ccfbd68/master.key" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/e2e/network/keys/f077b491b355e64048ce21e3a6fc4751eeea77fa/keystore.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/e2e/network/keys/f077b491b355e64048ce21e3a6fc4751eeea77fa/master.key" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/e2e/network/keys/f370940abdbd2583bc80bfc19d19bc216c88ccf0/keystore.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/e2e/network/keys/f370940abdbd2583bc80bfc19d19bc216c88ccf0/master.key" beforeDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="GOROOT" url="file:///opt/homebrew/opt/go/libexec" />
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="GitToolBoxStore">
+    <option name="projectConfigVersion" value="5" />
+    <option name="recentBranches">
+      <RecentBranches>
+        <option name="branchesForRepo">
+          <list>
+            <RecentBranchesForRepo>
+              <option name="branches">
+                <list>
+                  <RecentBranch>
+                    <option name="branchName" value="e2e-golang" />
+                    <option name="lastUsedInstant" value="1704365704" />
+                  </RecentBranch>
+                  <RecentBranch>
+                    <option name="branchName" value="qodana-testing" />
+                    <option name="lastUsedInstant" value="1703153907" />
+                  </RecentBranch>
+                  <RecentBranch>
+                    <option name="branchName" value="master" />
+                    <option name="lastUsedInstant" value="1703153899" />
+                  </RecentBranch>
+                  <RecentBranch>
+                    <option name="branchName" value="static-code-analysis" />
+                    <option name="lastUsedInstant" value="1703153898" />
+                  </RecentBranch>
+                </list>
+              </option>
+              <option name="repositoryRootUrl" value="file://$PROJECT_DIR$" />
+            </RecentBranchesForRepo>
+          </list>
+        </option>
+      </RecentBranches>
+    </option>
+  </component>
+  <component name="GoLibraries">
+    <option name="indexEntireGoPath" value="true" />
+  </component>
+  <component name="MarkdownSettingsMigration">
+    <option name="stateVersion" value="1" />
+  </component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 3
+}</component>
+  <component name="ProjectId" id="2aUGKXo0zr1TOSsjuPZEOIy6snE" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.go.formatter.settings.were.checked&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.go.migrated.go.modules.settings&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.go.modules.go.list.on.any.changes.was.set&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;e2e-golang&quot;,
+    &quot;go.import.settings.migrated&quot;: &quot;true&quot;,
+    &quot;go.sdk.automatically.set&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;/Users/darren&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;
+  }
+}</component>
+  <component name="SharedIndexes">
+    <attachedChunks>
+      <set>
+        <option value="bundled-gosdk-266795519c66-911b893a1778-org.jetbrains.plugins.go.sharedIndexes.bundled-GO-233.13135.104" />
+      </set>
+    </attachedChunks>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <option name="LAST_COMMIT_MESSAGE" value="" />
+  </component>
+  <component name="VgoProject">
+    <integration-enabled>false</integration-enabled>
+    <settings-migrated>true</settings-migrated>
+  </component>
+  <component name="com.intellij.coverage.CoverageDataManagerImpl">
+    <SUITE FILE_PATH="../../../../workspace/vechain/thor/coverage.out" NAME="coverage.out" MODIFIED="1703150194183" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="GoCoverage" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" />
+  </component>
+</project>
