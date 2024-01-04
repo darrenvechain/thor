@@ -7,22 +7,8 @@ import (
 	"log"
 	"os"
 	"os/exec"
-	"strings"
 	"testing"
 )
-
-var composeCommand string
-
-func init() {
-	// Determine the correct docker-compose command based on the OS
-	if _, err := exec.LookPath("docker-compose"); err == nil {
-		composeCommand = "docker-compose"
-	} else if _, err := exec.LookPath("docker"); err == nil {
-		composeCommand = "docker compose"
-	} else {
-		log.Fatal("Neither 'docker-compose' nor 'docker compose' commands found. Please install Docker and try again.")
-	}
-}
 
 // TestMain function is the entry point for the test suite.
 // It starts the docker-compose network and stops it after the tests are done.
@@ -53,15 +39,13 @@ func TestMain(m *testing.M) {
 }
 
 func startCompose() error {
-	commandParts := strings.Fields(composeCommand)
-	cmd := exec.Command(commandParts[0], append(commandParts[1:], "-f", "network/docker-compose.yaml", "up", "-d", "--wait", "--build")...)
+	cmd := exec.Command("docker", "compose", "-f", "network/docker-compose.yaml", "up", "-d", "--wait")
 
 	return executeCommand(cmd)
 }
 
 func stopCompose() error {
-	commandParts := strings.Fields(composeCommand)
-	cmd := exec.Command(commandParts[0], append(commandParts[1:], "-f", "network/docker-compose.yaml", "down", "--remove-orphans", "--rmi", "local")...)
+	cmd := exec.Command("docker", "compose", "-f", "network/docker-compose.yaml", "down", "--remove-orphans", "--rmi", "local")
 
 	return executeCommand(cmd)
 }
