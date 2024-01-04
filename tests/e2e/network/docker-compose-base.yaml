@@ -2,7 +2,8 @@ version: "3.8"
 
 services:
   base-authority-node:
-    image: ${THOR_IMAGE:-vechain/thor:latest}
+    build:
+      context: ../../../
     entrypoint: "/node/config/start.sh"
     volumes:
       - type: bind
