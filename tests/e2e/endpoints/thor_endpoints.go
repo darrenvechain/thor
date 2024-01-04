@@ -5,10 +5,10 @@ import (
 )
 
 var (
-	Node1 = &ClientEndpoints{"http://localhost:8669"}
+	Node1 = &ClientEndpoints{"http://127.0.0.1:8669"}
 
-	Node2 = &ClientEndpoints{"http://localhost:8679"}
-	Node3 = &ClientEndpoints{"http://localhost:8689"}
+	Node2 = &ClientEndpoints{"http://127.0.0.1:8679"}
+	Node3 = &ClientEndpoints{"http://127.0.0.1:8689"}
 )
 
 type ClientEndpoints struct {

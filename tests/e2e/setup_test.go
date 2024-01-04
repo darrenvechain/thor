@@ -54,7 +54,7 @@ func TestMain(m *testing.M) {
 
 func startCompose() error {
 	commandParts := strings.Fields(composeCommand)
-	cmd := exec.Command(commandParts[0], append(commandParts[1:], "-f", "network/docker-compose.yaml", "up", "-d", "--wait")...)
+	cmd := exec.Command(commandParts[0], append(commandParts[1:], "-f", "network/docker-compose.yaml", "up", "-d", "--wait", "--build")...)
 
 	return executeCommand(cmd)
 }
