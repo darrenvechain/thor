@@ -14,7 +14,7 @@ jobs:
           - go-version: 1.18.x
             os: ubuntu-latest
           - go-version: 1.19.x
-            os: ubuntu-latest 
+            os: ubuntu-latest
     runs-on: ${{ matrix.os }}
     steps:
       - name: Checkout code
@@ -27,6 +27,23 @@ jobs:
 
       - name: Make all
         run: make all
-      
+
       - name: Make Test
         run: make test
+
+  e2e_tests:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Install Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: 1.17.x
+
+      - name: Make all
+        run: make all
+
+      - name: Make E2E Test
+        run: make test-e2e
