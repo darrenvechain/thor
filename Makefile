@@ -51,5 +51,5 @@ test:| go_version_check #@ Run unit tests
 	@go test -cover $(UNIT_TEST_PACKAGES)
 
 test-e2e:| go_version_check #@ Run end-to-end tests
-	GOMAXPROCS=1 go test github.com/vechain/thor/v2/tests/e2e
+	@go test github.com/vechain/thor/v2/tests/e2e -v
 
