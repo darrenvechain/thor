@@ -133,8 +133,9 @@ func (t *Transactions) handleSendTransaction(w http.ResponseWriter, req *http.Re
 		}
 		return err
 	}
-	return utils.WriteJSON(w, map[string]string{
-		"id": tx.ID().String(),
+
+	return utils.WriteJSON(w, SubmitTxResponse{
+		ID: tx.ID().String(),
 	})
 }
 

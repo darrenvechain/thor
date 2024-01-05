@@ -51,5 +51,4 @@ test:| go_version_check #@ Run unit tests
 	@go test -cover $(UNIT_TEST_PACKAGES)
 
 test-e2e:| go_version_check #@ Run end-to-end tests
-	@go test github.com/vechain/thor/v2/tests/e2e -v
-
+	@go clean -testcache && go test github.com/vechain/thor/v2/tests/e2e -v

@@ -5,16 +5,18 @@ import (
 	"github.com/steinfletcher/apitest"
 	"github.com/stretchr/testify/assert"
 	"github.com/vechain/thor/v2/api/accounts"
-	"github.com/vechain/thor/v2/tests/e2e/endpoints"
+	"github.com/vechain/thor/v2/genesis"
 	"testing"
 )
 
 func TestAccountBalance(t *testing.T) {
 	acc := new(accounts.Account)
 
+	address := genesis.DevAccounts()[0].Address.String()
+
 	res := apitest.New().
 		EnableNetworking().
-		Get(endpoints.Node1.GetAccount("0xf077b491b355E64048cE21E3A6Fc4751eEeA77fa")).
+		Get(node1.getAccount(address)).
 		Expect(t).
 		Status(200).
 		End()

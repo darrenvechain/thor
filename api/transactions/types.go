@@ -16,6 +16,11 @@ import (
 	"github.com/vechain/thor/v2/tx"
 )
 
+// SubmitTxResponse response for submit transaction
+type SubmitTxResponse struct {
+	ID string `json:"id"`
+}
+
 // Clause for json marshal
 type Clause struct {
 	To    *thor.Address        `json:"to"`
