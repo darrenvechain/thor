@@ -8,7 +8,8 @@ package txpool
 import (
 	"context"
 	"crypto/rand"
-	"encoding/binary"
+	"errors"
+	"math/big"
 	"os"
 	"sync/atomic"
 	"time"
@@ -162,7 +163,7 @@ func (p *TxPool) fetchBlocklistLoop() {
 	var eTag string
 	fetch := func() {
 		if err := p.blocklist.Fetch(p.ctx, url, &eTag); err != nil {
-			if err == context.Canceled {
+			if errors.Is(err, context.Canceled) {
 				return
 			}
 			log.Warn("blocklist fetch failed", "error", err, "url", url)
@@ -182,11 +183,13 @@ func (p *TxPool) fetchBlocklistLoop() {
 
 	for {
 
-		var seconds uint64
-		binary.Read(rand.Reader, binary.LittleEndian, &seconds)
-
 		// delay 1~2 min
-		delay := time.Second * time.Duration(seconds%60+60)
+		randomNum, err := rand.Int(rand.Reader, new(big.Int).Sub(big.NewInt(60), big.NewInt(121)))
+		if err != nil {
+			randomNum = big.NewInt(90)
+		}
+
+		delay := time.Second * time.Duration(randomNum.Int64())
 		select {
 		case <-p.ctx.Done():
 			return
