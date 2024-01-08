@@ -8,7 +8,6 @@ package txpool
 import (
 	"bufio"
 	"context"
-	"errors"
 	"fmt"
 	"io"
 	"io/ioutil"
@@ -31,7 +30,7 @@ type blocklist struct {
 func (bl *blocklist) Load(path string) error {
 	path = filepath.Clean(path)
 	if _, err := os.Stat(path); os.IsNotExist(err) {
-		return errors.New(fmt.Sprintf("the path [%v] does not exist", path))
+		return fmt.Errorf("the path [%v] does not exist", path)
 	}
 	file, err := os.Open(path)
 	if err != nil {
