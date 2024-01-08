@@ -184,7 +184,7 @@ func (p *TxPool) fetchBlocklistLoop() {
 	for {
 
 		// delay 1~2 min
-		randomNum, err := rand.Int(rand.Reader, new(big.Int).Sub(big.NewInt(60), big.NewInt(121)))
+		randomNum, err := rand.Int(rand.Reader, new(big.Int).Sub(big.NewInt(121), big.NewInt(60)))
 		if err != nil {
 			randomNum = big.NewInt(90)
 		}
