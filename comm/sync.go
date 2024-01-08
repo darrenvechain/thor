@@ -84,7 +84,10 @@ func warmupBlocks(ctx context.Context, fetched <-chan []*block.Block, warmedUp c
 				h := blk.Header()
 				queue <- func() {
 					h.ID()
-					h.Beta()
+					_, err := h.Beta()
+					if err != nil {
+						return
+					}
 				}
 				for _, tx := range blk.Transactions() {
 					tx := tx

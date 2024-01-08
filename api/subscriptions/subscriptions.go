@@ -248,7 +248,10 @@ func (s *Subscriptions) handlePendingTransactions(w http.ResponseWriter, req *ht
 		case <-closed:
 			return nil
 		case <-pingTicker.C:
-			conn.WriteMessage(websocket.PingMessage, nil)
+			err := conn.WriteMessage(websocket.PingMessage, nil)
+			if err != nil {
+				return nil
+			}
 		}
 	}
 }
@@ -264,9 +267,18 @@ func (s *Subscriptions) setupConn(w http.ResponseWriter, req *http.Request) (*we
 	s.wg.Add(1)
 	go func() {
 		defer s.wg.Done()
-		conn.SetReadDeadline(time.Now().Add(pongWait))
+		err := conn.SetReadDeadline(time.Now().Add(pongWait))
+
+		if err != nil {
+			return
+		}
+
 		conn.SetPongHandler(func(string) error {
-			conn.SetReadDeadline(time.Now().Add(pongWait))
+			err := conn.SetReadDeadline(time.Now().Add(pongWait))
+
+			if err != nil {
+				return nil
+			}
 			return nil
 		})
 		for {
@@ -319,7 +331,11 @@ func (s *Subscriptions) pipe(conn *websocket.Conn, reader msgReader, closed chan
 			case <-closed:
 				return nil
 			case <-pingTicker.C:
-				conn.WriteMessage(websocket.PingMessage, nil)
+				err := conn.WriteMessage(websocket.PingMessage, nil)
+
+				if err != nil {
+					return nil
+				}
 			default:
 			}
 		} else {
@@ -330,7 +346,11 @@ func (s *Subscriptions) pipe(conn *websocket.Conn, reader msgReader, closed chan
 				return nil
 			case <-ticker.C():
 			case <-pingTicker.C:
-				conn.WriteMessage(websocket.PingMessage, nil)
+				err := conn.WriteMessage(websocket.PingMessage, nil)
+
+				if err != nil {
+					return nil
+				}
 			}
 		}
 	}

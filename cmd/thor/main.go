@@ -152,7 +152,13 @@ func defaultAction(ctx *cli.Context) error {
 	if err != nil {
 		return err
 	}
-	defer func() { log.Info("closing main database..."); mainDB.Close() }()
+	defer func() {
+		log.Info("closing main database...")
+		err := mainDB.Close()
+		if err != nil {
+			log.Warn("failed to close main database", "err", err)
+		}
+	}()
 
 	skipLogs := ctx.Bool(skipLogsFlag.Name)
 
@@ -160,7 +166,13 @@ func defaultAction(ctx *cli.Context) error {
 	if err != nil {
 		return err
 	}
-	defer func() { log.Info("closing log database..."); logDB.Close() }()
+	defer func() {
+		log.Info("closing log database...")
+		err := logDB.Close()
+		if err != nil {
+			log.Warn("failed to close log database", "err", err)
+		}
+	}()
 
 	repo, err := initChainRepository(gene, mainDB, logDB)
 	if err != nil {
@@ -261,11 +273,23 @@ func soloAction(ctx *cli.Context) error {
 		if mainDB, err = openMainDB(ctx, instanceDir); err != nil {
 			return err
 		}
-		defer func() { log.Info("closing main database..."); mainDB.Close() }()
+		defer func() {
+			log.Info("closing main database...")
+			err := mainDB.Close()
+			if err != nil {
+				log.Warn("failed to close main database", "err", err)
+			}
+		}()
 		if logDB, err = openLogDB(ctx, instanceDir); err != nil {
 			return err
 		}
-		defer func() { log.Info("closing log database..."); logDB.Close() }()
+		defer func() {
+			log.Info("closing log database...")
+			err := logDB.Close()
+			if err != nil {
+				log.Warn("failed to close log database", "err", err)
+			}
+		}()
 	} else {
 		instanceDir = "Memory"
 		mainDB = openMemMainDB()

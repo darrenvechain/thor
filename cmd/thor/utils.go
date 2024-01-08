@@ -146,7 +146,11 @@ func handleXGenesisID(h http.Handler, genesisID thor.Bytes32) http.Handler {
 		}
 		w.Header().Set(headerKey, expectedID)
 		if actualID != "" && actualID != expectedID {
-			io.Copy(ioutil.Discard, r.Body)
+			_, err := io.Copy(io.Discard, r.Body)
+			if err != nil {
+				http.Error(w, "", http.StatusInternalServerError)
+				return
+			}
 			http.Error(w, "genesis id mismatch", http.StatusForbidden)
 			return
 		}
@@ -429,7 +433,7 @@ func newP2PComm(ctx *cli.Context, repo *chain.Repository, txPool *txpool.TxPool,
 	}
 	nat, err := nat.Parse(ctx.String(natFlag.Name))
 	if err != nil {
-		cli.ShowAppHelp(ctx)
+		err := cli.ShowAppHelp(ctx)
 		return nil, errors.Wrap(err, "parse -nat flag")
 	}
 
@@ -521,10 +525,16 @@ func startAPIServer(ctx *cli.Context, handler http.Handler, genesisID thor.Bytes
 	srv := &http.Server{Handler: handler}
 	var goes co.Goes
 	goes.Go(func() {
-		srv.Serve(listener)
+		err := srv.Serve(listener)
+		if err != nil {
+			log.Warn("API server stopped", "err", err)
+		}
 	})
 	return "http://" + listener.Addr().String() + "/", func() {
-		srv.Close()
+		err := srv.Close()
+		if err != nil {
+			log.Warn("failed to close API server", "err", err)
+		}
 		goes.Wait()
 	}, nil
 }

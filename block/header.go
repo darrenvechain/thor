@@ -137,7 +137,7 @@ func (h *Header) SigningHash() (hash thor.Bytes32) {
 	defer func() { h.cache.signingHash.Store(hash) }()
 
 	return thor.Blake2bFn(func(w io.Writer) {
-		rlp.Encode(w, []interface{}{
+		err := rlp.Encode(w, []interface{}{
 			&h.body.ParentID,
 			h.body.Timestamp,
 			h.body.GasLimit,
@@ -150,6 +150,9 @@ func (h *Header) SigningHash() (hash thor.Bytes32) {
 			&h.body.StateRoot,
 			&h.body.ReceiptsRoot,
 		})
+		if err != nil {
+			log.Warn("failed to encode block header", "err", err)
+		}
 	})
 }
 

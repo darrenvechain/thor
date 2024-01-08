@@ -7,6 +7,7 @@ package block
 
 import (
 	"fmt"
+	"github.com/inconshreveable/log15"
 	"io"
 	"sync/atomic"
 
@@ -17,6 +18,10 @@ import (
 
 const (
 	ComplexSigSize = 81 + 65
+)
+
+var (
+	log = log15.New("pkg", "block")
 )
 
 // Block is an immutable block type.
@@ -100,7 +105,10 @@ func (b *Block) Size() metric.StorageSize {
 		return cached.(metric.StorageSize)
 	}
 	var size metric.StorageSize
-	rlp.Encode(&size, b)
+	err := rlp.Encode(&size, b)
+	if err != nil {
+		log.Warn("failed to encode block", "err", err)
+	}
 	b.cache.size.Store(size)
 	return size
 }

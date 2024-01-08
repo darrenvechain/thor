@@ -144,7 +144,10 @@ func (x *xof) Read(p []byte) (n int, err error) {
 		x.nodeOffset++
 
 		x.d.initConfig(&x.cfg)
-		x.d.Write(x.root[:])
+		n, err = x.d.Write(x.root[:])
+		if err != nil {
+			return
+		}
 		x.d.finalize(&x.block)
 
 		copy(p, x.block[:])
@@ -160,7 +163,10 @@ func (x *xof) Read(p []byte) (n int, err error) {
 		x.nodeOffset++
 
 		x.d.initConfig(&x.cfg)
-		x.d.Write(x.root[:])
+		n, err = x.d.Write(x.root[:])
+		if err != nil {
+			return
+		}
 		x.d.finalize(&x.block)
 
 		x.offset = copy(p, x.block[:todo])

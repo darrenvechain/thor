@@ -113,7 +113,10 @@ func (r *RPC) Serve(handleFunc HandleFunc, maxMsgSize uint32) error {
 		} else {
 			if err := handleFunc(&msg, func(result interface{}) {
 				if callID != 0 {
-					p2p.Send(r.rw, msg.Code, &msgData{callID, true, result})
+					sendError := p2p.Send(r.rw, msg.Code, &msgData{callID, true, result})
+					if sendError != nil {
+						log.Warn("failed to send result", "err", sendError)
+					}
 				}
 				// here we skip result for Notify (callID == 0)
 			}); err != nil {

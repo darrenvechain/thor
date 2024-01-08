@@ -10,6 +10,7 @@ package muxdb
 import (
 	"context"
 	"encoding/json"
+	"github.com/inconshreveable/log15"
 
 	"github.com/syndtr/goleveldb/leveldb"
 	dberrors "github.com/syndtr/goleveldb/leveldb/errors"
@@ -27,6 +28,10 @@ const (
 	trieDedupedSpace  = byte(1) // the key space for deduped trie nodes.
 	trieLeafBankSpace = byte(2) // the key space for the trie leaf bank.
 	namedStoreSpace   = byte(3) // the key space for named store.
+)
+
+var (
+	log = log15.New("pkg", "muxdb")
 )
 
 const (
@@ -105,7 +110,10 @@ func Open(path string, options *Options) (*MuxDB, error) {
 		DedupedPtnFactor: options.TrieDedupedPartitionFactor,
 	}
 	if err := cfg.LoadOrSave(propStore); err != nil {
-		ldb.Close()
+		closeErr := ldb.Close()
+		if closeErr != nil {
+			log.Warn("failed to close leveldb", "err", closeErr)
+		}
 		return nil, err
 	}
 

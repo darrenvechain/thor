@@ -153,7 +153,8 @@ func (n *Node) pack(flow *packer.Flow) error {
 
 		// write logs
 		if logEnabled {
-			if n.writeLogs(newBlock, receipts, oldBest.Header.ID()); err != nil {
+			err := n.writeLogs(newBlock, receipts, oldBest.Header.ID())
+			if err != nil {
 				return errors.Wrap(err, "write logs")
 			}
 		}
