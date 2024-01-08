@@ -140,12 +140,6 @@ FROM (%v) e
 		subQuery += ")"
 	}
 
-	if filter.Order == DESC {
-		subQuery += " ORDER BY seq DESC "
-	} else {
-		subQuery += " ORDER BY seq ASC "
-	}
-
 	if filter.Options != nil {
 		subQuery += " LIMIT ?, ?"
 		args = append(args, filter.Options.Offset, filter.Options.Limit)
@@ -153,7 +147,15 @@ FROM (%v) e
 
 	subQuery = "SELECT e.* FROM (" + subQuery + ") s LEFT JOIN event e ON s.seq = e.seq"
 
-	return db.queryEvents(ctx, fmt.Sprintf(query, subQuery), args...)
+	eventQuery := fmt.Sprintf(query, subQuery)
+
+	if filter.Order == DESC {
+		eventQuery += "\n ORDER BY seq DESC "
+	} else {
+		eventQuery += "\n ORDER BY seq ASC "
+	}
+
+	return db.queryEvents(ctx, eventQuery, args...)
 }
 
 func (db *LogDB) FilterTransfers(ctx context.Context, filter *TransferFilter) ([]*Transfer, error) {
@@ -213,6 +215,7 @@ FROM (%v) t
 }
 
 func (db *LogDB) queryEvents(ctx context.Context, query string, args ...interface{}) ([]*Event, error) {
+
 	rows, err := db.db.QueryContext(ctx, query, args...)
 	if err != nil {
 		return nil, err
