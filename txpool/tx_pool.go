@@ -7,7 +7,8 @@ package txpool
 
 import (
 	"context"
-	"math/rand"
+	"crypto/rand"
+	"encoding/binary"
 	"os"
 	"sync/atomic"
 	"time"
@@ -180,8 +181,12 @@ func (p *TxPool) fetchBlocklistLoop() {
 	fetch()
 
 	for {
+
+		var seconds uint64
+		binary.Read(rand.Reader, binary.LittleEndian, &seconds)
+
 		// delay 1~2 min
-		delay := time.Second * time.Duration(rand.Int()%60+60)
+		delay := time.Second * time.Duration(seconds%60+60)
 		select {
 		case <-p.ctx.Done():
 			return

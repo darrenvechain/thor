@@ -6,7 +6,9 @@
 package comm
 
 import (
-	"math/rand"
+	"crypto/rand"
+	"math/big"
+	mathRand "math/rand"
 	"sync"
 	"time"
 
@@ -23,10 +25,6 @@ const (
 	maxKnownTxs    = 65536 // Maximum transactions IDs to keep in the known list (prevent DOS)
 	maxKnownBlocks = 1024  // Maximum block IDs to keep in the known list (prevent DOS)
 )
-
-func init() {
-	rand.Seed(time.Now().UnixNano())
-}
 
 // Peer extends p2p.Peer with RPC integrated.
 type Peer struct {
@@ -84,7 +82,15 @@ func (p *Peer) UpdateHead(id thor.Bytes32, totalScore uint64) {
 // MarkTransaction marks a transaction to known.
 func (p *Peer) MarkTransaction(hash thor.Bytes32) {
 	// that's 10~100 block intervals
-	expiration := mclock.AbsTime(time.Second * time.Duration(thor.BlockInterval*uint64(rand.Intn(91)+10)))
+	randomValue, err := rand.Int(rand.Reader, big.NewInt(91))
+	if err != nil {
+		log.Warn("failed to generate random value", "err", err)
+		return
+	}
+
+	// Add 10 to the random value to get a number in the range [10, 100].
+	interval := randomValue.Int64() + 10
+	expiration := mclock.AbsTime(time.Second * time.Duration(thor.BlockInterval*uint64(interval)))
 
 	deadline := mclock.Now() + expiration
 	p.knownTxs.Add(hash, deadline)
@@ -183,7 +189,7 @@ func (ps *PeerSet) Slice() Peers {
 	defer ps.lock.Unlock()
 
 	ret := make(Peers, len(ps.m))
-	perm := rand.Perm(len(ps.m))
+	perm := mathRand.Perm(len(ps.m))
 	i := 0
 	for _, s := range ps.m {
 		// randomly

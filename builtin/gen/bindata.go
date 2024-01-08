@@ -44,21 +44,28 @@ import (
 	"time"
 )
 
+const (
+	maxDecompressedSize = 1 << 20 // 1MB
+)
+
 func bindataRead(data []byte, name string) ([]byte, error) {
 	gz, err := gzip.NewReader(bytes.NewBuffer(data))
 	if err != nil {
 		return nil, fmt.Errorf("Read %q: %v", name, err)
 	}
 
+	// Limit the number of bytes read from the decompressor
+	limitedReader := io.LimitReader(gz, maxDecompressedSize)
+
 	var buf bytes.Buffer
-	_, err = io.Copy(&buf, gz)
+	_, err = io.Copy(&buf, limitedReader)
 	clErr := gz.Close()
 
 	if err != nil {
 		return nil, fmt.Errorf("Read %q: %v", name, err)
 	}
 	if clErr != nil {
-		return nil, err
+		return nil, clErr
 	}
 
 	return buf.Bytes(), nil
@@ -794,11 +801,13 @@ var _bindata = map[string]func() (*asset, error){
 // directory embedded in the file by go-bindata.
 // For example if you run go-bindata on data/... and data contains the
 // following hierarchy:
-//     data/
-//       foo.txt
-//       img/
-//         a.png
-//         b.png
+//
+//	data/
+//	  foo.txt
+//	  img/
+//	    a.png
+//	    b.png
+//
 // then AssetDir("data") would return []string{"foo.txt", "img"}
 // AssetDir("data/img") would return []string{"a.png", "b.png"}
 // AssetDir("foo.txt") and AssetDir("notexist") would return an error

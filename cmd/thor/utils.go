@@ -203,6 +203,10 @@ func selectGenesis(ctx *cli.Context) (*genesis.Genesis, thor.ForkConfig, error) 
 		gene := genesis.NewMainnet()
 		return gene, thor.GetForkConfig(gene.ID()), nil
 	default:
+		network = filepath.Clean(network)
+		if _, err := os.Stat(network); os.IsNotExist(err) {
+			return nil, thor.ForkConfig{}, errors.New(fmt.Sprintf("the specified genesis file [%v] does not exist", network))
+		}
 		file, err := os.Open(network)
 		if err != nil {
 			return nil, thor.ForkConfig{}, errors.Wrap(err, "open genesis file")
@@ -444,8 +448,12 @@ func newP2PComm(ctx *cli.Context, repo *chain.Repository, txPool *txpool.TxPool,
 	}
 
 	peersCachePath := filepath.Join(instanceDir, "peers.cache")
+	peersCachePath = filepath.Clean(peersCachePath)
+	if _, err := os.Stat(peersCachePath); os.IsNotExist(err) {
+		log.Warn("failed to load peers cache", "err", err)
+	}
 
-	if data, err := ioutil.ReadFile(peersCachePath); err != nil {
+	if data, err := os.ReadFile(peersCachePath); err != nil {
 		if !os.IsNotExist(err) {
 			log.Warn("failed to load peers cache", "err", err)
 		}
@@ -518,7 +526,7 @@ func startAPIServer(ctx *cli.Context, handler http.Handler, genesisID thor.Bytes
 	handler = handleXGenesisID(handler, genesisID)
 	handler = handleXThorestVersion(handler)
 	handler = requestBodyLimit(handler)
-	srv := &http.Server{Handler: handler}
+	srv := &http.Server{Handler: handler, ReadHeaderTimeout: time.Millisecond * time.Duration(timeout)}
 	var goes co.Goes
 	goes.Go(func() {
 		srv.Serve(listener)

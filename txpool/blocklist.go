@@ -8,11 +8,13 @@ package txpool
 import (
 	"bufio"
 	"context"
+	"errors"
 	"fmt"
 	"io"
 	"io/ioutil"
 	"net/http"
 	"os"
+	"path/filepath"
 	"strings"
 	"sync"
 
@@ -27,6 +29,10 @@ type blocklist struct {
 
 // Load load list from local file.
 func (bl *blocklist) Load(path string) error {
+	path = filepath.Clean(path)
+	if _, err := os.Stat(path); os.IsNotExist(err) {
+		return errors.New(fmt.Sprintf("the path [%v] does not exist", path))
+	}
 	file, err := os.Open(path)
 	if err != nil {
 		return err
@@ -47,6 +53,7 @@ func (bl *blocklist) Load(path string) error {
 
 // Save save list to local file.
 func (bl *blocklist) Save(path string) error {
+	path = filepath.Clean(path)
 	file, err := os.Create(path)
 	if err != nil {
 		return err

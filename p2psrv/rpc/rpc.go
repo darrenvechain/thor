@@ -7,7 +7,8 @@ package rpc
 
 import (
 	"context"
-	"math/rand"
+	"crypto/rand"
+	"math/big"
 	"sync"
 	"time"
 
@@ -16,11 +17,6 @@ import (
 	"github.com/inconshreveable/log15"
 	"github.com/pkg/errors"
 )
-
-func init() {
-	// required when generate call id
-	rand.Seed(time.Now().UnixNano())
-}
 
 const (
 	rpcDefaultTimeout = time.Second * 10
@@ -154,12 +150,22 @@ func (r *RPC) handleResult(callID uint32, msg *p2p.Msg) error {
 	return nil
 }
 
+// generateRandomID generates a cryptographically secure random uint32.
+func generateRandomID() (uint32, error) {
+	maxInt := big.NewInt(1<<32 - 1)
+	randomID, err := rand.Int(rand.Reader, maxInt)
+	if err != nil {
+		return 0, err
+	}
+	return uint32(randomID.Int64()), nil
+}
+
 func (r *RPC) prepareCall(msgCode uint64, onResult func(*p2p.Msg) error) uint32 {
 	r.lock.Lock()
 	defer r.lock.Unlock()
 	for {
-		id := rand.Uint32()
-		if id == 0 {
+		id, err := generateRandomID()
+		if id == 0 || err != nil {
 			// 0 id is taken by Notify
 			continue
 		}
