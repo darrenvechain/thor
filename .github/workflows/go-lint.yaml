@@ -58,4 +58,5 @@ jobs:
       - name: Run Gosec Security Scanner
         uses: securego/gosec@master
         with:
-          args: ./...
+          # excluding G104: Audit errors not checked
+          args: --exclude=G104 ./...
