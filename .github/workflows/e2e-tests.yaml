@@ -61,6 +61,7 @@ jobs:
 
       - name: Run Tests
         run: |
+          export THOR_IMAGE: vechain/thor:${{ github.sha }}
           yarn install
           yarn test:report
 
