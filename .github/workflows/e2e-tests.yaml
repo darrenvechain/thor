@@ -62,7 +62,7 @@ jobs:
       - name: Run Tests
         run: |
           yarn install
-          yarn test
+          yarn test:report
 
       - name: Publish Results
         uses: dorny/test-reporter@v1

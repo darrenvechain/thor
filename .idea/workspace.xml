@@ -91,51 +91,39 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "Docker.integration_tests/docker-compose.yaml: Compose Deployment.executor": "Run",
-    "Go Build.go build github.com/vechain/thor/cmd/thor.executor": "Debug",
-    "Go Test.TestSeeder_Generate in github.com/vechain/thor/poa.executor": "Run",
-    "Jest.Blocks.executor": "Debug",
-    "Jest.Blocks.should be able to get the latest block.executor": "Debug",
-    "Makefile Target.test-coverage.executor": "Run",
-    "Mocha.Accounts.should be able to get a fungible token balance.executor": "Debug",
-    "Mocha.Blocks.executor": "Debug",
-    "Mocha.Contracts.executor": "Run",
-    "Mocha.Contracts.should be able to deploy contract.executor": "Run",
-    "RunOnceActivity.OpenProjectViewOnStart": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.go.formatter.settings.were.checked": "true",
-    "RunOnceActivity.go.migrated.go.modules.settings": "true",
-    "RunOnceActivity.go.modules.automatic.dependencies.download": "true",
-    "RunOnceActivity.go.modules.go.list.on.any.changes.was.set": "true",
-    "Vitest.Contracts.should be able to deploy contract.executor": "Debug",
-    "git-widget-placeholder": "integration-tests-2",
-    "go.import.settings.migrated": "true",
-    "go.sdk.automatically.set": "true",
-    "last_opened_file_path": "/Users/darren",
-    "node.js.detected.package.eslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "nodejs.jest.jest_package": "/Users/darren/workspace/vechain/thor/integration_tests/node_modules/jest",
-    "nodejs.mocha.mocha_node_package_dir": "/Users/darren/workspace/vechain/thor/integration_tests/node_modules/mocha",
-    "nodejs_package_manager_path": "npm",
-    "npm.test.executor": "Debug",
-    "settings.editor.selected.configurable": "preferences.pluginManager",
-    "ts.external.directory.path": "/Users/darren/workspace/vechain/thor/integration_tests/node_modules/typescript/lib"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;Docker.integration_tests/docker-compose.yaml: Compose Deployment.executor&quot;: &quot;Run&quot;,
+    &quot;Go Build.go build github.com/vechain/thor/cmd/thor.executor&quot;: &quot;Debug&quot;,
+    &quot;Go Test.TestSeeder_Generate in github.com/vechain/thor/poa.executor&quot;: &quot;Run&quot;,
+    &quot;Jest.Blocks.executor&quot;: &quot;Debug&quot;,
+    &quot;Jest.Blocks.should be able to get the latest block.executor&quot;: &quot;Debug&quot;,
+    &quot;Makefile Target.test-coverage.executor&quot;: &quot;Run&quot;,
+    &quot;Mocha.Accounts.should be able to get a fungible token balance.executor&quot;: &quot;Debug&quot;,
+    &quot;Mocha.Blocks.executor&quot;: &quot;Debug&quot;,
+    &quot;Mocha.Contracts.executor&quot;: &quot;Run&quot;,
+    &quot;Mocha.Contracts.should be able to deploy contract.executor&quot;: &quot;Run&quot;,
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.go.formatter.settings.were.checked&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.go.migrated.go.modules.settings&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.go.modules.automatic.dependencies.download&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.go.modules.go.list.on.any.changes.was.set&quot;: &quot;true&quot;,
+    &quot;Vitest.Contracts.should be able to deploy contract.executor&quot;: &quot;Debug&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;integration-tests-2&quot;,
+    &quot;go.import.settings.migrated&quot;: &quot;true&quot;,
+    &quot;go.sdk.automatically.set&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;/Users/darren&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs.jest.jest_package&quot;: &quot;/Users/darren/workspace/vechain/thor/integration_tests/node_modules/jest&quot;,
+    &quot;nodejs.mocha.mocha_node_package_dir&quot;: &quot;/Users/darren/workspace/vechain/thor/integration_tests/node_modules/mocha&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;npm.test.executor&quot;: &quot;Debug&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.pluginManager&quot;,
+    &quot;ts.external.directory.path&quot;: &quot;/Users/darren/workspace/vechain/thor/integration_tests/node_modules/typescript/lib&quot;
   }
-}]]></component>
-  <component name="QodanaHighlightedReportService">
-    <option name="openInIdeCloudReportPersistedInfo">
-      <OpenInIdeCloudReportPersistedInfo>
-        <option name="projectId" value="3yod2" />
-        <option name="projectName" value="thor" />
-        <option name="reportId" value="VgrM7" />
-      </OpenInIdeCloudReportPersistedInfo>
-    </option>
-  </component>
-  <component name="QodanaIsSelectedPersistenceService">
-    <option name="selectedOrLoading" value="true" />
-  </component>
+}</component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$/integration_tests/keys" />
