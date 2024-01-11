@@ -24,7 +24,7 @@ jobs:
         with:
           version: v1.54
           args: --timeout=30m
-          only-new-issues: ${{ github.event_name == 'pull_request' }}
+          only-new-issues: true
           skip-cache: true
           skip-pkg-cache: true
           skip-build-cache: true
