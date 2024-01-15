@@ -77,7 +77,7 @@ jobs:
         id: test-reporter
         if: success() || failure()
         with:
-          name: Integration Tests
+          name: E2E Test Results
           only-summary: 'false'
           list-suites: 'all'
           list-tests: 'all'
