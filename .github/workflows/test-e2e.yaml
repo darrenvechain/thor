@@ -70,7 +70,7 @@ jobs:
         run: |
           export THOR_IMAGE=vechain/thor:${{ github.sha }}
           yarn install
-          yarn test:report
+          yarn test
 
       - name: Publish Results
         uses: dorny/test-reporter@v1
@@ -82,9 +82,9 @@ jobs:
           list-suites: 'all'
           list-tests: 'all'
           fail-on-error: 'true'
-          reporter: 'mocha-json'
+          reporter: "jest-junit"
           path: |
-            ./tests/thor-e2e-tests/results.json
+            ./tests/thor-e2e-tests/junit.xml
 
       - name: Echo Report URL
         run: |
