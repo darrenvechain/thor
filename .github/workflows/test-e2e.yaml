@@ -80,7 +80,7 @@ jobs:
           name: E2E Test Results
           only-summary: 'false'
           list-suites: 'all'
-          list-tests: 'all'
+          list-tests: 'failed'
           fail-on-error: 'true'
           reporter: "jest-junit"
           path: |

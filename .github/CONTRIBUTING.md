@@ -109,5 +109,3 @@ cd tests/thor-e2e-tests
 yarn install
 yarn test
 ```
-=======
-
