@@ -43,7 +43,7 @@ func New(
 	skipLogs bool,
 	allowCustomTracer bool,
 	forkConfig thor.ForkConfig,
-) (http.HandlerFunc, func()) {
+) (http.HandlerFunc, *blocks.Blocks, func()) {
 	origins := strings.Split(strings.TrimSpace(allowedOrigins), ",")
 	for i, o := range origins {
 		origins[i] = strings.ToLower(strings.TrimSpace(o))
@@ -71,8 +71,11 @@ func New(
 		transfers.New(repo, logDB).
 			Mount(router, "/logs/transfer")
 	}
-	blocks.New(repo, bft).
+
+	blocksApi := blocks.New(repo, bft, txPool)
+	blocksApi.
 		Mount(router, "/blocks")
+
 	transactions.New(repo, txPool).
 		Mount(router, "/transactions")
 	debug.New(repo, stater, forkConfig, callGasLimit, allowCustomTracer).
@@ -96,6 +99,5 @@ func New(
 		handlers.AllowedHeaders([]string{"content-type", "x-genesis-id"}),
 		handlers.ExposedHeaders([]string{"x-genesis-id", "x-thorest-ver"}),
 	)(handler)
-	return handler.ServeHTTP,
-		subs.Close // subscriptions handles hijacked conns, which need to be closed
+	return handler.ServeHTTP, blocksApi, subs.Close
 }

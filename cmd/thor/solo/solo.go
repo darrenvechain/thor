@@ -8,6 +8,7 @@ package solo
 import (
 	"context"
 	"fmt"
+	"github.com/vechain/thor/v2/api/blocks"
 	"time"
 
 	"github.com/ethereum/go-ethereum/common"
@@ -39,6 +40,7 @@ type Solo struct {
 	bandwidth bandwidth.Bandwidth
 	onDemand  bool
 	skipLogs  bool
+	blocks    *blocks.Blocks
 }
 
 // New returns Solo instance
@@ -51,6 +53,7 @@ func New(
 	onDemand bool,
 	skipLogs bool,
 	forkConfig thor.ForkConfig,
+	blocks *blocks.Blocks,
 ) *Solo {
 	return &Solo{
 		repo:   repo,
@@ -65,6 +68,7 @@ func New(
 		gasLimit: gasLimit,
 		skipLogs: skipLogs,
 		onDemand: onDemand,
+		blocks:   blocks,
 	}
 }
 
@@ -90,17 +94,17 @@ func (s *Solo) loop(ctx context.Context) {
 	for {
 		select {
 		case <-ctx.Done():
-			log.Info("stopping interval packing service......")
+			log.Info("stopping interval Pack service......")
 			return
 		case <-time.After(time.Duration(1) * time.Second):
 			if left := uint64(time.Now().Unix()) % thor.BlockInterval; left == 0 {
-				if err := s.packing(s.txPool.Executables(), false); err != nil {
+				if err := s.Pack(s.txPool.Executables(), false); err != nil {
 					log.Error("failed to pack block", "err", err)
 				}
 			} else if s.onDemand {
 				pendingTxs := s.txPool.Executables()
 				if len(pendingTxs) > 0 {
-					if err := s.packing(pendingTxs, true); err != nil {
+					if err := s.Pack(pendingTxs, true); err != nil {
 						log.Error("failed to pack block", "err", err)
 					}
 				}
@@ -109,7 +113,7 @@ func (s *Solo) loop(ctx context.Context) {
 	}
 }
 
-func (s *Solo) packing(pendingTxs tx.Transactions, onDemand bool) error {
+func (s *Solo) Pack(pendingTxs tx.Transactions, onDemand bool) error {
 	best := s.repo.BestBlockSummary()
 	now := uint64(time.Now().Unix())
 

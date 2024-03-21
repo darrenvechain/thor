@@ -6,6 +6,8 @@
 package blocks
 
 import (
+	"github.com/inconshreveable/log15"
+	"github.com/vechain/thor/v2/txpool"
 	"net/http"
 	"strconv"
 
@@ -21,12 +23,15 @@ import (
 type Blocks struct {
 	repo *chain.Repository
 	bft  BFTEngine
+	pack SoloPack
+	pool *txpool.TxPool
 }
 
-func New(repo *chain.Repository, bft BFTEngine) *Blocks {
+func New(repo *chain.Repository, bft BFTEngine, pool *txpool.TxPool) *Blocks {
 	return &Blocks{
-		repo,
-		bft,
+		repo: repo,
+		bft:  bft,
+		pool: pool,
 	}
 }
 
@@ -134,7 +139,42 @@ func (b *Blocks) isTrunk(blkID thor.Bytes32, blkNum uint32) (bool, error) {
 	return blkID == idByNum, nil
 }
 
+func (b *Blocks) handlePackBlock(w http.ResponseWriter, req *http.Request) error {
+
+	var packBlocks *PackBlocks
+
+	if err := utils.ParseJSON(req.Body, &packBlocks); err != nil {
+		return utils.BadRequest(errors.WithMessage(err, "packBlocks"))
+	}
+
+	if packBlocks == nil || packBlocks.Count < 1 {
+		return utils.BadRequest(errors.New("packBlocks must be a number greater than 0"))
+	}
+
+	for i := int32(0); i < packBlocks.Count; i++ {
+
+		log15.Info("Packing block", "count", i+1)
+
+		pendingTxs := b.pool.Executables()
+		err := b.pack(pendingTxs, false)
+
+		if err != nil {
+			return errors.WithMessage(err, "failed to pack block")
+		}
+	}
+
+	w.Write([]byte("ok"))
+
+	return nil
+}
+
 func (b *Blocks) Mount(root *mux.Router, pathPrefix string) {
 	sub := root.PathPrefix(pathPrefix).Subrouter()
 	sub.Path("/{revision}").Methods("GET").HandlerFunc(utils.WrapHandlerFunc(b.handleGetBlock))
+
+	sub.Path("/pack").Methods("POST").HandlerFunc(utils.WrapHandlerFunc(b.handlePackBlock))
+}
+
+func (b *Blocks) SetSoloPack(soloPack SoloPack) {
+	b.pack = soloPack
 }

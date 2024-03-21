@@ -37,6 +37,10 @@ type JSONBlockSummary struct {
 	IsFinalized  bool         `json:"isFinalized"`
 }
 
+type PackBlocks struct {
+	Count int32 `json:"count"`
+}
+
 type JSONCollapsedBlock struct {
 	*JSONBlockSummary
 	Transactions []thor.Bytes32 `json:"transactions"`
@@ -194,3 +198,5 @@ func buildJSONEmbeddedTxs(txs tx.Transactions, receipts tx.Receipts) []*JSONEmbe
 	}
 	return jTxs
 }
+
+type SoloPack func(pendingTxs tx.Transactions, onDemand bool) error

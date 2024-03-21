@@ -194,7 +194,7 @@ func defaultAction(ctx *cli.Context) error {
 		return errors.Wrap(err, "init bft engine")
 	}
 
-	apiHandler, apiCloser := api.New(
+	apiHandler, _, apiCloser := api.New(
 		repo,
 		state.NewStater(mainDB),
 		txPool,
@@ -293,7 +293,7 @@ func soloAction(ctx *cli.Context) error {
 	defer func() { log.Info("closing tx pool..."); txPool.Close() }()
 
 	bftEngine := solo.NewBFTEngine(repo)
-	apiHandler, apiCloser := api.New(
+	apiHandler, blocks, apiCloser := api.New(
 		repo,
 		state.NewStater(mainDB),
 		txPool,
@@ -320,14 +320,19 @@ func soloAction(ctx *cli.Context) error {
 	optimizer := optimizer.New(mainDB, repo, !ctx.Bool(disablePrunerFlag.Name))
 	defer func() { log.Info("stopping optimizer..."); optimizer.Stop() }()
 
-	return solo.New(repo,
+	var instance = solo.New(repo,
 		state.NewStater(mainDB),
 		logDB,
 		txPool,
 		uint64(ctx.Int(gasLimitFlag.Name)),
 		ctx.Bool(onDemandFlag.Name),
 		skipLogs,
-		forkConfig).Run(exitSignal)
+		forkConfig,
+		blocks)
+
+	blocks.SetSoloPack(instance.Pack)
+
+	return instance.Run(exitSignal)
 }
 
 func masterKeyAction(ctx *cli.Context) error {
