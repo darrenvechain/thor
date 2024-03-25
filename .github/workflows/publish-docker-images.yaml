@@ -18,9 +18,22 @@ on:
   workflow_dispatch:
 
 jobs:
+
+  run-unit-tests:
+    name: Run Unit Tests
+    uses: ./.github/workflows/run-unit-tests.yaml
+
+  lint:
+    name: Lint
+    uses: ./.github/workflows/run-linters.yaml
+
   build-and-push-image:
     name: Build and Push Docker Image
     runs-on: ubuntu-latest
+
+    needs:
+      - run-unit-tests
+      - lint
 
     permissions:
       contents: read

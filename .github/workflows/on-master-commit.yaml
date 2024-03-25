@@ -6,14 +6,6 @@ on:
       - 'master'
 
 jobs:
-  run-unit-tests:
-    name: Run Unit Tests
-    uses: ./.github/workflows/test.yaml
-
-  lint:
-    name: Lint
-    uses: ./.github/workflows/lint-go.yaml
-
   generate-tags:
     name: Generate Docker Tags
     runs-on: ubuntu-latest

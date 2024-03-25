@@ -6,10 +6,6 @@ on:
       - prereleased
 
 jobs:
-  run-unit-tests:
-    name: Run Unit Tests
-    uses: ./.github/workflows/test.yaml
-
   publish-docker-image:
     name: Publish Pre-Release Docker Image
     uses: ./.github/workflows/publish-docker-images.yaml

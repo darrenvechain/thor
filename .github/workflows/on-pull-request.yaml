@@ -6,15 +6,6 @@ on:
       - master
 
 jobs:
-
-  run-unit-tests:
-    name: Run Unit Tests
-    uses: ./.github/workflows/test.yaml
-
-  lint:
-    name: Lint
-    uses: ./.github/workflows/lint-go.yaml
-
   # This doesn't publish the image, it just tests the publishing workflow (build the image / tags / labels)
   test-docker-publish:
     name: Test Docker Publish
