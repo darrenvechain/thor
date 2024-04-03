@@ -15,6 +15,9 @@ servers:
   - url: /
     description: Current Node
 tags:
+  - name: RPC
+    description: |
+      Provides access to the JSON-RPC interface, allowing users to interact with the blockchain using JSON-RPC requests.
   - name: Accounts
     description: |
       Provides access to on-chain account information. This includes details about account balances, contract states, and related functionalities.
@@ -38,6 +41,35 @@ tags:
       Offers a set of debugging utilities.
 
 paths:
+
+  /rpc:
+    post:
+      tags:
+        - RPC
+      summary: RPC
+      description: |
+        This endpoint allows you to send a JSON-RPC request to the node. The request must be a valid JSON-RPC 2.0 request.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RPCRequest'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RPCResponse'
+        '400':
+          description: Bad Request
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: 'Invalid request'
+
   /accounts/{address}:
     get:
       parameters:
@@ -88,7 +120,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref : '#/components/schemas/ExecuteCodesRequest'
+              $ref: '#/components/schemas/ExecuteCodesRequest'
       responses:
         '200':
           description: OK
@@ -738,6 +770,56 @@ paths:
 
 components:
   schemas:
+
+    RPCRequest:
+      type: object
+      title: RPCRequest
+      properties:
+        method:
+          type: string
+          description: The RPC method to call.
+          example: 'eth_sendRawTransaction'
+          nullable: false
+        params:
+          type: array
+          description: The parameters to pass to the RPC method.
+          nullable: false
+          example:
+            - "0x7b226e6f6e6365223a22307830222c226761735072696365223a2230783634222c22676173223a2230786634323430222c22746f223a22307866303737623439316233353565363430343863653231653361366663343735316565656137376661222c2276616c7565223a22307831222c22696e707574223a223078222c2276223a2230783162222c2272223a22307832316133376534363732353464306432323839326335346433366232363732366338383733366337613536623838303365646262396537363163373964353736222c2273223a22307837346636613732613439643130663831316336303138626139386666303730306432343462636463623639323561376364363238626265663933626134313831222c2268617368223a22307866626332306631363763353134663638393962653931613335666135323665653738333237633263373434366131326430383166316135393466666665333464227d"
+        jsonrpc:
+          type: string
+          description: The JSON-RPC version.
+          example: '2.0'
+          nullable: false
+        id:
+          type: number
+          description: The request ID.
+          example: 1
+          nullable: false
+
+    RPCResponse:
+      type: object
+      title: RPCResponse
+      properties:
+        jsonrpc:
+          type: string
+          description: The JSON-RPC version.
+          example: '2.0'
+          nullable: false
+        id:
+          type: number
+          description: The request ID.
+          example: 1
+          nullable: false
+        result:
+          type: object
+          description: The result of the RPC call.
+          nullable: true
+        error:
+          type: object
+          description: The error object if the RPC call failed.
+          nullable: true
+
     GetAccountResponse:
       type: object
       title: GetAccountResponse
@@ -805,13 +887,13 @@ components:
                 - "0x000000000000000000000000435933c8064b4ae76be665428e0307ef2ccfbd68"
                 - "0x0000000000000000000000000f872421dc479f3c11edd89512731814d0598db5"
               data: "0x0000000000000000000000000000000000000000000000013f306a2409fc0000"
-          transfers: []
+          transfers: [ ]
           gasUsed: 13326
           reverted: false
           vmError: ""
         # VET Transfer
         - data: "0x"
-          events: []
+          events: [ ]
           transfers:
             - sender: "0x435933c8064b4ae76be665428e0307ef2ccfbd68"
               recipient: "0xf077b491b355e64048ce21e3a6fc4751eeea77fa"
@@ -826,7 +908,7 @@ components:
               topics:
                 - "0xb35bf4274d4295009f1ec66ed3f579db287889444366c03d3a695539372e8951"
               data: "0x000000000000000000000000435933c8064b4ae76be665428e0307ef2ccfbd68"
-          transfers: []
+          transfers: [ ]
           gasUsed: 31881
           reverted: false
           vmError: ""
@@ -865,13 +947,13 @@ components:
             - $ref: '#/components/schemas/Tx'
             - properties:
                 meta:
-                    $ref: '#/components/schemas/TxMeta'
+                  $ref: '#/components/schemas/TxMeta'
           title: GetTxResponse
         - allOf:
             - $ref: '#/components/schemas/RawTx'
             - properties:
                 meta:
-                    $ref: '#/components/schemas/TxMeta'
+                  $ref: '#/components/schemas/TxMeta'
           title: GetRawTxResponse
       example:
         id: '0x4de71f2d588aa8a1ea00fe8312d92966da424d9939a511fc0be81e65fad52af8'
@@ -950,25 +1032,25 @@ components:
                 example: '0x284bba50ef777889ff1a367ed0b38d5e5626714477c40de38d71cedd6f9fa477'
 
     ExpandedBlockResponse:
-        title: ExpandedBlockResponse
-        type: object
-        description: |
-            The response will contain information about the block identified by the provided `revision`. The `transactions` 
-            field contains an array of transactions, expanded to include their receipts.
-        allOf:
-            - $ref: '#/components/schemas/Block'
-            - $ref: '#/components/schemas/IsTrunk'
-            - $ref: '#/components/schemas/IsFinalized'
-            - properties:
-                transactions:
-                  description: All included transactions, expanded, to include their receipts
-                  type: array
-                  nullable: false
-                  minItems: 0
-                  items:
-                    allOf:
-                      - $ref: '#/components/schemas/Tx'
-                      - $ref: '#/components/schemas/Receipt'
+      title: ExpandedBlockResponse
+      type: object
+      description: |
+        The response will contain information about the block identified by the provided `revision`. The `transactions` 
+        field contains an array of transactions, expanded to include their receipts.
+      allOf:
+        - $ref: '#/components/schemas/Block'
+        - $ref: '#/components/schemas/IsTrunk'
+        - $ref: '#/components/schemas/IsFinalized'
+        - properties:
+            transactions:
+              description: All included transactions, expanded, to include their receipts
+              type: array
+              nullable: false
+              minItems: 0
+              items:
+                allOf:
+                  - $ref: '#/components/schemas/Tx'
+                  - $ref: '#/components/schemas/Receipt'
 
     EventLogFilterRequest:
       type: object
@@ -1172,7 +1254,7 @@ components:
       example:
         target: '0x010709463c1f0c9aa66a31182fb36d1977d99bfb6526bae0564a0eac4006c31a/0/0'
         name: "prestate"
-        config: {}
+        config: { }
 
     PostDebugTracerCallRequest:
       title: PostDebugTracerCallRequest
@@ -1669,7 +1751,7 @@ components:
         to:
           type: string
           description: |
-              The recipient of the call. Null indicates contract deployment.
+            The recipient of the call. Null indicates contract deployment.
           example: '0x0000000000000000000000000000456e65726779'
           nullable: true
           pattern: '^0x[0-9a-f]{40}$'
@@ -2120,11 +2202,11 @@ components:
           type: object
           description: |
             The configuration of the tracer. It is specific to the `name`
-          example: {}
+          example: { }
           nullable: true
       example:
         name: "prestate"
-        config: {}
+        config: { }
 
     StorageRangeOption:
       type: object

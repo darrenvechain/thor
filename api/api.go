@@ -18,6 +18,7 @@ import (
 	"github.com/vechain/thor/v2/api/doc"
 	"github.com/vechain/thor/v2/api/events"
 	"github.com/vechain/thor/v2/api/node"
+	"github.com/vechain/thor/v2/api/rpc"
 	"github.com/vechain/thor/v2/api/subscriptions"
 	"github.com/vechain/thor/v2/api/transactions"
 	"github.com/vechain/thor/v2/api/transfers"
@@ -79,6 +80,9 @@ func New(
 		Mount(router, "/debug")
 	node.New(nw).
 		Mount(router, "/node")
+	rpc.New(repo, txPool).
+		Mount(router, "/rpc")
+
 	subs := subscriptions.New(repo, origins, backtraceLimit, txPool)
 	subs.Mount(router, "/subscriptions")
 
