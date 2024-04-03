@@ -7,6 +7,7 @@ package txpool
 
 import (
 	"context"
+	"github.com/ethereum/go-ethereum/core/types"
 	"math/rand"
 	"os"
 	"sync/atomic"
@@ -203,37 +204,7 @@ func (p *TxPool) SubscribeTxEvent(ch chan *TxEvent) event.Subscription {
 	return p.scope.Track(p.txFeed.Subscribe(ch))
 }
 
-func (p *TxPool) add(newTx *tx.Transaction, rejectNonExecutable bool, localSubmitted bool) error {
-	if p.all.ContainsHash(newTx.Hash()) {
-		// tx already in the pool
-		return nil
-	}
-
-	origin, _ := newTx.Origin()
-	if thor.IsOriginBlocked(origin) || p.blocklist.Contains(origin) {
-		// tx origin blocked
-		return nil
-	}
-
-	headSummary := p.repo.BestBlockSummary()
-
-	// validation
-	switch {
-	case newTx.ChainTag() != p.repo.ChainTag():
-		return badTxError{"chain tag mismatch"}
-	case newTx.Size() > maxTxSize:
-		return txRejectedError{"size too large"}
-	}
-
-	if err := newTx.TestFeatures(headSummary.Header.TxsFeatures()); err != nil {
-		return txRejectedError{err.Error()}
-	}
-
-	txObj, err := resolveTx(newTx, localSubmitted)
-	if err != nil {
-		return badTxError{err.Error()}
-	}
-
+func (p *TxPool) submit(txObj *txObject, headSummary *chain.BlockSummary, rejectNonExecutable bool, localSubmitted bool) error {
 	if isChainSynced(uint64(time.Now().Unix()), headSummary.Header.Timestamp()) {
 		if !localSubmitted {
 			// reject when pool size exceeds 120% of limit
@@ -276,7 +247,62 @@ func (p *TxPool) add(newTx *tx.Transaction, rejectNonExecutable bool, localSubmi
 			p.txFeed.Send(&TxEvent{newTx, nil})
 		})
 	}
+}
+
+func (p *TxPool) add(newTx *tx.Transaction, rejectNonExecutable bool, localSubmitted bool) error {
+	if p.all.ContainsHash(newTx.Hash()) {
+		// tx already in the pool
+		return nil
+	}
+
+	origin, _ := newTx.Origin()
+	if thor.IsOriginBlocked(origin) || p.blocklist.Contains(origin) {
+		// tx origin blocked
+		return nil
+	}
+
+	headSummary := p.repo.BestBlockSummary()
+
+	// validation
+	switch {
+	case newTx.ChainTag() != p.repo.ChainTag():
+		return badTxError{"chain tag mismatch"}
+	case newTx.Size() > maxTxSize:
+		return txRejectedError{"size too large"}
+	}
+
+	if err := newTx.TestFeatures(headSummary.Header.TxsFeatures()); err != nil {
+		return txRejectedError{err.Error()}
+	}
+
+	txObj, err := resolveTx(newTx, localSubmitted)
+	if err != nil {
+		return badTxError{err.Error()}
+	}
+
+	if err := p.submit(txObj, headSummary, rejectNonExecutable, localSubmitted); err != nil {
+		return err
+	}
+
 	atomic.AddUint32(&p.addedAfterWash, 1)
+	return nil
+}
+
+func (p *TxPool) addEth(newTx *types.Transaction, rejectNonExecutable bool, localSubmitted bool) error {
+
+	if p.all.ContainsHash(thor.BytesToBytes32(newTx.Hash().Bytes())) {
+		// tx already in the pool
+		return nil
+	}
+
+	// validation
+	switch {
+	case newTx.ChainId().Bytes()[len(newTx.ChainId().Bytes())-1] != p.repo.ChainTag():
+		return badTxError{"chain tag mismatch"}
+	case newTx.Size() > maxTxSize:
+		return txRejectedError{"size too large"}
+	}
+
 	return nil
 }
 
@@ -289,6 +315,11 @@ func (p *TxPool) Add(newTx *tx.Transaction) error {
 // AddLocal adds new locally submitted tx into pool.
 func (p *TxPool) AddLocal(newTx *tx.Transaction) error {
 	return p.add(newTx, false, true)
+}
+
+// AddLocalEth adds new locally submitted tx into pool.
+func (p *TxPool) AddLocalEth(newTx *types.Transaction) error {
+	return p.addEth(newTx, false, true)
 }
 
 // Get get pooled tx by id.

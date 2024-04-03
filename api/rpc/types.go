@@ -11,7 +11,12 @@ type rpcResponse struct {
 	JsonRPC string      `json:"jsonrpc"`
 	ID      int         `json:"id"`
 	Result  interface{} `json:"result"`
-	Error   *rpcError   `json:"error"`
+}
+
+type errorRpcResponse struct {
+	JsonRPC string   `json:"jsonrpc"`
+	ID      int      `json:"id"`
+	Error   rpcError `json:"error"`
 }
 
 type rpcError struct {

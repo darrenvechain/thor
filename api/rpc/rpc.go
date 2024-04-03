@@ -40,9 +40,24 @@ func (r *RPC) handleEthSendRawTransaction(w http.ResponseWriter, req *http.Reque
 		return utils.BadRequest(errors.WithMessage(err, "failed to unmarshal transaction"))
 	}
 
-	tx.Hash()
+	if err := r.pool.AddLocalEth(&tx); err != nil {
+		if txpool.IsBadTx(err) {
+			return utils.BadRequest(err)
+		}
+		if txpool.IsTxRejected(err) {
+			return utils.Forbidden(err)
+		}
+		return err
+	}
 
-	return nil
+	result := rpcResponse{
+		ID:      request.ID,
+		JsonRPC: "2.0",
+		Result:  tx.Hash().String(),
+	}
+
+	return utils.WriteJSON(w, result)
+
 }
 
 func (r *RPC) handleRpcRequest(w http.ResponseWriter, req *http.Request) error {
