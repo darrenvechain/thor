@@ -81,7 +81,7 @@ jobs:
 
       - name: Debug meta
         run: |
-          echo ${{ toJson(steps.meta.outputs) }} | jq '.tags[0]'
+          echo "${{ toJson(steps.meta.outputs) }}" | jq '.tags[0]'
 
       - name: Scan for vulnerabilities
         uses: crazy-max/ghaction-container-scan@v3
