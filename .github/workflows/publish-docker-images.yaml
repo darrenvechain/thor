@@ -65,25 +65,23 @@ jobs:
       - name: Debug metadata
         run: echo "${{ toJSON(steps.meta.outputs) }}"
 
-      - name: Build & Push
-        uses: docker/build-push-action@v5
-        id: build
-        with:
-          context: .
-          platforms: linux/amd64
-          push: ${{ github.event_name != 'pull_request' }}
-          provenance: false
-          tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
-
-      - name: Debug metadata
-        run: echo "${{ toJSON(steps.meta.outputs) }}"
+      # - name: Build & Push
+      #   uses: docker/build-push-action@v5
+      #   id: build
+      #   with:
+      #     context: .
+      #     platforms: linux/amd64
+      #     push: ${{ github.event_name != 'pull_request' }}
+      #     provenance: false
+      #     tags: ${{ steps.meta.outputs.tags }}
+      #     labels: ${{ steps.meta.outputs.labels }}
 
       - name: Docker Image LS
         run: docker image ls ${{ steps.meta.outputs.images }}
 
-      - name: Debug build
+      - name: Debug meta
         run: |
+          echo $DOCKER_METADATA_OUTPUT_TAGS
           echo "${{ toJSON(steps.meta.outputs)}}"
           echo "${{ toJSON(steps.meta.outputs.tags)}}"
 
