@@ -81,7 +81,7 @@ jobs:
 
       - name: Debug meta
         run: |
-          echo ${{ steps.meta.outputs.tags[0] }}
+          echo ${{ steps.meta.outputs.tags }}
 
       - name: Scan for vulnerabilities
         uses: crazy-max/ghaction-container-scan@v3
