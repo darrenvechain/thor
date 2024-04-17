@@ -62,19 +62,29 @@ jobs:
           # use the branch + sha if workflow_dispatch
           tags: ${{ inputs.tags || format('type=raw,value={0}-{1}', github.ref_name, github.sha) }}
 
-      - name: Push to Registry(s)
+      - name: Debug metadata
+        run: echo "${{ toJSON(steps.meta.outputs) }}"
+
+      - name: Build & Push
         uses: docker/build-push-action@v5
+        id: build
         with:
           context: .
-          platforms: linux/amd64,linux/arm64
+          platforms: linux/amd64
           push: ${{ github.event_name != 'pull_request' }}
           provenance: false
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
 
-      - name: Scan for vulnerabilities
-        uses: crazy-max/ghaction-container-scan@v3
-        if: ${{ github.event_name == 'pull_request' || github.ref_name == 'master' }}
-        with:
-          image: ${{ steps.meta.outputs.image }}
-          annotations: true
+      - name: Debug metadata
+        run: echo "${{ toJSON(steps.meta.outputs) }}"
+
+      - name: Docker Image LS
+        run: docker image ls ${{ steps.meta.outputs.images }}
+#
+#      - name: Scan for vulnerabilities
+#        uses: crazy-max/ghaction-container-scan@v3
+#        if: ${{ github.event_name == 'pull_request' || github.ref_name == 'master' }}
+#        with:
+#          image: ${{ steps.build.outputs.image }}
+#          annotations: true
