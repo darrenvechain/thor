@@ -83,7 +83,9 @@ jobs:
         run: docker image ls ${{ steps.meta.outputs.images }}
 
       - name: Debug build
-        run: echo "${{ steps.meta.outputs.tags[0] }}"
+        run: |
+          echo "${{ toJSON(steps.meta.outputs)}}"
+          echo "${{ toJSON(steps.meta.outputs.tags)}}"
 
       - name: Scan for vulnerabilities
         uses: crazy-max/ghaction-container-scan@v3
