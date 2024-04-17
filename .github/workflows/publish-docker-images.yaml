@@ -82,6 +82,9 @@ jobs:
       - name: Docker Image LS
         run: docker image ls ${{ steps.meta.outputs.images }}
 
+      - name: Debug build
+        run: echo "${{ steps.build.outputs.tags[0] }}"
+
       - name: Scan for vulnerabilities
         uses: crazy-max/ghaction-container-scan@v3
         if: ${{ github.event_name == 'pull_request' || github.ref_name == 'master' }}
