@@ -81,14 +81,14 @@ jobs:
 
       - name: Debug meta
         run: |
-          echo $DOCKER_METADATA_OUTPUT_TAGS
-          echo "${{ toJSON(steps.meta.outputs)}}"
-          echo "${{ toJSON(steps.meta.outputs.tags)}}"
+          # echo $DOCKER_METADATA_OUTPUT_TAGS
+          # echo "${{ toJSON(steps.meta.outputs)}}"
+          # echo "${{ toJSON(steps.meta.outputs.tags)}}"
           echo ${{ steps.meta.outputs.tags[0] }}
 
       - name: Scan for vulnerabilities
         uses: crazy-max/ghaction-container-scan@v3
         if: ${{ github.event_name == 'pull_request' || github.ref_name == 'master' }}
         with:
-          image: ${{ steps.meta.outputs.tags[0] }}
+          image: 
           annotations: true
