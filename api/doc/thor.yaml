@@ -6,6 +6,8 @@ info:
     RESTful API to access VechainThor Network
     
     [Project Home](https://github.com/vechain/thor)
+    
+    ⚠️ <b>Note:</b> The examples given in this specification are optimized for main net. 
 
   license:
     name: LGPL 3.0
@@ -219,6 +221,8 @@ paths:
       summary: Send a transaction
       description: |
         This endpoint allows you to send a transaction to the blockchain. The transaction must be signed and RLP encoded.
+        
+        ⚠️ <b>Note:</b> The example values provided for this endpoint are optimized for main net.  
         
         The below is a TypeScript example of how to sign and RLP encode a transaction using the `thor-devkit` library:
         
@@ -650,6 +654,8 @@ paths:
         This endpoint allows you to create a tracer for a specific clause. Tracers are instrumental in monitoring and analyzing the execution flow within the EVM.
         
         You can customize the tracer using various options to tailor it to your specific debugging needs.
+        
+        ⚠️ <b>Note:</b> The example values provided for this endpoint are optimized for main net.
       requestBody:
         required: true
         content:
@@ -715,6 +721,8 @@ paths:
       description: |
         The endpoint retrieves storage entries related to a particular clause execution and contract address. This 
         could be useful for inspecting or analyzing storage changes.
+        
+        ⚠️ <b>Note:</b> The example values provided for this endpoint are optimized for main net.
       requestBody:
         required: true
         content:
