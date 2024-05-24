@@ -85,7 +85,7 @@ var (
 	}
 	bootNodeFlag = cli.StringFlag{
 		Name:  "bootnode",
-		Usage: "comma separated list of bootnode IDs",
+		Usage: "comma separated list of bootstrap node IDs",
 	}
 	allowedPeersFlag = cli.StringFlag{
 		Name:   "allowed-peers",
@@ -127,10 +127,25 @@ var (
 		Name:  "disable-pruner",
 		Usage: "disable state pruner to keep all history",
 	}
+	metricsEnabledFlag = cli.BoolFlag{
+		Name:  "enable-metrics",
+		Usage: "enables metrics collection",
+	}
+	metricsAddrFlag = cli.StringFlag{
+		Name:  "metrics-addr",
+		Value: "localhost:2112",
+		Usage: "metrics service listening address",
+	}
+
 	// solo mode only flags
 	onDemandFlag = cli.BoolFlag{
 		Name:  "on-demand",
 		Usage: "create new block when there is pending transaction",
+	}
+	blockInterval = cli.IntFlag{
+		Name:  "block-interval",
+		Value: 10,
+		Usage: "choose a custom block interval for solo mode (seconds)",
 	}
 	persistFlag = cli.BoolFlag{
 		Name:  "persist",
