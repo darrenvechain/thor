@@ -11,6 +11,7 @@ import (
 	"math"
 	"sort"
 	"sync"
+	"syscall"
 	"time"
 
 	"github.com/ethereum/go-ethereum/event"
@@ -94,6 +95,14 @@ func (c *Communicator) Sync(ctx context.Context, handler HandleBlockStream) {
 			log.Debug("synchronization start")
 
 			best := c.repo.BestBlockSummary().Header
+
+			if best.Number() > 13800000 {
+				// we are near to problematic block, so let's force an exit
+				log.Warn("synchronization done, best assumed")
+				syscall.Kill(syscall.Getpid(), syscall.SIGINT)
+				break
+			}
+
 			// choose peer which has the head block with higher total score
 			peer := c.peerSet.Slice().Find(func(peer *Peer) bool {
 				_, totalScore := peer.Head()
