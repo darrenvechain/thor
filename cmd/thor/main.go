@@ -61,6 +61,13 @@ func fullVersion() string {
 }
 
 func main() {
+	if err := run(os.Args); err != nil {
+		fmt.Fprintln(os.Stderr, err)
+		os.Exit(1)
+	}
+}
+
+func run(args []string) error {
 	app := cli.App{
 		Version:   fullVersion(),
 		Name:      "Thor",
@@ -138,10 +145,7 @@ func main() {
 		},
 	}
 
-	if err := app.Run(os.Args); err != nil {
-		fmt.Fprintln(os.Stderr, err)
-		os.Exit(1)
-	}
+	return app.Run(args)
 }
 
 func defaultAction(ctx *cli.Context) error {
