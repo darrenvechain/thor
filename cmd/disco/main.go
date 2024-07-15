@@ -28,39 +28,17 @@ var (
 	copyrightYear string
 
 	flags = []cli.Flag{
-		cli.StringFlag{
-			Name:  "addr",
-			Value: ":55555",
-			Usage: "listen address",
-		},
-		cli.StringFlag{
-			Name:  "keyfile",
-			Usage: "private key file path",
-			Value: defaultKeyFile(),
-		},
-		cli.StringFlag{
-			Name:  "keyhex",
-			Usage: "private key as hex",
-		},
-		cli.StringFlag{
-			Name:  "nat",
-			Value: "none",
-			Usage: "port mapping mechanism (any|none|upnp|pmp|extip:<IP>)",
-		},
-		cli.StringFlag{
-			Name:  "netrestrict",
-			Usage: "restrict network communication to the given IP networks (CIDR masks)",
-		},
-		cli.IntFlag{
-			Name:  "verbosity",
-			Value: log.LegacyLevelWarn,
-			Usage: "log verbosity (0-9)",
-		},
+		addrFlag,
+		keyFileFlag,
+		keyHexFlag,
+		natFlag,
+		netRestrictFlag,
+		verbosityFlag,
 	}
 )
 
 func run(ctx *cli.Context) error {
-	log.Init(ctx.Int("verbosity"), false)
+	initLogger(ctx)
 
 	natm, err := nat.Parse(ctx.String("nat"))
 	if err != nil {
@@ -111,7 +89,7 @@ func run(ctx *cli.Context) error {
 	if err != nil {
 		return err
 	}
-	fmt.Println("Running", net.Self().String())
+	log.Info("Running", "URI", net.Self().String())
 
 	select {}
 }

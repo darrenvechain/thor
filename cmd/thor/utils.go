@@ -12,6 +12,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"log/slog"
 	"math"
 	"net"
 	"net/http"
@@ -29,6 +30,7 @@ import (
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/common/fdlimit"
 	"github.com/ethereum/go-ethereum/crypto"
+	ethlog "github.com/ethereum/go-ethereum/log"
 	"github.com/ethereum/go-ethereum/p2p/discover"
 	"github.com/ethereum/go-ethereum/p2p/nat"
 	"github.com/ethereum/go-ethereum/rlp"
@@ -44,6 +46,7 @@ import (
 	"github.com/vechain/thor/v2/co"
 	"github.com/vechain/thor/v2/comm"
 	"github.com/vechain/thor/v2/genesis"
+	"github.com/vechain/thor/v2/log"
 	"github.com/vechain/thor/v2/logdb"
 	"github.com/vechain/thor/v2/metrics"
 	"github.com/vechain/thor/v2/muxdb"
@@ -56,6 +59,42 @@ import (
 )
 
 var devNetGenesisID = genesis.NewDevnet().ID()
+
+func initLogger(ctx *cli.Context) {
+	logLevel := log.FromLegacyLevel(ctx.Int(verbosityFlag.Name))
+	jsonLogs := ctx.Bool(jsonLogsFlag.Name)
+	output := io.Writer(os.Stdout)
+
+	var handler slog.Handler
+	if jsonLogs {
+		handler = log.JSONHandlerWithLevel(output, logLevel)
+	} else {
+		useColor := (isatty.IsTerminal(os.Stderr.Fd()) || isatty.IsCygwinTerminal(os.Stderr.Fd())) && os.Getenv("TERM") != "dumb"
+		handler = log.NewTerminalHandlerWithLevel(output, logLevel, useColor)
+	}
+	log.SetDefault(log.NewLogger(handler))
+	ethlog.Root().SetHandler(&ethLogger{
+		logger: log.WithContext("pkg", "geth"),
+	})
+}
+
+type ethLogger struct {
+	logger log.Logger
+}
+
+func (h *ethLogger) Log(r *ethlog.Record) error {
+	switch r.Lvl {
+	case ethlog.LvlCrit:
+		h.logger.Crit(r.Msg)
+	case ethlog.LvlError:
+		h.logger.Error(r.Msg)
+	case ethlog.LvlWarn:
+		h.logger.Warn(r.Msg)
+	default:
+		return nil
+	}
+	return nil
+}
 
 func loadOrGeneratePrivateKey(path string) (*ecdsa.PrivateKey, error) {
 	key, err := crypto.LoadECDSA(path)
