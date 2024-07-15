@@ -53,7 +53,7 @@ var (
 		},
 		cli.IntFlag{
 			Name:  "verbosity",
-			Value: int(log.LevelWarn),
+			Value: log.LegacyLevelWarn,
 			Usage: "log verbosity (0-9)",
 		},
 	}

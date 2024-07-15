@@ -6,11 +6,9 @@
 package main
 
 import (
+	"github.com/vechain/thor/v2/log"
 	cli "gopkg.in/urfave/cli.v1"
 )
-
-// legacy value for log15.LvlInfo
-const defaultLogLevel = 3
 
 var (
 	networkFlag = cli.StringFlag{
@@ -77,7 +75,7 @@ var (
 	}
 	verbosityFlag = cli.Uint64Flag{
 		Name:  "verbosity",
-		Value: defaultLogLevel,
+		Value: log.LegacyLevelInfo,
 		Usage: "log verbosity (0-9)",
 	}
 	jsonLogsFlag = cli.BoolFlag{
