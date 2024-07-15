@@ -9,6 +9,9 @@ import (
 	cli "gopkg.in/urfave/cli.v1"
 )
 
+// legacy value for log15.LvlInfo
+const defaultLogLevel = 3
+
 var (
 	networkFlag = cli.StringFlag{
 		Name:  "network",
@@ -73,9 +76,8 @@ var (
 		Usage: "enables API requests logging",
 	}
 	verbosityFlag = cli.Uint64Flag{
-		Name: "verbosity",
-		// Legacy value for log15.LvlInfo
-		Value: 3,
+		Name:  "verbosity",
+		Value: defaultLogLevel,
 		Usage: "log verbosity (0-9)",
 	}
 	jsonLogsFlag = cli.BoolFlag{

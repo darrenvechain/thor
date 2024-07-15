@@ -18,9 +18,13 @@ package log
 
 import (
 	"context"
+	"io"
 	"log/slog"
 	"os"
 	"sync/atomic"
+
+	ethlog "github.com/ethereum/go-ethereum/log"
+	"github.com/mattn/go-isatty"
 )
 
 var root atomic.Value
@@ -184,4 +188,46 @@ func (r *RootWithContext) Write(level slog.Level, msg string, ctx ...interface{}
 
 func (r *RootWithContext) Enabled(ctx context.Context, level slog.Level) bool {
 	return Root().Enabled(ctx, level)
+}
+
+func Init(legacyLevel int, jsonLogs bool) {
+	logLevel := FromLegacyLevel(legacyLevel)
+	output := io.Writer(os.Stdout)
+
+	var handler slog.Handler
+	if jsonLogs {
+		handler = JSONHandlerWithLevel(output, logLevel)
+	} else {
+		useColor := (isatty.IsTerminal(os.Stderr.Fd()) || isatty.IsCygwinTerminal(os.Stderr.Fd())) && os.Getenv("TERM") != "dumb"
+		handler = NewTerminalHandlerWithLevel(output, logLevel, useColor)
+	}
+	SetDefault(NewLogger(handler))
+	ethlog.Root().SetHandler(&EthLogHandler{
+		logger: WithContext("pkg", "geth"),
+	})
+}
+
+type EthLogHandler struct {
+	logger Logger
+}
+
+func (h *EthLogHandler) Log(r *ethlog.Record) error {
+	switch r.Lvl {
+	case ethlog.LvlCrit:
+		h.logger.Crit(r.Msg)
+	case ethlog.LvlError:
+		h.logger.Error(r.Msg)
+	case ethlog.LvlWarn:
+		h.logger.Warn(r.Msg)
+	case ethlog.LvlInfo:
+		h.logger.Info(r.Msg)
+	case ethlog.LvlDebug:
+		h.logger.Debug(r.Msg)
+	case ethlog.LvlTrace:
+		h.logger.Trace(r.Msg)
+	default:
+		break
+	}
+
+	return nil
 }

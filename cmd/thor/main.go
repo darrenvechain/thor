@@ -158,7 +158,7 @@ func defaultAction(ctx *cli.Context) error {
 	if err != nil {
 		return errors.Wrap(err, "parse verbosity flag")
 	}
-	initLogger(lvl, ctx.Bool(jsonLogsFlag.Name))
+	log.Init(lvl, ctx.Bool(jsonLogsFlag.Name))
 
 	// enable metrics as soon as possible
 	metricsURL := ""
@@ -285,7 +285,7 @@ func soloAction(ctx *cli.Context) error {
 	if err != nil {
 		return errors.Wrap(err, "parse verbosity flag")
 	}
-	initLogger(lvl, ctx.Bool(jsonLogsFlag.Name))
+	log.Init(lvl, ctx.Bool(jsonLogsFlag.Name))
 
 	// enable metrics as soon as possible
 	metricsURL := ""
