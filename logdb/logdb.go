@@ -95,7 +95,7 @@ func (db *LogDB) Path() string {
 }
 
 func (db *LogDB) FilterEvents(ctx context.Context, filter *EventFilter) ([]*Event, error) {
-	const query = `SELECT e.seq, r0.data, e.blockTime, r1.data, r2.data, e.clauseIndex, r3.data, r4.data, r5.data, r6.data, r7.data, r8.data, e.data
+	const query = `SELECT e.seq, r0.data, e.blockTime, r1.data, r2.data, e.clauseIndex, e.txIndex, e.clauseIndex, r3.data, r4.data, r5.data, r6.data, r7.data, r8.data, e.data
 FROM (%v) e
 	LEFT JOIN ref r0 ON e.blockID = r0.id
 	LEFT JOIN ref r1 ON e.txID = r1.id
@@ -251,6 +251,8 @@ func (db *LogDB) queryEvents(ctx context.Context, query string, args ...interfac
 			clauseIndex uint32
 			address     []byte
 			topics      [5][]byte
+			txIndex     uint32
+			logIndex    uint32
 			data        []byte
 		)
 		if err := rows.Scan(
@@ -260,6 +262,8 @@ func (db *LogDB) queryEvents(ctx context.Context, query string, args ...interfac
 			&txID,
 			&txOrigin,
 			&clauseIndex,
+			&txIndex,
+			&logIndex,
 			&address,
 			&topics[0],
 			&topics[1],
@@ -276,6 +280,8 @@ func (db *LogDB) queryEvents(ctx context.Context, query string, args ...interfac
 			BlockID:     thor.BytesToBytes32(blockID),
 			BlockTime:   blockTime,
 			TxID:        thor.BytesToBytes32(txID),
+			TxIndex:     txIndex,
+			LogIndex:    logIndex,
 			TxOrigin:    thor.BytesToAddress(txOrigin),
 			ClauseIndex: clauseIndex,
 			Address:     thor.BytesToAddress(address),
@@ -443,6 +449,11 @@ func (w *Writer) Write(b *block.Block, receipts tx.Receipts) error {
 		}
 	)
 
+	indexes := make(map[thor.Bytes32]int, len(txs))
+	for i, tx := range txs {
+		indexes[tx.ID()] = i
+	}
+
 	for i, r := range receipts {
 		if isReceiptEmpty(r) {
 			continue
@@ -466,6 +477,9 @@ func (w *Writer) Write(b *block.Block, receipts tx.Receipts) error {
 			txID = tx.ID()
 			txOrigin, _ = tx.Origin()
 		}
+
+		txIndex := indexes[txID]
+
 		if err := w.exec(
 			"INSERT OR IGNORE INTO ref(data) VALUES(?),(?)",
 			txID[:], txOrigin[:]); err != nil {
@@ -485,8 +499,8 @@ func (w *Writer) Write(b *block.Block, receipts tx.Receipts) error {
 					return err
 				}
 
-				const query = "INSERT OR IGNORE INTO event(seq, blockTime, clauseIndex, data, blockID, txID, txOrigin, address, topic0, topic1, topic2, topic3, topic4) " +
-					"VALUES(?,?,?,?," +
+				const query = "INSERT OR IGNORE INTO event(seq, blockTime, clauseIndex, txIndex, logIndex, data, blockID, txID, txOrigin, address, topic0, topic1, topic2, topic3, topic4) " +
+					"VALUES(?,?,?,?,?,?," +
 					refIDQuery + "," +
 					refIDQuery + "," +
 					refIDQuery + "," +
@@ -507,6 +521,8 @@ func (w *Writer) Write(b *block.Block, receipts tx.Receipts) error {
 					newSequence(blockNum, eventCount),
 					blockTimestamp,
 					clauseIndex,
+					txIndex,
+					eventCount,
 					eventData,
 					blockID[:],
 					txID[:],
@@ -547,7 +563,8 @@ func (w *Writer) Write(b *block.Block, receipts tx.Receipts) error {
 					txID[:],
 					txOrigin[:],
 					tr.Sender[:],
-					tr.Recipient[:]); err != nil {
+					tr.Recipient[:],
+				); err != nil {
 					return err
 				}
 				transferCount++

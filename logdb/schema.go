@@ -19,6 +19,8 @@ const (
 	txID INTEGER NOT NULL,
 	txOrigin INTEGER NOT NULL,
 	clauseIndex INTEGER NOT NULL,
+	txIndex INTEGER,
+	logIndex INTEGER,
 	address INTEGER NOT NULL,
 	topic0 INTEGER,
 	topic1 INTEGER,

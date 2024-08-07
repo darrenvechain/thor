@@ -19,6 +19,8 @@ type Event struct {
 	BlockID     thor.Bytes32
 	BlockTime   uint64
 	TxID        thor.Bytes32
+	TxIndex     uint32
+	LogIndex    uint32
 	TxOrigin    thor.Address //contract caller
 	ClauseIndex uint32
 	Address     thor.Address // always a contract address

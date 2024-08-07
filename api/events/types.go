@@ -16,6 +16,17 @@ import (
 	"github.com/vechain/thor/v2/thor"
 )
 
+type EventLogMeta struct {
+	BlockID        thor.Bytes32 `json:"blockID"`
+	BlockNumber    uint32       `json:"blockNumber"`
+	BlockTimestamp uint64       `json:"blockTimestamp"`
+	TxID           thor.Bytes32 `json:"txID"`
+	TxOrigin       thor.Address `json:"txOrigin"`
+	ClauseIndex    uint32       `json:"clauseIndex"`
+	TxIndex        uint32       `json:"txIndex"`
+	LogIndex       uint32       `json:"logIndex"`
+}
+
 type LogMeta struct {
 	BlockID        thor.Bytes32 `json:"blockID"`
 	BlockNumber    uint32       `json:"blockNumber"`
@@ -38,7 +49,7 @@ type FilteredEvent struct {
 	Address thor.Address    `json:"address"`
 	Topics  []*thor.Bytes32 `json:"topics"`
 	Data    string          `json:"data"`
-	Meta    LogMeta         `json:"meta"`
+	Meta    EventLogMeta    `json:"meta"`
 }
 
 // convert a logdb.Event into a json format Event
@@ -46,11 +57,13 @@ func convertEvent(event *logdb.Event) *FilteredEvent {
 	fe := FilteredEvent{
 		Address: event.Address,
 		Data:    hexutil.Encode(event.Data),
-		Meta: LogMeta{
+		Meta: EventLogMeta{
 			BlockID:        event.BlockID,
 			BlockNumber:    event.BlockNumber,
 			BlockTimestamp: event.BlockTime,
 			TxID:           event.TxID,
+			TxIndex:        event.TxIndex,
+			LogIndex:       event.LogIndex,
 			TxOrigin:       event.TxOrigin,
 			ClauseIndex:    event.ClauseIndex,
 		},
