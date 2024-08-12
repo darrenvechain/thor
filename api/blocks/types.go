@@ -101,6 +101,11 @@ type CoefStats struct {
 	Total     int         `json:"total"`
 	GasUsed   uint64      `json:"gasUsed"`
 	UnusedGas uint64      `json:"unusedGas"`
+	Min       uint8       `json:"min"`
+	Max       uint8       `json:"max"`
+	Median    uint8       `json:"median"`
+	Average   float64     `json:"average"`
+	Mode      uint8       `json:"mode"`
 }
 
 func buildJSONBlockSummary(summary *chain.BlockSummary, isTrunk bool, isFinalized bool) *JSONBlockSummary {
