@@ -90,6 +90,19 @@ type JSONExpandedBlock struct {
 	Transactions []*JSONEmbeddedTx `json:"transactions"`
 }
 
+type CoefRange struct {
+	Min     uint8 `json:"min"`
+	Max     uint8 `json:"max"`
+	Percent int   `json:"percent"`
+}
+
+type CoefStats struct {
+	Ranges    []CoefRange `json:"ranges"`
+	Total     int         `json:"total"`
+	GasUsed   uint64      `json:"gasUsed"`
+	UnusedGas uint64      `json:"unusedGas"`
+}
+
 func buildJSONBlockSummary(summary *chain.BlockSummary, isTrunk bool, isFinalized bool) *JSONBlockSummary {
 	header := summary.Header
 	signer, _ := header.Signer()
