@@ -6,10 +6,16 @@
 package thorclient
 
 import (
+	"fmt"
+	"net"
 	"net/http"
 	"net/http/httptest"
+	"os"
 	"reflect"
 	"testing"
+	"time"
+
+	"github.com/vechain/thor/v2/cmd/thor/runtime"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/vechain/thor/v2/api/accounts"
@@ -17,6 +23,68 @@ import (
 	"github.com/vechain/thor/v2/thor"
 	"github.com/vechain/thor/v2/tx"
 )
+
+var (
+	apiURL string
+)
+
+func findAvailablePort() (int, error) {
+	// Create a listener on any available port
+	listener, err := net.Listen("tcp", "localhost:0")
+	if err != nil {
+		return 0, err
+	}
+	defer listener.Close()
+
+	// Extract the port number from the listener's address
+	addr := listener.Addr().(*net.TCPAddr)
+	return addr.Port, nil
+}
+
+func TestMain(m *testing.M) {
+	// Defer teardown code (e.g., close the database connection)
+	defer func() {
+		fmt.Println("Tearing down")
+		// Perform teardown tasks here
+	}()
+
+	port, err := findAvailablePort()
+	if err != nil {
+		panic("failed to find available port")
+	}
+	apiAddr := fmt.Sprintf("localhost:%d", port)
+	apiURL = "http://" + apiAddr
+	dataDir, err := os.MkdirTemp("", "thorclient")
+	if err != nil {
+		panic("failed to create temp dir")
+	}
+
+	args := []string{os.Args[0], "solo", "--api-addr", apiAddr, "--persist", "--data-dir", dataDir}
+
+	go func() {
+		runtime.Start(args)
+	}()
+
+	ticker := time.NewTicker(100 * time.Millisecond)
+	for {
+		select {
+		case <-ticker.C:
+			res, err := http.Get("http://" + apiAddr + "/blocks/0")
+			if err == nil && res.StatusCode == http.StatusOK {
+				os.Exit(m.Run())
+			}
+		case <-time.After(5 * time.Second):
+			panic("timeout waiting for solo to start")
+		}
+	}
+}
+
+func TestClient_GetBlock(t *testing.T) {
+	client := New(apiURL)
+	block, err := client.GetBlock("0")
+	assert.NoError(t, err)
+	assert.NotNil(t, block)
+}
 
 func TestWs_Error(t *testing.T) {
 	client := New("http://test.com")
