@@ -15,11 +15,10 @@ import (
 	"testing"
 	"time"
 
-	"github.com/vechain/thor/v2/cmd/thor/runtime"
-
 	"github.com/stretchr/testify/assert"
 	"github.com/vechain/thor/v2/api/accounts"
 	"github.com/vechain/thor/v2/api/transactions"
+	"github.com/vechain/thor/v2/cmd/thor/runtime"
 	"github.com/vechain/thor/v2/thor"
 	"github.com/vechain/thor/v2/tx"
 )
