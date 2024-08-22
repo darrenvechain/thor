@@ -20,6 +20,14 @@ type Account struct {
 	HasCode bool                 `json:"hasCode"`
 }
 
+type AccountCode struct {
+	Code string `json:"code"`
+}
+
+type AccountStorage struct {
+	Value string `json:"value"`
+}
+
 // CallData represents contract-call body
 type CallData struct {
 	Value    *math.HexOrDecimal256 `json:"value"`

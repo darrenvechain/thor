@@ -7,10 +7,35 @@ package httpclient
 
 import (
 	"encoding/json"
+	"math/big"
+	"net"
 	"net/http"
 	"net/http/httptest"
 	"reflect"
 	"testing"
+	"time"
+
+	"github.com/vechain/thor/v2/packer"
+
+	"github.com/ethereum/go-ethereum/crypto"
+
+	"github.com/vechain/thor/v2/tx"
+
+	"github.com/vechain/thor/v2/co"
+
+	"github.com/vechain/thor/v2/cmd/thor/solo"
+	"github.com/vechain/thor/v2/logdb"
+	"github.com/vechain/thor/v2/txpool"
+
+	"github.com/vechain/thor/v2/block"
+
+	"github.com/vechain/thor/v2/api"
+	"github.com/vechain/thor/v2/chain"
+	"github.com/vechain/thor/v2/genesis"
+	"github.com/vechain/thor/v2/muxdb"
+	"github.com/vechain/thor/v2/state"
+
+	common2 "github.com/ethereum/go-ethereum/common"
 
 	"github.com/ethereum/go-ethereum/common/math"
 	"github.com/stretchr/testify/assert"
@@ -24,31 +49,143 @@ import (
 	"github.com/vechain/thor/v2/thorclient/common"
 )
 
-func TestClient_GetTransactionReceipt(t *testing.T) {
-	txID := thor.Bytes32{0x01}
-	expectedReceipt := &transactions.Receipt{
-		GasUsed:  1000,
-		GasPayer: thor.Address{0x01},
-		Paid:     &math.HexOrDecimal256{},
-		Reward:   &math.HexOrDecimal256{},
-		Reverted: false,
-		Meta:     transactions.ReceiptMeta{},
-		Outputs:  []*transactions.Output{},
+var (
+	genesisBlock *block.Block
+	apiURL       = "http://localhost:0"
+	transaction  *tx.Transaction
+	mempoolTx    *tx.Transaction
+)
+
+func initTransaction(repo *chain.Repository, stater *state.Stater, b *block.Block) (*tx.Transaction, error) {
+	addr := thor.BytesToAddress([]byte("to"))
+	cla := tx.NewClause(&addr).WithValue(big.NewInt(10000))
+	transaction = new(tx.Builder).
+		ChainTag(repo.ChainTag()).
+		GasPriceCoef(1).
+		Expiration(10).
+		Gas(21000).
+		Nonce(1).
+		Clause(cla).
+		BlockRef(tx.NewBlockRef(0)).
+		Build()
+
+	mempoolTx = new(tx.Builder).
+		ChainTag(repo.ChainTag()).
+		Expiration(10).
+		Gas(21000).
+		Nonce(1).
+		Build()
+
+	sig, err := crypto.Sign(transaction.SigningHash().Bytes(), genesis.DevAccounts()[0].PrivateKey)
+	if err != nil {
+		return nil, err
 	}
 
-	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		assert.Equal(t, "/transactions/"+txID.String()+"/receipt", r.URL.Path)
+	sig2, err := crypto.Sign(mempoolTx.SigningHash().Bytes(), genesis.DevAccounts()[0].PrivateKey)
+	if err != nil {
+		return nil, err
+	}
 
-		receiptBytes, _ := json.Marshal(expectedReceipt)
-		w.Write(receiptBytes)
-	}))
-	defer ts.Close()
+	transaction = transaction.WithSignature(sig)
+	mempoolTx = mempoolTx.WithSignature(sig2)
 
-	client := New(ts.URL)
+	packer := packer.New(repo, stater, genesis.DevAccounts()[0].Address, &genesis.DevAccounts()[0].Address, thor.NoFork)
+	sum, _ := repo.GetBlockSummary(b.Header().ID())
+	flow, err := packer.Schedule(sum, uint64(time.Now().Unix()))
+	if err != nil {
+		return nil, err
+	}
+	err = flow.Adopt(transaction)
+	if err != nil {
+		return nil, err
+	}
+	b, stage, receipts, err := flow.Pack(genesis.DevAccounts()[0].PrivateKey, 0, false)
+	if err != nil {
+		return nil, err
+	}
+	if _, err := stage.Commit(); err != nil {
+		return nil, err
+	}
+	if err := repo.AddBlock(b, receipts, 0); err != nil {
+		return nil, err
+	}
+	if err := repo.SetBestBlockID(b.Header().ID()); err != nil {
+		return nil, err
+	}
+
+	return mempoolTx, nil
+}
+
+func TestMain(m *testing.M) {
+	db := muxdb.NewMem()
+	stater := state.NewStater(db)
+	gene := genesis.NewDevnet()
+	logDB, err := logdb.NewMem()
+	if err != nil {
+		panic(err)
+	}
+	genesisBlock, _, _, err = gene.Build(stater)
+	if err != nil {
+		panic(err)
+	}
+	repo, _ := chain.NewRepository(db, genesisBlock)
+
+	mempoolTx, err := initTransaction(repo, stater, genesisBlock)
+	if err != nil {
+		panic(err)
+	}
+
+	mempool := txpool.New(
+		repo,
+		stater,
+		txpool.Options{Limit: 10000, LimitPerAccount: 16, MaxLifetime: 10 * time.Minute},
+	)
+	if err := mempool.Add(mempoolTx); err != nil {
+		panic(err)
+	}
+	bft := solo.NewBFTEngine(repo)
+	handler, closer := api.New(
+		repo,
+		stater,
+		mempool,
+		logDB,
+		bft,
+		&solo.Communicator{},
+		thor.NoFork,
+		"*",
+		5,
+		10_000_000,
+		false,
+		false,
+		true,
+		false,
+		false,
+		1000)
+	defer closer()
+
+	listener, err := net.Listen("tcp", "localhost:0")
+	if err != nil {
+		panic(err)
+	}
+	apiURL = "http://" + listener.Addr().String()
+	defer listener.Close()
+	srv := &http.Server{Handler: handler, ReadHeaderTimeout: time.Second, ReadTimeout: 5 * time.Second}
+	defer srv.Close()
+	var goes co.Goes
+	goes.Go(func() {
+		srv.Serve(listener)
+	})
+
+	m.Run()
+}
+
+func TestClient_GetTransactionReceipt(t *testing.T) {
+	client := New(apiURL)
+	txID := transaction.ID()
 	receipt, err := client.GetTransactionReceipt(&txID)
 
 	assert.NoError(t, err)
-	assert.Equal(t, expectedReceipt, receipt)
+	assert.Equal(t, transaction.ID(), receipt.Meta.TxID)
 }
 
 func TestClient_InspectClauses(t *testing.T) {
@@ -61,15 +198,7 @@ func TestClient_InspectClauses(t *testing.T) {
 		Reverted:  false,
 		VMError:   "no error"}}
 
-	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		assert.Equal(t, "/accounts/*", r.URL.Path)
-
-		inspectionResBytes, _ := json.Marshal(expectedResults)
-		w.Write(inspectionResBytes)
-	}))
-	defer ts.Close()
-
-	client := New(ts.URL)
+	client := New(apiURL)
 	results, err := client.InspectClauses(calldata)
 
 	assert.NoError(t, err)
@@ -169,12 +298,15 @@ func TestClient_GetAccount(t *testing.T) {
 
 func TestClient_GetAccountCode(t *testing.T) {
 	addr := thor.Address{0x01}
+	// expected is a map with "code" as the only key
 	expectedByteCode := []byte{0x01}
+	expected := map[string]string{"code": common2.Bytes2Hex(expectedByteCode)}
 
 	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		assert.Equal(t, "/accounts/"+addr.String()+"/code", r.URL.Path)
 
-		w.Write(expectedByteCode)
+		accountBytes, _ := json.Marshal(expected)
+		w.Write(accountBytes)
 	}))
 	defer ts.Close()
 
@@ -264,7 +396,7 @@ func TestClient_GetTransaction(t *testing.T) {
 	defer ts.Close()
 
 	client := New(ts.URL)
-	tx, err := client.GetTransaction(&txID, false)
+	tx, err := client.GetTransaction(&txID, false, false)
 
 	assert.NoError(t, err)
 	assert.Equal(t, expectedTx, tx)
@@ -404,9 +536,11 @@ func TestClient_Errors(t *testing.T) {
 			function: func(client *Client) (*blocks.JSONBlockSummary, error) { return client.GetBlock(blockID) },
 		},
 		{
-			name:     "GetTransaction",
-			path:     "/transactions/" + txID.String(),
-			function: func(client *Client) (*transactions.Transaction, error) { return client.GetTransaction(&txID, false) },
+			name: "GetTransaction",
+			path: "/transactions/" + txID.String(),
+			function: func(client *Client) (*transactions.Transaction, error) {
+				return client.GetTransaction(&txID, false, false)
+			},
 		},
 		{
 			name:     "GetPeers",

@@ -132,11 +132,31 @@ func (c *Client) GetAccountCode(addr *thor.Address, revision string) ([]byte, er
 		url += "?revision=" + revision
 	}
 
-	return c.httpGET(url)
+	res, err := c.httpGET(url)
+	if err != nil {
+		return nil, fmt.Errorf("unable to retrieve account code - %w", err)
+	}
+
+	var code accounts.AccountCode
+	if err = json.Unmarshal(res, &code); err != nil {
+		return nil, fmt.Errorf("unable to unmarshall events - %w", err)
+	}
+
+	return []byte(code.Code), nil
 }
 
 func (c *Client) GetStorage(addr *thor.Address, key *thor.Bytes32) ([]byte, error) {
-	return c.httpGET(c.url + "/accounts/" + addr.String() + "/key/" + key.String())
+	res, err := c.httpGET(c.url + "/accounts/" + addr.String() + "/storage/" + key.String())
+	if err != nil {
+		return nil, fmt.Errorf("unable to retrieve account storage - %w", err)
+	}
+
+	var storage accounts.AccountStorage
+	if err = json.Unmarshal(res, &storage); err != nil {
+		return nil, fmt.Errorf("unable to unmarshall events - %w", err)
+	}
+
+	return []byte(storage.Value), nil
 }
 
 func (c *Client) GetBlockExpanded(blockID string) (*blocks.JSONExpandedBlock, error) {
