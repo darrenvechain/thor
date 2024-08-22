@@ -15,38 +15,30 @@ import (
 	"testing"
 	"time"
 
-	"github.com/vechain/thor/v2/packer"
-
-	"github.com/ethereum/go-ethereum/crypto"
-
-	"github.com/vechain/thor/v2/tx"
-
-	"github.com/vechain/thor/v2/co"
-
-	"github.com/vechain/thor/v2/cmd/thor/solo"
-	"github.com/vechain/thor/v2/logdb"
-	"github.com/vechain/thor/v2/txpool"
-
-	"github.com/vechain/thor/v2/block"
-
-	"github.com/vechain/thor/v2/api"
-	"github.com/vechain/thor/v2/chain"
-	"github.com/vechain/thor/v2/genesis"
-	"github.com/vechain/thor/v2/muxdb"
-	"github.com/vechain/thor/v2/state"
-
-	common2 "github.com/ethereum/go-ethereum/common"
-
+	ethcommon "github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/common/math"
+	"github.com/ethereum/go-ethereum/crypto"
 	"github.com/stretchr/testify/assert"
+	"github.com/vechain/thor/v2/api"
 	"github.com/vechain/thor/v2/api/accounts"
 	"github.com/vechain/thor/v2/api/blocks"
 	"github.com/vechain/thor/v2/api/events"
 	"github.com/vechain/thor/v2/api/node"
 	"github.com/vechain/thor/v2/api/transactions"
 	"github.com/vechain/thor/v2/api/transfers"
+	"github.com/vechain/thor/v2/block"
+	"github.com/vechain/thor/v2/chain"
+	"github.com/vechain/thor/v2/cmd/thor/solo"
+	"github.com/vechain/thor/v2/co"
+	"github.com/vechain/thor/v2/genesis"
+	"github.com/vechain/thor/v2/logdb"
+	"github.com/vechain/thor/v2/muxdb"
+	"github.com/vechain/thor/v2/packer"
+	"github.com/vechain/thor/v2/state"
 	"github.com/vechain/thor/v2/thor"
 	"github.com/vechain/thor/v2/thorclient/common"
+	"github.com/vechain/thor/v2/tx"
+	"github.com/vechain/thor/v2/txpool"
 )
 
 var (
@@ -300,7 +292,7 @@ func TestClient_GetAccountCode(t *testing.T) {
 	addr := thor.Address{0x01}
 	// expected is a map with "code" as the only key
 	expectedByteCode := []byte{0x01}
-	expected := map[string]string{"code": common2.Bytes2Hex(expectedByteCode)}
+	expected := map[string]string{"code": ethcommon.Bytes2Hex(expectedByteCode)}
 
 	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		assert.Equal(t, "/accounts/"+addr.String()+"/code", r.URL.Path)
