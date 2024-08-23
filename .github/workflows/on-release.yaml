@@ -19,6 +19,10 @@ jobs:
         with:
           node-version: '20'
 
+      - uses: actions/setup-go@v5
+        with:
+          go-version: '1.22'
+
       - name: Validate Tag
         run: |
           node -e "if (!/^v\d+\.\d+\.\d+$/.test('${{ github.ref_name }}')) { console.error('Invalid version provided');process.exit(1);}"
@@ -43,6 +47,14 @@ jobs:
             echo "Tag is not an official release"
             exit 1
           fi
+
+      - name: Publish Binaries
+        uses: goreleaser/goreleaser-action@v6
+        with:
+          version: '~> v2'
+          args: release --clean --timeout=90m
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   publish-docker-image:
     name: Publish Docker Image
