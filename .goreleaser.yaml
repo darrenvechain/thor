@@ -18,8 +18,9 @@ builds:
       - amd64
       - arm64
     id: thor
+    hooks:
+      pre: make thor
     binary: ./bin/thor
-    command: make thor
   - env:
       - CGO_ENABLED=0
     goos:
@@ -31,7 +32,8 @@ builds:
       - arm64
     id: disco
     binary: ./bin/disco
-    command: make disco
+    hooks:
+      pre: make disco
 
 release:
   github:
