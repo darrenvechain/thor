@@ -6,17 +6,97 @@
 package thorclient
 
 import (
+	"encoding/json"
+	"fmt"
+
+	"io"
+	"net"
 	"net/http"
 	"net/http/httptest"
+	"os"
 	"reflect"
 	"testing"
+	"time"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/vechain/thor/v2/api/accounts"
+	"github.com/vechain/thor/v2/api/blocks"
 	"github.com/vechain/thor/v2/api/transactions"
+	"github.com/vechain/thor/v2/cmd/thor/runtime"
 	"github.com/vechain/thor/v2/thor"
 	"github.com/vechain/thor/v2/tx"
 )
+
+var thorURL string
+
+func newApiAddr() string {
+	// Create a listener on any available port
+	listener, err := net.Listen("tcp", "localhost:0")
+	if err != nil {
+		panic(fmt.Sprintf("failed to create listener: %v", err))
+	}
+	defer listener.Close()
+
+	// Extract the port number from the listener's address
+	addr := listener.Addr().(*net.TCPAddr)
+	return addr.String()
+}
+
+func waitForServer(apiAddr string) error {
+	ticker := time.NewTicker(100 * time.Millisecond)
+	timeout := time.NewTimer(5 * time.Second)
+
+	for {
+		select {
+		case <-ticker.C:
+			// Wait for the server to start
+			res, err := http.Get(apiAddr + "/blocks/0")
+			if err != nil || res.StatusCode != http.StatusOK {
+				continue
+			}
+
+			body, err := io.ReadAll(res.Body)
+			if err != nil {
+				continue
+			}
+
+			var block blocks.JSONCollapsedBlock
+			if err := json.Unmarshal(body, &block); err == nil {
+				return nil
+			}
+		case <-timeout.C:
+			return nil
+		}
+	}
+}
+
+func TestMain(m *testing.M) {
+	addr := newApiAddr()
+	thorURL = "http://" + addr
+
+	go func() {
+		args := []string{
+			os.Args[0],
+			"solo",
+			"--api-addr", addr,
+		}
+		runtime.Start(args)
+	}()
+
+	if err := waitForServer(thorURL); err != nil {
+		fmt.Println("failed to start server")
+		os.Exit(1)
+	}
+
+	m.Run()
+}
+
+func TestClient_RealServer(t *testing.T) {
+	client := New(thorURL)
+	expanded, err := client.ExpandedBlock("0")
+	assert.NoError(t, err)
+	assert.NotNil(t, expanded)
+}
 
 func TestWs_Error(t *testing.T) {
 	client := New("http://test.com")

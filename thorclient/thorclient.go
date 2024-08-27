@@ -50,11 +50,6 @@ func NewWithWS(url string) (*Client, error) {
 
 type Option func(*getOptions)
 
-var defaultOptions = &getOptions{
-	revision: "best",
-	pending:  false,
-}
-
 type getOptions struct {
 	revision string
 	pending  bool
