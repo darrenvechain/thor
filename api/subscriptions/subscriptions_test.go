@@ -9,6 +9,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"math/big"
 	"net/http"
 	"net/http/httptest"
 	"net/url"
@@ -16,6 +17,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/ethereum/go-ethereum/crypto"
 	"github.com/gorilla/mux"
 	"github.com/gorilla/websocket"
 	"github.com/stretchr/testify/assert"
@@ -26,6 +28,7 @@ import (
 	"github.com/vechain/thor/v2/packer"
 	"github.com/vechain/thor/v2/state"
 	"github.com/vechain/thor/v2/thor"
+	"github.com/vechain/thor/v2/tx"
 	"github.com/vechain/thor/v2/txpool"
 )
 
@@ -34,6 +37,90 @@ var sub *Subscriptions
 var txPool *txpool.TxPool
 var repo *chain.Repository
 var blocks []*block.Block
+
+func initChain(t *testing.T) (*chain.Repository, []*block.Block, *txpool.TxPool) {
+	db := muxdb.NewMem()
+	stater := state.NewStater(db)
+	gene := genesis.NewDevnet()
+
+	b, _, _, err := gene.Build(stater)
+	if err != nil {
+		t.Fatal(err)
+	}
+	repo, _ := chain.NewRepository(db, b)
+
+	txPool := txpool.New(repo, stater, txpool.Options{
+		Limit:           100,
+		LimitPerAccount: 16,
+		MaxLifetime:     time.Hour,
+	})
+
+	addr := thor.BytesToAddress([]byte("to"))
+	cla := tx.NewClause(&addr).WithValue(big.NewInt(10000))
+	tr := new(tx.Builder).
+		ChainTag(repo.ChainTag()).
+		GasPriceCoef(1).
+		Expiration(10).
+		Gas(21000).
+		Nonce(1).
+		Clause(cla).
+		BlockRef(tx.NewBlockRef(0)).
+		Build()
+
+	sig, err := crypto.Sign(tr.SigningHash().Bytes(), genesis.DevAccounts()[0].PrivateKey)
+	if err != nil {
+		t.Fatal(err)
+	}
+	tr = tr.WithSignature(sig)
+	packer := packer.New(repo, stater, genesis.DevAccounts()[0].Address, &genesis.DevAccounts()[0].Address, thor.NoFork)
+	sum, _ := repo.GetBlockSummary(b.Header().ID())
+	flow, err := packer.Schedule(sum, uint64(time.Now().Unix()))
+	if err != nil {
+		t.Fatal(err)
+	}
+	err = flow.Adopt(tr)
+	if err != nil {
+		t.Fatal(err)
+	}
+	blk, stage, receipts, err := flow.Pack(genesis.DevAccounts()[0].PrivateKey, 0, false)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if _, err := stage.Commit(); err != nil {
+		t.Fatal(err)
+	}
+	insertMockOutputEvent(receipts)
+	if err := repo.AddBlock(blk, receipts, 0); err != nil {
+		t.Fatal(err)
+	}
+	if err := repo.SetBestBlockID(blk.Header().ID()); err != nil {
+		t.Fatal(err)
+	}
+	return repo, []*block.Block{b, blk}, txPool
+}
+
+// This is a helper function to forcly insert an event into the output receipts
+func insertMockOutputEvent(receipts tx.Receipts) {
+	oldReceipt := receipts[0]
+	events := make(tx.Events, 0)
+	events = append(events, &tx.Event{
+		Address: thor.BytesToAddress([]byte("to")),
+		Topics:  []thor.Bytes32{thor.BytesToBytes32([]byte("topic"))},
+		Data:    []byte("data"),
+	})
+	outputs := &tx.Output{
+		Transfers: oldReceipt.Outputs[0].Transfers,
+		Events:    events,
+	}
+	receipts[0] = &tx.Receipt{
+		Reverted: oldReceipt.Reverted,
+		GasUsed:  oldReceipt.GasUsed,
+		Outputs:  []*tx.Output{outputs},
+		GasPayer: oldReceipt.GasPayer,
+		Paid:     oldReceipt.Paid,
+		Reward:   oldReceipt.Reward,
+	}
+}
 
 func TestSubscriptions(t *testing.T) {
 	initSubscriptionsServer(t)

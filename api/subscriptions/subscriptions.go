@@ -13,6 +13,7 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/gorilla/websocket"
 	"github.com/pkg/errors"
+	"github.com/vechain/thor/v2/api/subscriptions/broadcaster"
 	"github.com/vechain/thor/v2/api/utils"
 	"github.com/vechain/thor/v2/block"
 	"github.com/vechain/thor/v2/chain"
@@ -31,6 +32,9 @@ type Subscriptions struct {
 	pendingTx      *pendingTx
 	done           chan struct{}
 	wg             sync.WaitGroup
+	beats          *broadcaster.Broadcaster
+	beat2          *broadcaster.Broadcaster
+	blocks         *broadcaster.Broadcaster
 }
 
 type msgReader interface {
@@ -69,6 +73,9 @@ func New(repo *chain.Repository, allowedOrigins []string, backtraceLimit uint32,
 		},
 		pendingTx: newPendingTx(txpool),
 		done:      make(chan struct{}),
+		blocks:    broadcaster.New(repo, createBlockMessage),
+		beats:     broadcaster.New(repo, createBeatMessage),
+		beat2:     broadcaster.New(repo, createBeat2Message),
 	}
 
 	sub.wg.Add(1)
@@ -78,14 +85,6 @@ func New(repo *chain.Repository, allowedOrigins []string, backtraceLimit uint32,
 		sub.pendingTx.DispatchLoop(sub.done)
 	}()
 	return sub
-}
-
-func (s *Subscriptions) handleBlockReader(_ http.ResponseWriter, req *http.Request) (*blockReader, error) {
-	position, err := s.parsePosition(req.URL.Query().Get("pos"))
-	if err != nil {
-		return nil, err
-	}
-	return newBlockReader(s.repo, position), nil
 }
 
 func (s *Subscriptions) handleEventReader(w http.ResponseWriter, req *http.Request) (*eventReader, error) {
@@ -153,23 +152,29 @@ func (s *Subscriptions) handleTransferReader(_ http.ResponseWriter, req *http.Re
 	return newTransferReader(s.repo, position, transferFilter), nil
 }
 
-func (s *Subscriptions) handleBeatReader(w http.ResponseWriter, req *http.Request) (*beatReader, error) {
+func (s *Subscriptions) handleBlocks(w http.ResponseWriter, req *http.Request) error {
 	position, err := s.parsePosition(req.URL.Query().Get("pos"))
 	if err != nil {
-		return nil, err
+		return err
 	}
-	return newBeatReader(s.repo, position), nil
+
+	var handler *broadcaster.Broadcaster
+
+	switch mux.Vars(req)["subject"] {
+	case "block":
+		handler = s.blocks
+	case "beat":
+		handler = s.beats
+	case "beat2":
+		handler = s.beat2
+	default:
+		return utils.HTTPError(errors.New("not found"), http.StatusNotFound)
+	}
+
+	return handler.Add(w, req, position)
 }
 
-func (s *Subscriptions) handleBeat2Reader(w http.ResponseWriter, req *http.Request) (*beat2Reader, error) {
-	position, err := s.parsePosition(req.URL.Query().Get("pos"))
-	if err != nil {
-		return nil, err
-	}
-	return newBeat2Reader(s.repo, position), nil
-}
-
-func (s *Subscriptions) handleSubject(w http.ResponseWriter, req *http.Request) error {
+func (s *Subscriptions) handleCriteria(w http.ResponseWriter, req *http.Request) error {
 	s.wg.Add(1)
 	defer s.wg.Done()
 
@@ -178,10 +183,10 @@ func (s *Subscriptions) handleSubject(w http.ResponseWriter, req *http.Request) 
 		err    error
 	)
 	switch mux.Vars(req)["subject"] {
-	case "block":
-		if reader, err = s.handleBlockReader(w, req); err != nil {
-			return err
-		}
+	//case "block":
+	//	if reader, err = s.handleBlockReader(w, req); err != nil {
+	//		return err
+	//	}
 	case "event":
 		if reader, err = s.handleEventReader(w, req); err != nil {
 			return err
@@ -190,14 +195,14 @@ func (s *Subscriptions) handleSubject(w http.ResponseWriter, req *http.Request) 
 		if reader, err = s.handleTransferReader(w, req); err != nil {
 			return err
 		}
-	case "beat":
-		if reader, err = s.handleBeatReader(w, req); err != nil {
-			return err
-		}
-	case "beat2":
-		if reader, err = s.handleBeat2Reader(w, req); err != nil {
-			return err
-		}
+	//case "beat":
+	//	if reader, err = s.handleBeatReader(w, req); err != nil {
+	//		return err
+	//	}
+	//case "beat2":
+	//	if reader, err = s.handleBeat2Reader(w, req); err != nil {
+	//		return err
+	//	}
 	default:
 		return utils.HTTPError(errors.New("not found"), http.StatusNotFound)
 	}
@@ -385,8 +390,12 @@ func (s *Subscriptions) Mount(root *mux.Router, pathPrefix string) {
 		Methods(http.MethodGet).
 		Name("subscriptions_pending_tx").
 		HandlerFunc(utils.WrapHandlerFunc(s.handlePendingTransactions))
-	sub.Path("/{subject:beat|beat2|block|event|transfer}").
+	sub.Path("/{subject:event|transfer}").
 		Methods(http.MethodGet).
-		Name("subscriptions_subject").
-		HandlerFunc(utils.WrapHandlerFunc(s.handleSubject))
+		Name("subscriptions_criteria").
+		HandlerFunc(utils.WrapHandlerFunc(s.handleCriteria))
+	sub.Path("/{subject:beat|beat2|block}").
+		Methods(http.MethodGet).
+		Name("subscriptions_blocks").
+		HandlerFunc(utils.WrapHandlerFunc(s.handleBlocks))
 }
