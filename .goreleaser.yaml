@@ -1,0 +1,60 @@
+version: 2
+
+before:
+  hooks:
+    - go mod tidy
+
+builds:
+  - id: thor
+    main: ./cmd/thor
+    binary: thor
+    ldflags:
+      - >-
+        -X main.version={{ .Env.THOR_VERSION }}
+        -X main.gitCommit={{ .Commit }}
+        -X main.gitTag={{ .Tag }}
+        -X main.copyrightYear={{ .Env.COPYRIGHT_YEAR }}
+    goos:
+      - linux
+      - darwin
+      - windows
+    goarch:
+      - amd64
+      - arm64
+
+  - id: disco
+    main: ./cmd/disco
+    binary: disco
+    ldflags:
+      - >-
+        -X main.version={{ .Env.DISCO_VERSION }}
+        -X main.gitCommit={{ .Commit }}
+        -X main.gitTag={{ .Tag }}
+        -X main.copyrightYear={{ .Env.COPYRIGHT_YEAR }}
+    goos:
+      - linux
+      - darwin
+      - windows
+    goarch:
+      - amd64
+      - arm64
+
+archives:
+  - format: tar.gz
+    name_template: >-
+      {{ .ProjectName }}_
+      {{- title .Os }}_
+      {{- if eq .Arch "amd64" }}x86_64
+      {{- else if eq .Arch "386" }}i386
+      {{- else }}{{ .Arch }}{{ end }}
+      {{- if .Arm }}v{{ .Arm }}{{ end }}
+    format_overrides:
+      - goos: windows
+        format: zip
+
+changelog:
+  sort: asc
+  filters:
+    exclude:
+      - "^docs:"
+      - "^test:"
