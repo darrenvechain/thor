@@ -70,6 +70,7 @@ jobs:
           go-version: 1.24
 
       - name: Build Binary
+        shell: bash
         run: |
           make $BINARY
           mkdir -p ./dist
@@ -102,4 +103,4 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ github.token }}
         with:
-          asset_paths: '["./dist/*"]'
+          asset_paths: '["./dist/*", "!./dist/*.asc"]'
