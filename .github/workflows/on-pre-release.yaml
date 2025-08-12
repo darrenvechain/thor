@@ -50,3 +50,6 @@ jobs:
       - validate
     permissions:
       contents: write
+
+    with:
+      binary: 'thor'
