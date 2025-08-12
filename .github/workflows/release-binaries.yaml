@@ -79,15 +79,27 @@ jobs:
           mv ./bin/${BINARY} $RELEASE_BINARY_NAME
           chmod +x $RELEASE_BINARY_NAME
 
-      - name: Import GPG Private Key
+      - name: Import GPG Private Key (Linux/macOS)
+        if: runner.os != 'Windows'
         env:
           GPG_PRIVATE_KEY: ${{ secrets.GPG_PRIVATE_KEY }}
         run: |
           echo "$GPG_PRIVATE_KEY" | gpg --batch --import
 
+      - name: Import GPG Private Key (Windows)
+        if: runner.os == 'Windows'
+        shell: pwsh
+        env:
+          GPG_PRIVATE_KEY: ${{ secrets.GPG_PRIVATE_KEY }}
+        run: |
+          $gpgKey = $Env:GPG_PRIVATE_KEY -replace "`r`n", "`n"
+          $gpgKey | Out-File -Encoding ascii private.key
+          gpg --batch --import private.key
+
       - name: Sign Executable with GPG
         env:
           GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
+        shell: bash
         run: |
           gpg --batch --yes --pinentry-mode loopback --passphrase "$GPG_PASSPHRASE" --armor --detach-sign "$RELEASE_BINARY_NAME"
 
