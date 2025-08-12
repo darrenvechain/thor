@@ -86,7 +86,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ github.token }}
         with:
-          asset_paths: '["${{env.BINARY}}", "${{env.ARCHIVE_NAME}}"]'
+          asset_paths: '["${{env.RELEASE_BINARY_NAME}}", "${{env.ARCHIVE_NAME}}"]'
 
   build-windows:
     name: Build Windows binary
@@ -139,4 +139,4 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ github.token }}
         with:
-          asset_paths: '["${{env.BINARY}}", "${{env.ARCHIVE_NAME}}"]'
+          asset_paths: '["${{env.RELEASE_BINARY_NAME}}", "${{env.ARCHIVE_NAME}}"]'
