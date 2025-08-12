@@ -73,8 +73,6 @@ jobs:
         shell: bash
         run: |
           make $BINARY
-          ls -la
-          ls -la ./bin
           mkdir -p ./dist
           mv ./bin/${BINARY} $RELEASE_BINARY_NAME
           chmod +x $RELEASE_BINARY_NAME
@@ -104,6 +102,7 @@ jobs:
           gpg --batch --yes --pinentry-mode loopback --passphrase "$GPG_PASSPHRASE" --armor --detach-sign "$RELEASE_BINARY_NAME"
 
       - name: Create archive
+        shell: bash
         run: |
           cd dist
           if [[ "${{ matrix.archive_ext }}" == "zip" ]]; then
