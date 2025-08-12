@@ -1,0 +1,99 @@
+name: Release Binaries
+
+on:
+  workflow_dispatch:
+    inputs:
+      binary:
+        options:
+          - thor
+          - disco
+        description: 'Select the binary to build and release'
+        type: choice
+        required: true
+        default: thor
+  workflow_call:
+    inputs:
+      binary:
+        description: 'Select the binary to build and release'
+        type: string
+        required: true
+        default: thor
+
+permissions:
+  contents: write
+  packages: write
+
+jobs:
+  build-binaries:
+    runs-on: ${{ matrix.hostos }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - goos: linux
+            goarch: amd64
+            hostos: ubuntu-latest
+            ext: ''
+            archive_ext: tar.gz
+          - goos: linux
+            goarch: arm64
+            hostos: ubuntu-24.04-arm
+            ext: ''
+            archive_ext: tar.gz
+          - goos: darwin
+            goarch: arm64
+            hostos: macos-latest
+            ext: ''
+            archive_ext: tar.gz
+          - goos: windows
+            goarch: amd64
+            hostos: windows-latest
+            ext: '.exe'
+            archive_ext: zip
+
+    env:
+      BINARY: ${{ inputs.binary || 'thor' }}
+      RELEASE_BINARY_NAME: ./dist/${{ inputs.binary || 'thor' }}-${{ matrix.goos }}-${{ matrix.goarch }}${{ matrix.ext }}
+      ARCHIVE_NAME: ./dist/${{ inputs.binary || 'thor' }}-${{ matrix.goos }}-${{ matrix.goarch }}.${{ matrix.archive_ext }}
+
+    environment: binary-publish
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: 1.24
+
+      - name: Build Binary
+        run: |
+          make $BINARY
+          mkdir -p ./dist
+          mv ./bin/${BINARY}${{ matrix.ext }} $RELEASE_BINARY_NAME
+          chmod +x $RELEASE_BINARY_NAME
+
+      - name: Sign Executable with GPG
+        env:
+          GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
+        run: |
+          gpg --batch --yes --pinentry-mode loopback --passphrase "$GPG_PASSPHRASE" --armor --detach-sign "$RELEASE_BINARY_NAME"
+
+      - name: Create archive
+        run: |
+          cd dist
+          if [[ "${{ matrix.archive_ext }}" == "zip" ]]; then
+            zip "${ARCHIVE_NAME##*/}" "$(basename "$RELEASE_BINARY_NAME")"
+          else
+            tar czf "${ARCHIVE_NAME##*/}" "$(basename "$RELEASE_BINARY_NAME")"
+          fi
+
+      - name: Upload Binary
+        uses: alexellis/upload-assets@0.4.1
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        with:
+          asset_paths: '["./dist/*"]'
