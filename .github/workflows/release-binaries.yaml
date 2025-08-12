@@ -73,8 +73,10 @@ jobs:
         shell: bash
         run: |
           make $BINARY
+          ls -la
+          ls -la ./bin
           mkdir -p ./dist
-          mv ./bin/${BINARY}${{ matrix.ext }} $RELEASE_BINARY_NAME
+          mv ./bin/${BINARY} $RELEASE_BINARY_NAME
           chmod +x $RELEASE_BINARY_NAME
 
       - name: Import GPG Private Key
