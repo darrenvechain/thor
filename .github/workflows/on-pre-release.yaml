@@ -50,5 +50,6 @@ jobs:
       - validate
     permissions:
       contents: write
+      packages: write
     with:
       binary: 'thor'
