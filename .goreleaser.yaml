@@ -137,6 +137,8 @@ nfpms:
 
 dockers:
   - id: "thor"
+    goarch: '{{ .Runtime.Goarch }}'
+    goos: linux
     image_templates:
       - '{{ if .IsRelease }}ghcr.io/{{ .Env.REPOSITORY }}:{{ .Tag }}-{{ .Runtime.Goarch }}{{ end }}'
       - '{{ if .IsSnapshot }}ghcr.io/{{ .Env.REPOSITORY }}:{{ .ShortCommit }}-{{ .CommitTimestamp }}{{ .Runtime.Goarch }}{{ end }}'
