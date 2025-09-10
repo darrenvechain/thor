@@ -1,0 +1,166 @@
+# This is an example .goreleaser.yml file with some sensible defaults.
+# Make sure to check the documentation at https://goreleaser.com
+
+# The lines below are called `modelines`. See `:help modeline`
+# Feel free to remove those if you don't want/need to use them.
+# yaml-language-server: $schema=https://goreleaser.com/static/schema-pro.json
+# vim: set ts=2 sw=2 tw=0 fo=cnqoj
+
+version: 2
+pro: true
+project_name: thor
+
+metadata:
+  license: "LGPL-3.0"
+  homepage: "https://github.com/vechain/thor"
+  description: "A general purpose blockchain highly compatible with Ethereum's ecosystem"
+  full_description: "Thor is the official Golang client for VeChainThor, the public blockchain powering the VeChain ecosystem. VeChainThor is designed for real-world adoption, enabling scalable, low-cost, and sustainable applications."
+
+partial:
+  by: target
+
+builds:
+  - id: "thor"
+    main: ./cmd/thor
+    binary: thor
+    ldflags:
+      - -s -w
+      - -X main.version={{.Env.THOR_VERSION}}
+      - -X main.gitCommit={{.ShortCommit}}
+      - -X main.gitTag={{.Tag}}
+      - -X main.copyrightYear={{.Env.COPYRIGHT_YEAR}}
+    env:
+      - CGO_ENABLED=1
+  - id: "disco"
+    main: ./cmd/disco
+    binary: disco
+    ldflags:
+      - -s -w
+      - -X main.version={{.Env.DISCO_VERSION}}
+      - -X main.gitCommit={{.ShortCommit}}
+      - -X main.gitTag={{.Tag}}
+      - -X main.copyrightYear={{.Env.COPYRIGHT_YEAR}}
+    env:
+      - CGO_ENABLED=1
+
+archives:
+  - formats: [ 'tar.gz' ]
+    wrap_in_directory: true
+    format_overrides:
+      - goos: windows
+        formats: [ 'zip' ]
+    name_template: '{{ .ProjectName }}-{{ .Tag }}-{{ .Os }}-{{ .Arch }}{{ if .Arm }}v{{ .Arm }}{{ end }}'
+    files:
+      - LICENSE
+      - README.md
+
+snapshot:
+  version_template: SNAPSHOT-{{ .Commit }}
+
+checksum:
+  disable: false
+  name_template: '{{ .ProjectName }}-{{ .Tag }}-checksums.txt'
+
+release:
+  skip_upload: false
+  github:
+    owner: vecahin
+    name: thor
+  header: |
+    Thor is the official Golang client for VeChainThor, the public blockchain powering the VeChain ecosystem. VeChainThor is designed for real-world adoption, enabling scalable, low-cost, and sustainable applications.
+
+source:
+  enabled: true
+  name_template: '{{ .ProjectName }}-{{ .Tag }}-source'
+
+homebrew_casks:
+  # https://goreleaser.com/customization/homebrew_casks/
+  - name: vechain-thor
+    alternative_names:
+      - vechain-thor@{{ .Tag }}
+    ids:
+      - thor
+      - disco
+    binary: thor
+    skip_upload: '{{ if .IsRelease }}false{{ else }}true{{ end }}'
+    description: A general purpose blockchain highly compatible with Ethereum's ecosystem
+    homepage: https://github.com/vechain/thor
+    license: LGPL-3.0
+    url:
+      template: "https://github.com/vechain/thor/releases/download/{{ .Tag }}/thor-{{ .Tag }}-darwin-{{ .Arch }}.tar.gz"
+    repository:
+      git:
+        url: git@github.com:vechain/thor.git
+
+npms:
+  - name: "@vechain/thor"
+    repository: https://github.com/vechain/thor
+    bugs: https://github.com/vechain/thor/issues
+    description: A general purpose blockchain highly compatible with Ethereum's ecosystem
+    homepage: https://github.com/vechain/thor
+    license: LGPL-3.0
+    access: public
+    keywords:
+      - vechain
+      - thor
+    files:
+      - README.md
+
+nfpms:
+  - id: vechain-thor
+    package_name: vechain/thor
+    description: A general purpose blockchain highly compatible with Ethereum's ecosystem
+    homepage: https://github.com/vechain/thor
+    if: '{{ eq .Os "linux" }}'
+    file_name_template: "{{ .ProjectName }}-{{ .Tag }}-{{ .Os }}-{{ .Arch }}{{ if .Arm }}v{{ .Arm }}{{ end }}"
+    license: GPLv3
+    maintainer: protocol@vechain.org
+    vendor: vechain
+    formats:
+      - deb
+      - rpm
+      - apk
+    umask: 0o022
+    contents:
+      - src: LICENSE
+        dst: /usr/share/doc/thor/copyright
+      - src: README.md
+        dst: /usr/share/doc/thor/README.md
+    rpm:
+      group: Unspecified
+
+dockers_v2:
+  - id: "thor"
+    images:
+      - 'ghcr.io/vechain/thor'
+      - '{{ if .IsRelease }}vechain/thor{{ end }}'
+    dockerfile: Dockerfile
+    tags:
+      - '{{ if eq .Runtime.Goos "linux" }}{{ if not .IsSnapshot }}{{ .Tag }}{{ end }}{{ end }}'
+      - '{{ if eq .Runtime.Goos "linux" }}{{ if .IsNightly }}nightly{{ end }}{{ end }}'
+      - '{{ if eq .Runtime.Goos "linux" }}{{ if .IsRelease }}latest{{ end }}{{ end }}'
+      - '{{ if eq .Runtime.Goos "linux" }}{{ if .IsSnapshot }}{{ .ShortCommit }}-{{ .CommitTimestamp }}{{ end }}{{ end }}'
+    labels:
+      "org.opencontainers.image.title": "{{.ProjectName}}"
+      "org.opencontainers.image.description": "A general purpose blockchain highly compatible with Ethereum's ecosystem"
+      "org.opencontainers.image.source": "{{.GitURL}}"
+      "org.opencontainers.image.url": "{{.GitURL}}"
+      "org.opencontainers.image.created": "{{.Date}}"
+      "org.opencontainers.image.revision": "{{.FullCommit}}"
+      "org.opencontainers.image.version": "{{.Tag}}"
+      "org.opencontainers.image.licenses": "LGPL-3.0"
+    platforms:
+      - linux/amd64
+      - linux/arm64
+
+docker_digest:
+  name_template: "{{ProjectName}}_digest.txt"
+
+dockerhub:
+  - username: "{{ .Env.DOCKERHUB_USERNAME }}"
+    secret_name: "DOCKERHUB_TOKEN"
+    images:
+      - vechain/thor
+    full_description:
+      from_file:
+        path: ./README.md

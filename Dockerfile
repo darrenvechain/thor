@@ -2,9 +2,14 @@
 FROM golang:1.24-alpine3.21 AS builder
 
 RUN apk add --no-cache make gcc musl-dev linux-headers git
-WORKDIR  /go/thor
+WORKDIR /go/thor
 COPY . /go/thor
-RUN make all
+
+# Ensure VERSION files exist before running make
+RUN ls -la cmd/thor/VERSION cmd/disco/VERSION
+
+# Run make with explicit targets
+RUN make thor disco
 
 # Pull thor into a second stage deploy alpine container
 FROM alpine:3.21.3

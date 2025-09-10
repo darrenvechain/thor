@@ -1,0 +1,166 @@
+name: GoReleaser
+
+on:
+  push:
+    branches:
+      - darren/test/goreleaser-pro
+
+jobs:
+  prepare:
+    runs-on: ${{ matrix.runs-on }}
+    strategy:
+      matrix:
+        include:
+          - runs-on: ubuntu-latest
+            go-arch: amd64
+            go-os: linux
+          - runs-on: ubuntu-24.04-arm
+            go-arch: arm64
+            go-os: linux
+          - runs-on: macos-latest
+            go-arch: arm64
+            go-os: darwin
+          - runs-on: windows-latest
+            go-arch: amd64
+            go-os: windows
+    outputs:
+      THOR_VERSION: ${{ steps.env.outputs.THOR_VERSION }}
+      DISCO_VERSION: ${{ steps.env.outputs.DISCO_VERSION }}
+      COPYRIGHT_YEAR: ${{ steps.env.outputs.COPYRIGHT_YEAR }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v5
+      - name: Set up Go
+        uses: actions/setup-go@v6
+        with:
+          go-version: 1.24
+
+      - uses: docker/setup-qemu-action@v3
+        if: matrix.go-os == 'linux'
+      - uses: docker/setup-buildx-action@v3
+        if:  matrix.go-os == 'linux'
+      - name: ghcr-login
+        uses: docker/login-action@v3
+        if: matrix.go-os == 'linux'
+        with:
+          registry: ghcr.io
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - uses: actions/setup-go@v6
+        with:
+          go-version: stable
+      - if: ${{ github.event_name == 'workflow_dispatch' }}
+        shell: bash
+        run: |
+          echo "flags=--nightly" >> $GITHUB_ENV
+      - shell: bash
+        run: |
+          echo "sha_short=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
+      - uses: actions/cache@v4
+        if: matrix.go-os == 'linux'
+        with:
+          path: dist/linux
+          key: linux-${{ env.sha_short }}${{ env.flags }}
+      - uses: actions/cache@v4
+        if: matrix.go-os == 'darwin'
+        with:
+          path: dist/darwin
+          key: darwin-${{ env.sha_short }}${{ env.flags }}
+      - uses: actions/cache@v4
+        if: matrix.go-os == 'windows'
+        with:
+          path: dist/windows
+          key: windows-${{ env.sha_short }}${{ env.flags }}
+          enableCrossOsArchive: true
+
+      - name: Set Up Env
+        id: env
+        shell: bash
+        run: |
+          THOR_VERSION=$(cat ./cmd/thor/VERSION)
+          echo "THOR_VERSION=$THOR_VERSION" >> "$GITHUB_OUTPUT"
+          DISCO_VERSION=$(cat ./cmd/disco/VERSION)
+          echo "DISCO_VERSION=$DISCO_VERSION" >> "$GITHUB_OUTPUT"
+          COPYRIGHT_YEAR=$(date +'%Y')
+          echo "COPYRIGHT_YEAR=$COPYRIGHT_YEAR" >> "$GITHUB_OUTPUT"
+
+      - name: Setup Flags
+        if: matrix.go-os != 'linux'
+        run: |
+          flags="--skip docker"
+          echo "flags=$flags" >> "$GITHUB_ENV"
+
+      - uses: goreleaser/goreleaser-action@v6
+        with:
+          distribution: goreleaser-pro
+          version: latest
+          args: release --clean --split ${{ env.flags }}
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          GORELEASER_KEY: ${{ secrets.GORELEASER_KEY }}
+          GOOS: ${{ matrix.go-os }}
+          GOARCH: ${{ matrix.go-arch }}
+          THOR_VERSION: ${{ steps.env.outputs.THOR_VERSION }}
+          DISCO_VERSION: ${{ steps.env.outputs.DISCO_VERSION }}
+          COPYRIGHT_YEAR: ${{ steps.env.outputs.COPYRIGHT_YEAR }}
+
+  release:
+    runs-on: ubuntu-latest
+    needs: prepare
+    env:
+      DOCKER_CLI_EXPERIMENTAL: "enabled"
+      flags: ""
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+      - uses: docker/setup-qemu-action@v3
+      - uses: docker/setup-buildx-action@v3
+      - uses: sigstore/cosign-installer@v3.9.2
+      - uses: anchore/sbom-action/download-syft@v0.20.5
+      - name: ghcr-login
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - uses: actions/setup-go@v6
+        with:
+          go-version: stable
+
+      # copy the cashes from prepare
+      - if: ${{ github.event_name == 'workflow_dispatch' }}
+        shell: bash
+        run: |
+          echo "flags=--nightly" >> $GITHUB_ENV
+      - shell: bash
+        run: |
+          echo "sha_short=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
+      - uses: actions/cache@v4
+        with:
+          path: dist/linux
+          key: linux-${{ env.sha_short }}${{ env.flags }}
+      - uses: actions/cache@v4
+        with:
+          path: dist/darwin
+          key: darwin-${{ env.sha_short }}${{ env.flags }}
+      - uses: actions/cache@v4
+        with:
+          path: dist/windows
+          key: windows-${{ env.sha_short }}${{ env.flags }}
+          enableCrossOsArchive: true
+
+      - uses: goreleaser/goreleaser-action@v6
+        if: false
+        with:
+          distribution: goreleaser-pro
+          version: latest
+          args: continue --merge
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          GORELEASER_KEY: ${{ secrets.GORELEASER_KEY }}
+          GOOS: ${{ matrix.go-os }}
+          GOARCH: ${{ matrix.go-arch }}
+          THOR_VERSION: ${{ needs.prepare.outputs.THOR_VERSION }}
+          DISCO_VERSION: ${{ needs.prepare.outputs.DISCO_VERSION }}
+          COPYRIGHT_YEAR: ${{ needs.prepare.outputs.COPYRIGHT_YEAR }}
