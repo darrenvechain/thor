@@ -109,7 +109,7 @@ jobs:
         with:
           distribution: goreleaser-pro
           version: latest
-          args: release --clean --split --verbose --${{ inputs.type }} ${{ env.flags }} ${{ (matrix.go-os == 'darwin' || matrix.go-os == 'windows') && '--skip docker' || ''}}
+          args: release --clean --split --verbose --${{ inputs.type != 'release' &&  inputs.type || '' }} ${{ env.flags }} ${{ (matrix.go-os == 'darwin' || matrix.go-os == 'windows') && '--skip docker' || ''}}
         env:
           GITHUB_TOKEN: ${{ github.token }}
           GORELEASER_KEY: ${{ secrets.GORELEASER_KEY }}
