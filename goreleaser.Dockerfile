@@ -1,15 +1,10 @@
 # Pull thor into a second stage deploy alpine container
 FROM alpine:3.21.3
 
-ARG BINARY
-ARG GOOS
-ARG GOARCH
-
-RUN echo "Building $GOOS/$GOARCH/$BINARY"
-
 RUN apk add --no-cache ca-certificates
 RUN apk upgrade libssl3 libcrypto3
-COPY ./$GOOS/$GOARCH/$BINARY /usr/local/bin/$BINARY
+COPY thor /usr/local/bin
+COPY disco /usr/local/bin/
 RUN adduser -D -s /bin/ash thor
 USER thor
 
