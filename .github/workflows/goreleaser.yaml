@@ -29,7 +29,7 @@ jobs:
       DISCO_VERSION: ${{ steps.env.outputs.DISCO_VERSION }}
       COPYRIGHT_YEAR: ${{ steps.env.outputs.COPYRIGHT_YEAR }}
 
-    environment: ${{ inputs.environment }}
+    environment: docker-publish
     steps:
       - name: Checkout code
         uses: actions/checkout@v5
@@ -114,7 +114,7 @@ jobs:
     env:
       DOCKER_CLI_EXPERIMENTAL: "enabled"
       flags: ""
-    environment: ${{ inputs.environment }}
+    environment: docker-publish
     steps:
       - uses: actions/checkout@v5
         with:
