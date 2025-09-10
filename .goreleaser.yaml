@@ -135,10 +135,7 @@ nfpms:
 dockers:
   - id: "thor"
     image_templates:
-      - '{{ if .IsRelease }}{{ .Env.REPOSITORY }}:{{ .Tag }}-{{ .Runtime.Goarch }}{{ end }}'
       - '{{ if .IsRelease }}ghcr.io/{{ .Env.REPOSITORY }}:{{ .Tag }}-{{ .Runtime.Goarch }}{{ end }}'
-      - '{{ if .IsRelease }}{{ .Env.REPOSITORY }}:latest-{{ .Runtime.Goarch }}{{ end }}'
-      - '{{ if .IsRelease }}ghcr.io/{{ .Env.REPOSITORY }}:latest-{{ .Runtime.Goarch }}{{ end }}'
       - '{{ if .IsSnapshot }}ghcr.io/{{ .Env.REPOSITORY }}:{{ .ShortCommit }}-{{ .CommitTimestamp }}{{ .Runtime.Goarch }}{{ end }}'
     ids:
       - thor
@@ -158,20 +155,20 @@ dockers:
 docker_manifests:
   - name_template: '{{ .Env.REPOSITORY }}:latest'
     image_templates:
-      - '{{ .Env.REPOSITORY }}:latest-amd64'
-      - '{{ .Env.REPOSITORY }}:latest-arm64'
+      - 'ghcr.io/{{ .Env.REPOSITORY }}:{{ .Tag }}-amd64'
+      - 'ghcr.io/{{ .Env.REPOSITORY }}:{{ .Tag }}-arm64'
     skip_push: '{{ if not .IsRelease }}true{{ else }}false{{ end }}'
 
   - name_template: 'ghcr.io/{{ .Env.REPOSITORY }}:latest'
     image_templates:
-      - 'ghcr.io/{{ .Env.REPOSITORY }}:latest-amd64'
-      - 'ghcr.io/{{ .Env.REPOSITORY }}:latest-arm64'
+      - 'ghcr.io/{{ .Env.REPOSITORY }}:{{ .Tag }}-amd64'
+      - 'ghcr.io/{{ .Env.REPOSITORY }}:{{ .Tag }}-arm64'
     skip_push: '{{ if not .IsRelease }}true{{ else }}false{{ end }}'
 
   - name_template: '{{ .Env.REPOSITORY }}:{{ .Tag }}'
     image_templates:
-      - '{{ .Env.REPOSITORY }}:{{ .Tag }}-amd64'
-      - '{{ .Env.REPOSITORY }}:{{ .Tag }}-arm64'
+      - 'ghcr.io/{{ .Env.REPOSITORY }}:{{ .Tag }}-amd64'
+      - 'ghcr.io/{{ .Env.REPOSITORY }}:{{ .Tag }}-arm64'
     skip_push: '{{ if not .IsRelease }}true{{ else }}false{{ end }}'
 
   - name_template: 'ghcr.io/{{ .Env.REPOSITORY }}:{{ .Tag }}'
