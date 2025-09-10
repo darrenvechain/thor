@@ -153,7 +153,7 @@ jobs:
         if: always()
         with:
           name: dist-${{ needs.validate.outputs.COMMIT_SHA }}${{ needs.validate.outputs.FLAGS }}-${{ matrix.go-os }}_${{ matrix.go-arch }}
-          path: ./dist
+          path: ./dist/${{ matrix.go-os }}_${{ matrix.go-arch }}
           retention-days: 1
 
       - shell: bash
@@ -211,14 +211,17 @@ jobs:
         uses: actions/download-artifact@v5
         with:
           name: dist-${{ needs.validate.outputs.COMMIT_SHA }}${{ needs.validate.outputs.FLAGS }}-linux_arm64
+          path: ./dist/linux_arm64
       - name: macOS (ARM64)
         uses: actions/download-artifact@v5
         with:
           name: dist-${{ needs.validate.outputs.COMMIT_SHA }}${{ needs.validate.outputs.FLAGS }}-darwin_arm64
+          path: ./dist/darwin_arm64
       - name: Windows (AMD64)
         uses: actions/download-artifact@v5
         with:
           name: dist-${{ needs.validate.outputs.COMMIT_SHA }}${{ needs.validate.outputs.FLAGS }}-windows_amd64
+          path: ./dist/windows_amd64
 
       - name: Debug
         run: ls -laR ./dist
