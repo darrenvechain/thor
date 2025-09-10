@@ -43,6 +43,20 @@ builds:
     env:
       - CGO_ENABLED=1
 
+binary_signs:
+  - cmd: gpg
+    args:
+      - --batch
+      - --yes
+      - --pinentry-mode loopback
+      - --passphrase={{ .Env.GPG_PASSPHRASE }}
+      - --armor
+      - --detach-sign
+    artifacts: binary
+    ids:
+      - thor
+      - disco
+
 archives:
   - formats: [ 'tar.gz' ]
     wrap_in_directory: true
@@ -66,6 +80,9 @@ release:
   github:
     owner: vecahin
     name: thor
+  ids:
+    - disco
+    - thor
   header: |
     Thor is the official Golang client for VeChainThor, the public blockchain powering the VeChain ecosystem. VeChainThor is designed for real-world adoption, enabling scalable, low-cost, and sustainable applications.
 
@@ -92,22 +109,11 @@ homebrew_casks:
     url:
       template: "https://github.com/{{ .Env.REPOSITORY }}/releases/download/{{ .Tag }}/thor-{{ .Tag }}-darwin-{{ .Arch }}.tar.gz"
     repository:
+      owner: vechain
+      name: thor
+      token_type: "github"
       git:
         url: 'git@github.com:{{ .Env.REPOSITORY }}.git'
-
-npms:
-  - name: "@{{ .Env.REPOSITORY }}"
-    repository: 'https://github.com/{{ .Env.REPOSITORY }}'
-    bugs: 'https://github.com/{{ .Env.REPOSITORY }}/issues'
-    description: A general purpose blockchain highly compatible with Ethereum's ecosystem
-    homepage: 'https://github.com/{{ .Env.REPOSITORY }}'
-    license: LGPL-3.0
-    access: public
-    keywords:
-      - vechain
-      - thor
-    files:
-      - README.md
 
 nfpms:
   - id: vechain-thor
@@ -134,6 +140,11 @@ nfpms:
         dst: /usr/share/doc/thor/README.md
     rpm:
       group: Unspecified
+
+# TODO
+#cloudsmiths:
+#snapcrafts:
+#npms:
 
 dockers:
   - goarch: amd64
@@ -204,3 +215,17 @@ docker_manifests:
 
 docker_digest:
   name_template: "{{ProjectName}}_digest.txt"
+
+docker_signs:
+  - cmd: gpg
+    args:
+      - --batch
+      - --yes
+      - --pinentry-mode loopback
+      - --passphrase={{ .Env.GPG_PASSPHRASE }}
+      - --armor
+      - --detach-sign
+    artifacts: all
+    ids:
+      - thor
+      - disco

@@ -134,6 +134,12 @@ jobs:
           COPYRIGHT_YEAR=$(date +'%Y')
           echo "COPYRIGHT_YEAR=$COPYRIGHT_YEAR" >> "$GITHUB_OUTPUT"
 
+      - name: Import GPG Private Key
+        env:
+          GPG_PRIVATE_KEY: ${{ secrets.GPG_PRIVATE_KEY }}
+        run: |
+          echo "$GPG_PRIVATE_KEY" | gpg --batch --import
+
       - uses: goreleaser/goreleaser-action@v6
         with:
           distribution: goreleaser-pro
@@ -224,6 +230,12 @@ jobs:
       - name: Debug
         run: ls -laR ./dist
 
+      - name: Import GPG Private Key
+        env:
+          GPG_PRIVATE_KEY: ${{ secrets.GPG_PRIVATE_KEY }}
+        run: |
+          echo "$GPG_PRIVATE_KEY" | gpg --batch --import
+
       - uses: goreleaser/goreleaser-action@v6
         with:
           distribution: goreleaser-pro
@@ -240,6 +252,14 @@ jobs:
           REPOSITORY: ${{ github.repository }}
           DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
           DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - uses: actions/attest-build-provenance@v3
+        with:
+          subject-checksums: ./dist/checksums.txt
+
+      - uses: actions/attest-build-provenance@v3
+        with:
+          subject-checksums: ./dist/digests.txt
 
       - uses: actions/upload-artifact@v4
         if: always()
