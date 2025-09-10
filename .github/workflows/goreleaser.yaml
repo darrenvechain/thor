@@ -1,40 +1,9 @@
 name: GoReleaser
 
 on:
-  workflow_call:
-    inputs:
-      type:
-        type: string
-        required: false
-        default: 'release'
-        description: 'release, --snapshot, --nightly'
-      environment:
-        type: string
-        required: false
-        default: ''
-      tag:
-        type: string
-        required: false
-        default: ''
-  workflow_dispatch:
-    inputs:
-      type:
-        description: 'Type of release to perform'
-        required: false
-        default: 'release'
-        options:
-          - release
-          - --snapshot
-          - --nightly
-      environment:
-        type: environment
-        description: 'The environment to use for credentials'
-        required: false
-      tag:
-        type: string
-        required: false
-        default: ''
-        description: 'The tag to publish'
+  push:
+    tags:
+      - v*
 
 jobs:
   prepare:
@@ -64,13 +33,16 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v5
-        with:
-          ref: ${{ inputs.tag != '' && inputs.tag || 'master' }}
 
       - name: Set up Go
         uses: actions/setup-go@v6
         with:
           go-version: 1.24
+
+      - if: contains(github.ref, 'rc')
+        shell: bash
+        run: |
+          echo "flags=--nightly" >> $GITHUB_ENV
 
       - uses: docker/setup-qemu-action@v3
         if: matrix.go-os == 'linux'
@@ -92,8 +64,8 @@ jobs:
       - uses: actions/cache@v4
         if: matrix.go-os == 'linux'
         with:
-          path: dist/linux
-          key: linux-${{ env.sha_short }}${{ env.flags }}
+          path: dist/linux-${{ matrix.go-arch }}
+          key: linux-${{ env.sha_short }}${{ env.flags }}-${{ matrix.go-arch }}
       - uses: actions/cache@v4
         if: matrix.go-os == 'darwin'
         with:
@@ -121,7 +93,7 @@ jobs:
         with:
           distribution: goreleaser-pro
           version: latest
-          args: release --clean --split --verbose ${{ inputs.type != 'release' &&  inputs.type || '' }} ${{ env.flags }} ${{ (matrix.go-os == 'darwin' || matrix.go-os == 'windows') && '--skip docker' || ''}}
+          args: release --clean --split --verbose ${{ env.flags }} ${{ (matrix.go-os == 'darwin' || matrix.go-os == 'windows') && '--skip docker' || ''}}
         env:
           GITHUB_TOKEN: ${{ github.token }}
           GORELEASER_KEY: ${{ secrets.GORELEASER_KEY }}
@@ -147,7 +119,6 @@ jobs:
       - uses: actions/checkout@v5
         with:
           fetch-depth: 0
-          ref: ${{ inputs.tag != '' && inputs.tag || 'master' }}
 
       - uses: docker/setup-qemu-action@v3
       - uses: docker/setup-buildx-action@v3
@@ -163,22 +134,22 @@ jobs:
         with:
           go-version: stable
 
-      # copy the cashes from prepare
-      - if: ${{ github.event_name == 'workflow_dispatch' }}
+      - if: contains(github.ref, 'rc')
         shell: bash
         run: |
           echo "flags=--nightly" >> $GITHUB_ENV
-      - if: ${{ github.event_name == 'push' || github.event_name == 'pull_request' }}
-        shell: bash
-        run: |
-          echo "flags=--snapshot" >> $GITHUB_ENV
+
       - shell: bash
         run: |
           echo "sha_short=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
       - uses: actions/cache@v4
         with:
-          path: dist/linux
-          key: linux-${{ env.sha_short }}${{ env.flags }}
+          path: dist/linux-amd64
+          key: linux-${{ env.sha_short }}${{ env.flags }}-amd64
+      - uses: actions/cache@v4
+        with:
+          path: dist/linux-arm64
+          key: linux-${{ env.sha_short }}${{ env.flags }}-arm64
       - uses: actions/cache@v4
         with:
           path: dist/darwin
