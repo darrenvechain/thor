@@ -150,7 +150,7 @@ jobs:
           enableCrossOsArchive: true
 
       - uses: goreleaser/goreleaser-action@v6
-        if: false
+        if: false # TODO: testing for now
         with:
           distribution: goreleaser-pro
           version: latest
