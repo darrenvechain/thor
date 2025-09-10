@@ -69,6 +69,9 @@ release:
   header: |
     Thor is the official Golang client for VeChainThor, the public blockchain powering the VeChain ecosystem. VeChainThor is designed for real-world adoption, enabling scalable, low-cost, and sustainable applications.
 
+changelog:
+  disable: true
+
 source:
   enabled: true
   name_template: '{{ .ProjectName }}-{{ .Tag }}-source'
