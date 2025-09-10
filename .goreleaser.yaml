@@ -12,7 +12,7 @@ project_name: thor
 
 metadata:
   license: "LGPL-3.0"
-  homepage: "https://github.com/vechain/thor"
+  homepage: "https://github.com/{{ .Env.REPOSITORY }}"
   description: "A general purpose blockchain highly compatible with Ethereum's ecosystem"
   full_description: "Thor is the official Golang client for VeChainThor, the public blockchain powering the VeChain ecosystem. VeChainThor is designed for real-world adoption, enabling scalable, low-cost, and sustainable applications."
 
@@ -87,20 +87,20 @@ homebrew_casks:
     binary: thor
     skip_upload: '{{ if .IsRelease }}false{{ else }}true{{ end }}'
     description: A general purpose blockchain highly compatible with Ethereum's ecosystem
-    homepage: https://github.com/vechain/thor
+    homepage: 'https://github.com/{{ .Env.REPOSITORY }}'
     license: LGPL-3.0
     url:
-      template: "https://github.com/vechain/thor/releases/download/{{ .Tag }}/thor-{{ .Tag }}-darwin-{{ .Arch }}.tar.gz"
+      template: "https://github.com/{{ .Env.REPOSITORY }}/releases/download/{{ .Tag }}/thor-{{ .Tag }}-darwin-{{ .Arch }}.tar.gz"
     repository:
       git:
-        url: git@github.com:vechain/thor.git
+        url: 'git@github.com:{{ .Env.REPOSITORY }}.git'
 
 npms:
-  - name: "@vechain/thor"
-    repository: https://github.com/vechain/thor
-    bugs: https://github.com/vechain/thor/issues
+  - name: "@{{ .Env.REPOSITORY }}"
+    repository: 'https://github.com/{{ .Env.REPOSITORY }}'
+    bugs: 'https://github.com/{{ .Env.REPOSITORY }}/issues'
     description: A general purpose blockchain highly compatible with Ethereum's ecosystem
-    homepage: https://github.com/vechain/thor
+    homepage: 'https://github.com/{{ .Env.REPOSITORY }}'
     license: LGPL-3.0
     access: public
     keywords:
@@ -111,9 +111,9 @@ npms:
 
 nfpms:
   - id: vechain-thor
-    package_name: vechain/thor
+    package_name: '{{ .Env.REPOSITORY }}'
     description: A general purpose blockchain highly compatible with Ethereum's ecosystem
-    homepage: https://github.com/vechain/thor
+    homepage: 'https://github.com/{{ .Env.REPOSITORY }}'
     if: '{{ eq .Os "linux" }}'
     file_name_template: "{{ .ProjectName }}-{{ .Tag }}-{{ .Os }}-{{ .Arch }}{{ if .Arm }}v{{ .Arm }}{{ end }}"
     license: GPLv3
