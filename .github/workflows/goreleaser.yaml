@@ -62,21 +62,9 @@ jobs:
         run: |
           echo "sha_short=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
       - uses: actions/cache@v4
-        if: matrix.go-os == 'linux'
         with:
-          path: dist/linux-${{ matrix.go-arch }}
-          key: linux-${{ env.sha_short }}${{ env.flags }}-${{ matrix.go-arch }}
-      - uses: actions/cache@v4
-        if: matrix.go-os == 'darwin'
-        with:
-          path: dist/darwin
-          key: darwin-${{ env.sha_short }}${{ env.flags }}
-      - uses: actions/cache@v4
-        if: matrix.go-os == 'windows'
-        with:
-          path: dist/windows
-          key: windows-${{ env.sha_short }}${{ env.flags }}
-          enableCrossOsArchive: true
+          path: dist/${{ matrix.go-os }}_${{ matrix.go-arch }}
+          key: ${{ matrix.go-os }}-${{ env.sha_short }}${{ env.flags }}-${{ matrix.go-arch }}
 
       - name: Set Up Env
         id: env
@@ -153,11 +141,11 @@ jobs:
       - uses: actions/cache@v4
         with:
           path: dist/darwin
-          key: darwin-${{ env.sha_short }}${{ env.flags }}
+          key: darwin-${{ env.sha_short }}${{ env.flags }}-arm64
       - uses: actions/cache@v4
         with:
           path: dist/windows
-          key: windows-${{ env.sha_short }}${{ env.flags }}
+          key: windows-${{ env.sha_short }}${{ env.flags }}-amd64
           enableCrossOsArchive: true
 
       - uses: goreleaser/goreleaser-action@v6
