@@ -133,19 +133,19 @@ jobs:
       - uses: actions/cache@v4
         with:
           path: dist/linux-amd64
-          key: linux-${{ env.sha_short }}${{ env.flags }}-amd64
+          key: linux_${{ env.sha_short }}${{ env.flags }}-amd64
       - uses: actions/cache@v4
         with:
           path: dist/linux-arm64
-          key: linux-${{ env.sha_short }}${{ env.flags }}-arm64
+          key: linux_${{ env.sha_short }}${{ env.flags }}-arm64
       - uses: actions/cache@v4
         with:
           path: dist/darwin
-          key: darwin-${{ env.sha_short }}${{ env.flags }}-arm64
+          key: darwin_${{ env.sha_short }}${{ env.flags }}-arm64
       - uses: actions/cache@v4
         with:
           path: dist/windows
-          key: windows-${{ env.sha_short }}${{ env.flags }}-amd64
+          key: windows_${{ env.sha_short }}${{ env.flags }}-amd64
           enableCrossOsArchive: true
 
       - uses: goreleaser/goreleaser-action@v6
