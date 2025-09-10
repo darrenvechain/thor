@@ -153,7 +153,6 @@ dockers:
       - "--label=org.opencontainers.image.revision={{.FullCommit}}"
       - "--label=org.opencontainers.image.version={{.Tag}}"
       - "--label=org.opencontainers.image.licenses=LGPL-3.0"
-      - "--platform=linux/{{ .Runtime.Goarch }}"
 
 docker_manifests:
   - name_template: '{{ .Env.REPOSITORY }}:latest'
