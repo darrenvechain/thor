@@ -2,10 +2,13 @@
 FROM alpine:3.21.3
 
 ARG TARGETPLATFORM
+ARG BINARY
+
+RUN echo "Building $TARGETPLATFORM/$BINARY"
 
 RUN apk add --no-cache ca-certificates
 RUN apk upgrade libssl3 libcrypto3
-COPY $TARGETPLATFORM/thor /usr/local/bin/thor
+COPY $TARGETPLATFORM/$BINARY /usr/local/bin/$BINARY
 RUN adduser -D -s /bin/ash thor
 USER thor
 

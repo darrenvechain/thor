@@ -135,6 +135,32 @@ dockers_v2:
       - 'ghcr.io/vechain/thor'
       - '{{ if .IsRelease }}vechain/thor{{ end }}'
     dockerfile: goreleaser.Dockerfile
+    build_args:
+      BINARY: thor
+    tags:
+      - '{{ if not .IsSnapshot }}{{ .Tag }}{{ end }}'
+      - '{{ if .IsNightly }}nightly{{ end }}'
+      - '{{ if .IsRelease }}latest{{ end }}'
+      - '{{ if .IsSnapshot }}{{ .ShortCommit }}-{{ .CommitTimestamp }}{{ end }}'
+    labels:
+      "org.opencontainers.image.title": "{{.ProjectName}}"
+      "org.opencontainers.image.description": "A general purpose blockchain highly compatible with Ethereum's ecosystem"
+      "org.opencontainers.image.source": "{{.GitURL}}"
+      "org.opencontainers.image.url": "{{.GitURL}}"
+      "org.opencontainers.image.created": "{{.Date}}"
+      "org.opencontainers.image.revision": "{{.FullCommit}}"
+      "org.opencontainers.image.version": "{{.Tag}}"
+      "org.opencontainers.image.licenses": "LGPL-3.0"
+    platforms:
+      - linux/amd64
+      - linux/arm64
+  - id: "disco"
+    images:
+      - 'ghcr.io/vechain/disco"
+      - '{{ if .IsRelease }}vechain/disco{{ end }}'
+    dockerfile: goreleaser.Dockerfile
+    build_args:
+      BINARY: disco
     tags:
       - '{{ if not .IsSnapshot }}{{ .Tag }}{{ end }}'
       - '{{ if .IsNightly }}nightly{{ end }}'
