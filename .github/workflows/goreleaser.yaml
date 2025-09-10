@@ -23,7 +23,7 @@ jobs:
 
       - name: Commit SHA
         id: commit-sha
-        run: echo "commit_sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+        run: echo "commit_sha=$(git rev-parse --short HEAD)" >> "$GITHUB_OUTPUT"
 
       - name: Validate Release
         env:
@@ -121,9 +121,7 @@ jobs:
       - uses: actions/setup-go@v6
         with:
           go-version: stable
-      - shell: bash
-        run: |
-          echo "sha_short=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
+
       - uses: actions/cache@v4
         with:
           path: dist/${{ matrix.go-os }}_${{ matrix.go-arch }}
@@ -191,9 +189,6 @@ jobs:
         with:
           go-version: stable
 
-      - shell: bash
-        run: |
-          echo "sha_short=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
       - uses: actions/cache@v4
         with:
           path: dist/linux_amd64
@@ -228,3 +223,5 @@ jobs:
           DISCO_VERSION: ${{ needs.prepare.outputs.DISCO_VERSION }}
           COPYRIGHT_YEAR: ${{ needs.prepare.outputs.COPYRIGHT_YEAR }}
           REPOSITORY: ${{ github.repository }}
+          DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+          DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
