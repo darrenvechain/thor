@@ -135,10 +135,12 @@ jobs:
           echo "COPYRIGHT_YEAR=$COPYRIGHT_YEAR" >> "$GITHUB_OUTPUT"
 
       - id: skip-options
+        name: Set Skip Options
+        shell: bash
         run: |
           skip_options="--skip sign"
-          if [[ "${{ matrix.go-os }}" == "darwin" || "${{ matrix.go-os }}" == "windows" ]]; then
-            skip_options="$skip_options --skip docker"
+          if [[ "${{ matrix.go-os }}" != "linux" ]]; then
+              skip_options="$skip_options --skip docker"
           fi
           echo "skip_options=$skip_options" >> "$GITHUB_ENV"
 
