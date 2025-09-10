@@ -139,6 +139,8 @@ dockers:
   - id: "thor"
     goarch: '{{ .Runtime.Goarch }}'
     goos: linux
+    skip_build: false
+    skip_push: '{{ if not .IsRelease }}true{{ else }}false{{ end }}'
     image_templates:
       - '{{ if .IsRelease }}ghcr.io/{{ .Env.REPOSITORY }}:{{ .Tag }}-{{ .Runtime.Goarch }}{{ end }}'
       - '{{ if .IsSnapshot }}ghcr.io/{{ .Env.REPOSITORY }}:{{ .ShortCommit }}-{{ .CommitTimestamp }}{{ .Runtime.Goarch }}{{ end }}'
