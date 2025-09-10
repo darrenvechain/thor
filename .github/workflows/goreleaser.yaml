@@ -58,7 +58,8 @@ jobs:
           thor_version=$(cat cmd/thor/VERSION)
           if [ "$version" != "$thor_version" ]; then
             echo "VERSION file ($thor_version) does not match tag ($version)"
-          exit 1
+            exit 1
+          fi
           
           api_version=$(grep -o 'version: [0-9.]*' api/doc/thor.yaml | awk '{print $2}')
           if [ "$version" != "$api_version" ]; then
