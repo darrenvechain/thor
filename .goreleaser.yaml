@@ -132,13 +132,11 @@ nfpms:
 dockers:
   - id: "thor"
     image_templates:
-      - '{{ if not .IsSnapshot }}vechain/thor:{{ .Tag }}{{ end }}'
-      - '{{ if not .IsSnapshot }}ghcr.io/vechain/thor:{{ .Tag }}{{ end }}'
-      - '{{ if .IsRelease }}vechain/thor:{{ .Tag }}{{ end }}'
-      - '{{ if .IsRelease }}ghcr.io/vechain/thor:{{ .Tag }}{{ end }}'
-      - '{{ if .IsRelease }}vechain/thor:latest{{ end }}'
-      - '{{ if .IsRelease }}ghcr.io/vechain/thor:latest{{ end }}'
-      - '{{ if .IsSnapshot }}ghcr.io/vechain/thor:{{ .ShortCommit }}-{{ .CommitTimestamp }}{{ end }}'
+      - '{{ if .IsRelease }}{{ .Env.REPOSITORY }}:{{ .Tag }}-{{ .Runtime.Goarch }}{{ end }}'
+      - '{{ if .IsRelease }}ghcr.io/{{ .Env.REPOSITORY }}:{{ .Tag }}-{{ .Runtime.Goarch }}{{ end }}'
+      - '{{ if .IsRelease }}{{ .Env.REPOSITORY }}:latest-{{ .Runtime.Goarch }}{{ end }}'
+      - '{{ if .IsRelease }}ghcr.io/{{ .Env.REPOSITORY }}:latest-{{ .Runtime.Goarch }}{{ end }}'
+      - '{{ if .IsSnapshot }}ghcr.io/{{ .Env.REPOSITORY }}:{{ .ShortCommit }}-{{ .CommitTimestamp }}{{ .Runtime.Goarch }}{{ end }}'
     ids:
       - thor
       - disco
@@ -154,6 +152,37 @@ dockers:
       - "--label=org.opencontainers.image.licenses=LGPL-3.0"
       - "--platform=linux/{{ .Runtime.Goarch }}"
 
+docker_manifests:
+  - name_template: '{{ .Env.REPOSITORY }}:latest'
+    image_templates:
+      - '{{ .Env.REPOSITORY }}:latest-amd64'
+      - '{{ .Env.REPOSITORY }}:latest-arm64'
+    skip_push: '{{ if not .IsRelease }}true{{ else }}false{{ end }}'
+
+  - name_template: 'ghcr.io/{{ .Env.REPOSITORY }}:latest'
+    image_templates:
+      - 'ghcr.io/{{ .Env.REPOSITORY }}:latest-amd64'
+      - 'ghcr.io/{{ .Env.REPOSITORY }}:latest-arm64'
+    skip_push: '{{ if not .IsRelease }}true{{ else }}false{{ end }}'
+
+  - name_template: '{{ .Env.REPOSITORY }}:{{ .Tag }}'
+    image_templates:
+      - '{{ .Env.REPOSITORY }}:{{ .Tag }}-amd64'
+      - '{{ .Env.REPOSITORY }}:{{ .Tag }}-arm64'
+    skip_push: '{{ if not .IsRelease }}true{{ else }}false{{ end }}'
+
+  - name_template: 'ghcr.io/{{ .Env.REPOSITORY }}:{{ .Tag }}'
+    image_templates:
+      - 'ghcr.io/{{ .Env.REPOSITORY }}:{{ .Tag }}-amd64'
+      - 'ghcr.io/{{ .Env.REPOSITORY }}:{{ .Tag }}-arm64'
+    skip_push: '{{ if not .IsRelease }}true{{ else }}false{{ end }}'
+
+  - name_template: 'ghcr.io/{{ .Env.REPOSITORY }}:{{ .ShortCommit }}-{{ .CommitTimestamp }}'
+    image_templates:
+      - 'ghcr.io/{{ .Env.REPOSITORY }}:{{ .ShortCommit }}-{{ .CommitTimestamp }}-amd64'
+      - 'ghcr.io/{{ .Env.REPOSITORY }}:{{ .ShortCommit }}-{{ .CommitTimestamp }}-arm64'
+    skip_push: '{{ if .IsSnapshot }}false{{ else }}true{{ end }}'
+
 docker_digest:
   name_template: "{{ProjectName}}_digest.txt"
 
@@ -161,7 +190,7 @@ dockerhub:
   - username: "{{ .Env.DOCKERHUB_USERNAME }}"
     secret_name: "DOCKERHUB_TOKEN"
     images:
-      - vechain/thor
+      - '{{ .Env.REPOSITORY }}'
     full_description:
       from_file:
         path: ./README.md

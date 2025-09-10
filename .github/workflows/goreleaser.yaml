@@ -54,6 +54,10 @@ jobs:
         shell: bash
         run: |
           echo "flags=--nightly" >> $GITHUB_ENV
+      - if: ${{ github.event_name == 'push' || github.event_name == 'pull_request' }}
+        shell: bash
+        run: |
+          echo "flags=--snapshot" >> $GITHUB_ENV
       - shell: bash
         run: |
           echo "sha_short=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
@@ -98,6 +102,7 @@ jobs:
           THOR_VERSION: ${{ steps.env.outputs.THOR_VERSION }}
           DISCO_VERSION: ${{ steps.env.outputs.DISCO_VERSION }}
           COPYRIGHT_YEAR: ${{ steps.env.outputs.COPYRIGHT_YEAR }}
+          REPOSITORY: ${{ github.repository }}
 
       - shell: bash
         run: |
@@ -150,7 +155,6 @@ jobs:
           enableCrossOsArchive: true
 
       - uses: goreleaser/goreleaser-action@v6
-        if: false # TODO: testing for now
         with:
           distribution: goreleaser-pro
           version: latest
@@ -163,3 +167,4 @@ jobs:
           THOR_VERSION: ${{ needs.prepare.outputs.THOR_VERSION }}
           DISCO_VERSION: ${{ needs.prepare.outputs.DISCO_VERSION }}
           COPYRIGHT_YEAR: ${{ needs.prepare.outputs.COPYRIGHT_YEAR }}
+          REPOSITORY: ${{ github.repository }}
