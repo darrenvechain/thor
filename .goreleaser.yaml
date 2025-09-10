@@ -44,7 +44,7 @@ builds:
       - CGO_ENABLED=1
 
 binary_signs:
-  - cmd: gpg2
+  - cmd: gpg
     args:
       - --batch
       - --yes
