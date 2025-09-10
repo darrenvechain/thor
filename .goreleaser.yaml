@@ -51,6 +51,7 @@ binary_signs:
       - --passphrase={{ .Env.GPG_PASSPHRASE }}
       - --armor
       - --detach-sign
+      - "${artifact}"
     artifacts: binary
     ids:
       - thor
