@@ -160,7 +160,6 @@ jobs:
       - validate
     env:
       DOCKER_CLI_EXPERIMENTAL: "enabled"
-      flags: ""
     environment: docker-publish
     steps:
       - uses: actions/checkout@v5
@@ -180,11 +179,6 @@ jobs:
       - uses: actions/setup-go@v6
         with:
           go-version: stable
-
-      - if: contains(github.ref, 'rc')
-        shell: bash
-        run: |
-          echo "flags=--nightly" >> $GITHUB_ENV
 
       - shell: bash
         run: |
@@ -213,7 +207,7 @@ jobs:
         with:
           distribution: goreleaser-pro
           version: latest
-          args: continue --merge --verbose ${{ env.flags }}
+          args: continue --merge --verbose ${{ needs.validate.outputs.FLAGS }}
         env:
           GITHUB_TOKEN: ${{ github.token }}
           GORELEASER_KEY: ${{ secrets.GORELEASER_KEY }}
