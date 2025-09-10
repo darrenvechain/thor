@@ -9,6 +9,7 @@ jobs:
   prepare:
     runs-on: ${{ matrix.runs-on }}
     strategy:
+      fail-fast: false
       matrix:
         include:
           - runs-on: ubuntu-latest
