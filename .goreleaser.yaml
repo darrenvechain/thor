@@ -30,7 +30,7 @@ builds:
       - -X main.gitTag={{.Tag}}
       - -X main.copyrightYear={{.Env.COPYRIGHT_YEAR}}
     env:
-      - CGO_ENABLED=0
+      - CGO_ENABLED=1
   - id: "disco"
     main: ./cmd/disco
     binary: disco
@@ -41,7 +41,7 @@ builds:
       - -X main.gitTag={{.Tag}}
       - -X main.copyrightYear={{.Env.COPYRIGHT_YEAR}}
     env:
-      - CGO_ENABLED=0
+      - CGO_ENABLED=1
 
 archives:
   - formats: [ 'tar.gz' ]
