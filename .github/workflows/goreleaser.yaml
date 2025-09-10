@@ -138,11 +138,28 @@ jobs:
         name: Set Skip Options
         shell: bash
         run: |
-          skip_options="--skip sign"
+          skip_options=""
           if [[ "${{ matrix.go-os }}" != "linux" ]]; then
               skip_options="$skip_options --skip docker"
           fi
           echo "skip_options=$skip_options" >> "$GITHUB_ENV"
+
+      - name: Import GPG Private Key
+        shell: pwsh
+        if: matrix.go-os == 'windows'
+        env:
+          GPG_PRIVATE_KEY: ${{ secrets.GPG_PRIVATE_KEY }}
+        run: |
+          $gpgKey = $Env:GPG_PRIVATE_KEY -replace "`r`n", "`n"
+          $gpgKey | Out-File -Encoding ascii private.key
+          gpg --batch --import private.key
+
+      - name: Import GPG Private Key
+        if: matrix.go-os != 'windows'
+        env:
+          GPG_PRIVATE_KEY: ${{ secrets.GPG_PRIVATE_KEY }}
+        run: |
+          echo "$GPG_PRIVATE_KEY" | gpg --batch --import
 
       - uses: goreleaser/goreleaser-action@v6
         with:
@@ -158,7 +175,7 @@ jobs:
           DISCO_VERSION: ${{ steps.env.outputs.DISCO_VERSION }}
           COPYRIGHT_YEAR: ${{ steps.env.outputs.COPYRIGHT_YEAR }}
           REPOSITORY: ${{ github.repository }}
-          GPG_PASSPHRASE: ""
+          GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
 
       - uses: actions/upload-artifact@v4
         if: always()

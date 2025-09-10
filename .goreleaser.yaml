@@ -49,7 +49,7 @@ binary_signs:
       - --batch
       - --yes
       - --pinentry-mode loopback
-      - --passphrase={{ .Env.GPG_PASSPHRASE }}
+      - --passphrase "{{ .Env.GPG_PASSPHRASE }}"
       - --armor
       - --detach-sign
     artifacts: binary
