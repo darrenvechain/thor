@@ -84,12 +84,6 @@ jobs:
           COPYRIGHT_YEAR=$(date +'%Y')
           echo "COPYRIGHT_YEAR=$COPYRIGHT_YEAR" >> "$GITHUB_OUTPUT"
 
-      - name: Setup Flags
-        if: matrix.go-os != 'linux'
-        run: |
-          flags="--skip docker"
-          echo "flags=$flags" >> "$GITHUB_ENV"
-
       - uses: goreleaser/goreleaser-action@v6
         with:
           distribution: goreleaser-pro
