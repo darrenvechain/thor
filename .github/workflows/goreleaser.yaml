@@ -1,9 +1,31 @@
 name: GoReleaser
 
 on:
-  push:
-    branches:
-      - darren/test/goreleaser-pro
+  workflow_call:
+    inputs:
+      type:
+        type: string
+        required: false
+        default: 'snapshot'
+        description: 'snapshot, nightly, release'
+      environment:
+        type: string
+        required: false
+        default: ''
+  workflow_dispatch:
+    inputs:
+      type:
+        description: 'Type of release to perform'
+        required: false
+        default: 'snapshot'
+        options:
+          - snapshot
+          - nightly
+          - release
+      environment:
+        type: environment
+        description: 'The environment to use for credentials'
+        required: false
 
 jobs:
   prepare:
@@ -28,6 +50,8 @@ jobs:
       THOR_VERSION: ${{ steps.env.outputs.THOR_VERSION }}
       DISCO_VERSION: ${{ steps.env.outputs.DISCO_VERSION }}
       COPYRIGHT_YEAR: ${{ steps.env.outputs.COPYRIGHT_YEAR }}
+
+    environment: ${{ inputs.environment }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v5
@@ -50,14 +74,6 @@ jobs:
       - uses: actions/setup-go@v6
         with:
           go-version: stable
-      - if: ${{ github.event_name == 'workflow_dispatch' }}
-        shell: bash
-        run: |
-          echo "flags=--nightly" >> $GITHUB_ENV
-      - if: ${{ github.event_name == 'push' || github.event_name == 'pull_request' }}
-        shell: bash
-        run: |
-          echo "flags=--snapshot" >> $GITHUB_ENV
       - shell: bash
         run: |
           echo "sha_short=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
@@ -93,7 +109,7 @@ jobs:
         with:
           distribution: goreleaser-pro
           version: latest
-          args: release --clean --split --verbose ${{ env.flags }} ${{ (matrix.go-os == 'darwin' || matrix.go-os == 'windows') && '--skip docker' || ''}} #TODO: remove snapshot and introduce an input
+          args: release --clean --split --verbose --${{ inputs.type }} ${{ env.flags }} ${{ (matrix.go-os == 'darwin' || matrix.go-os == 'windows') && '--skip docker' || ''}}
         env:
           GITHUB_TOKEN: ${{ github.token }}
           GORELEASER_KEY: ${{ secrets.GORELEASER_KEY }}
@@ -114,6 +130,7 @@ jobs:
     env:
       DOCKER_CLI_EXPERIMENTAL: "enabled"
       flags: ""
+    environment: ${{ inputs.environment }}
     steps:
       - uses: actions/checkout@v5
         with:
