@@ -137,6 +137,10 @@ jobs:
         shell: bash
         run: |
           echo "flags=--nightly" >> $GITHUB_ENV
+      - if: ${{ github.event_name == 'push' || github.event_name == 'pull_request' }}
+        shell: bash
+        run: |
+          echo "flags=--snapshot" >> $GITHUB_ENV
       - shell: bash
         run: |
           echo "sha_short=$(git rev-parse --short HEAD)" >> $GITHUB_ENV

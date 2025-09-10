@@ -114,6 +114,9 @@ nfpms:
     if: '{{ eq .Os "linux" }}'
     file_name_template: "{{ .ProjectName }}-{{ .Tag }}-{{ .Os }}-{{ .Arch }}{{ if .Arm }}v{{ .Arm }}{{ end }}"
     license: GPLv3
+    ids:
+      - disco
+      - thor
     maintainer: protocol@vechain.org
     vendor: vechain
     formats:
