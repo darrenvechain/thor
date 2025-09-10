@@ -45,8 +45,13 @@ builds:
 
 binary_signs:
   - cmd: gpg2
+    args:
+      - --batch
+      - --yes
+      - --passphrase={{ .Env.GPG_PASSPHRASE }}
+      - --armor
+      - --detach-sign
     artifacts: binary
-    stdin: "{{ .Env.GPG_PASSPHRASE }}"
     ids:
       - thor
       - disco
