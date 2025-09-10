@@ -94,7 +94,7 @@ jobs:
         with:
           distribution: goreleaser-pro
           version: latest
-          args: release --clean --split ${{ env.flags }}
+          args: release --clean --split --snapshot ${{ env.flags }} #TODO: remove snapshot and introduce an input
         env:
           GITHUB_TOKEN: ${{ github.token }}
           GORELEASER_KEY: ${{ secrets.GORELEASER_KEY }}
