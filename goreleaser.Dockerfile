@@ -10,5 +10,3 @@ USER thor
 
 EXPOSE 8669 11235 11235/udp 55555/udp
 ENTRYPOINT ["thor"]
-
-
