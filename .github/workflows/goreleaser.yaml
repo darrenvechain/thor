@@ -6,9 +6,13 @@ on:
       type:
         type: string
         required: false
-        default: 'snapshot'
-        description: 'snapshot, nightly, release'
+        default: 'release'
+        description: 'release, --snapshot, --nightly'
       environment:
+        type: string
+        required: false
+        default: ''
+      tag:
         type: string
         required: false
         default: ''
@@ -17,15 +21,20 @@ on:
       type:
         description: 'Type of release to perform'
         required: false
-        default: 'snapshot'
+        default: 'release'
         options:
-          - snapshot
-          - nightly
           - release
+          - --snapshot
+          - --nightly
       environment:
         type: environment
         description: 'The environment to use for credentials'
         required: false
+      tag:
+        type: string
+        required: false
+        default: ''
+        description: 'The tag to publish'
 
 jobs:
   prepare:
@@ -55,6 +64,9 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v5
+        with:
+          ref: ${{ inputs.tag != '' && inputs.tag || 'master' }}
+
       - name: Set up Go
         uses: actions/setup-go@v6
         with:
@@ -109,7 +121,7 @@ jobs:
         with:
           distribution: goreleaser-pro
           version: latest
-          args: release --clean --split --verbose --${{ inputs.type != 'release' &&  inputs.type || '' }} ${{ env.flags }} ${{ (matrix.go-os == 'darwin' || matrix.go-os == 'windows') && '--skip docker' || ''}}
+          args: release --clean --split --verbose ${{ inputs.type != 'release' &&  inputs.type || '' }} ${{ env.flags }} ${{ (matrix.go-os == 'darwin' || matrix.go-os == 'windows') && '--skip docker' || ''}}
         env:
           GITHUB_TOKEN: ${{ github.token }}
           GORELEASER_KEY: ${{ secrets.GORELEASER_KEY }}
@@ -135,6 +147,8 @@ jobs:
       - uses: actions/checkout@v5
         with:
           fetch-depth: 0
+          ref: ${{ inputs.tag != '' && inputs.tag || 'master' }}
+
       - uses: docker/setup-qemu-action@v3
       - uses: docker/setup-buildx-action@v3
       - uses: sigstore/cosign-installer@v3.9.2
