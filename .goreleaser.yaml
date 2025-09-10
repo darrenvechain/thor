@@ -137,6 +137,8 @@ dockers_v2:
     dockerfile: goreleaser.Dockerfile
     build_args:
       BINARY: thor
+      GOOS: '{{ .Runtime.GOOS }}'
+      GOARCH: '{{ .Runtime.GOARCH }}'
     tags:
       - '{{ if not .IsSnapshot }}{{ .Tag }}{{ end }}'
       - '{{ if .IsNightly }}nightly{{ end }}'
@@ -161,6 +163,8 @@ dockers_v2:
     dockerfile: goreleaser.Dockerfile
     build_args:
       BINARY: disco
+      GOOS: '{{ .Runtime.GOOS }}'
+      GOARCH: '{{ .Runtime.GOARCH }}'
     tags:
       - '{{ if not .IsSnapshot }}{{ .Tag }}{{ end }}'
       - '{{ if .IsNightly }}nightly{{ end }}'
