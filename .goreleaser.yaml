@@ -136,14 +136,13 @@ nfpms:
       group: Unspecified
 
 dockers:
-  - id: "thor"
-    goarch: '{{ .Runtime.Goarch }}'
+  - goarch: amd64
     goos: linux
     skip_build: false
     skip_push: '{{ if not .IsRelease }}true{{ else }}false{{ end }}'
     image_templates:
-      - '{{ if .IsRelease }}ghcr.io/{{ .Env.REPOSITORY }}:{{ .Tag }}-{{ .Runtime.Goarch }}{{ end }}'
-      - '{{ if .IsSnapshot }}ghcr.io/{{ .Env.REPOSITORY }}:{{ .ShortCommit }}-{{ .CommitTimestamp }}{{ .Runtime.Goarch }}{{ end }}'
+      - '{{ if .IsRelease }}ghcr.io/{{ .Env.REPOSITORY }}:{{ .Tag }}-amd64{{ end }}'
+      - '{{ if .IsSnapshot }}ghcr.io/{{ .Env.REPOSITORY }}:{{ .ShortCommit }}-{{ .CommitTimestamp }}-amd64{{ end }}'
     ids:
       - thor
       - disco
@@ -157,6 +156,28 @@ dockers:
       - "--label=org.opencontainers.image.revision={{.FullCommit}}"
       - "--label=org.opencontainers.image.version={{.Tag}}"
       - "--label=org.opencontainers.image.licenses=LGPL-3.0"
+  - goarch: arm64
+    goos: linux
+    skip_build: false
+    skip_push: '{{ if not .IsRelease }}true{{ else }}false{{ end }}'
+    image_templates:
+      - '{{ if .IsRelease }}ghcr.io/{{ .Env.REPOSITORY }}:{{ .Tag }}-arm64{{ end }}'
+      - '{{ if .IsSnapshot }}ghcr.io/{{ .Env.REPOSITORY }}:{{ .ShortCommit }}-{{ .CommitTimestamp }}-arm64{{ end }}'
+      - "--platform=linux/amd64"
+    ids:
+      - thor
+      - disco
+    dockerfile: goreleaser.Dockerfile
+    build_flag_templates:
+      - "--label=org.opencontainers.image.title={{.ProjectName}}"
+      - "--label=org.opencontainers.image.description=A general purpose blockchain highly compatible with Ethereum's ecosystem"
+      - "--label=org.opencontainers.image.source={{.GitURL}}"
+      - "--label=org.opencontainers.image.url={{.GitURL}}"
+      - "--label=org.opencontainers.image.created={{.Date}}"
+      - "--label=org.opencontainers.image.revision={{.FullCommit}}"
+      - "--label=org.opencontainers.image.version={{.Tag}}"
+      - "--label=org.opencontainers.image.licenses=LGPL-3.0"
+      - "-platform=linux/arm64"
 
 docker_manifests:
   - name_template: '{{ .Env.REPOSITORY }}:latest'
