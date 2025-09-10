@@ -179,7 +179,7 @@ dockers_v2:
       "org.opencontainers.image.version": "{{.Tag}}"
       "org.opencontainers.image.licenses": "LGPL-3.0"
     platforms:
-      - 'linux/{{ .Runtime.Goarch }}'
+      - '{{if eq .Runtime.Goarch "amd64" }}linux/amd64{{ else if eq .Runtime.Goarch "arm64" }}linux/arm64{{ end}}'
 
 docker_digest:
   name_template: "{{ProjectName}}_digest.txt"
