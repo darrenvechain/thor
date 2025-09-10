@@ -134,11 +134,19 @@ jobs:
           COPYRIGHT_YEAR=$(date +'%Y')
           echo "COPYRIGHT_YEAR=$COPYRIGHT_YEAR" >> "$GITHUB_OUTPUT"
 
+      - id: skip-options
+        run: |
+          skip_options="--skip sign"
+          if [[ "${{ matrix.go-os }}" == "darwin" || "${{ matrix.go-os }}" == "windows" ]]; then
+            skip_options="$skip_options --skip docker"
+          fi
+          echo "skip_options=$skip_options" >> "$GITHUB_ENV"
+
       - uses: goreleaser/goreleaser-action@v6
         with:
           distribution: goreleaser-pro
           version: latest
-          args: release --clean --split --verbose ${{ needs.validate.outputs.FLAGS }} ${{ (matrix.go-os == 'darwin' || matrix.go-os == 'windows') && '--skip docker' || ''}}
+          args: release --clean --split --verbose ${{ needs.validate.outputs.FLAGS }} ${{ env.skip_options }}
         env:
           GITHUB_TOKEN: ${{ github.token }}
           GORELEASER_KEY: ${{ secrets.GORELEASER_KEY }}
@@ -148,6 +156,7 @@ jobs:
           DISCO_VERSION: ${{ steps.env.outputs.DISCO_VERSION }}
           COPYRIGHT_YEAR: ${{ steps.env.outputs.COPYRIGHT_YEAR }}
           REPOSITORY: ${{ github.repository }}
+          GPG_PASSPHRASE: ""
 
       - uses: actions/upload-artifact@v4
         if: always()
