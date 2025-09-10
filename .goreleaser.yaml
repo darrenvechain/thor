@@ -30,7 +30,7 @@ builds:
       - -X main.gitTag={{.Tag}}
       - -X main.copyrightYear={{.Env.COPYRIGHT_YEAR}}
     env:
-      - CGO_ENABLED=1
+      - CGO_ENABLED=0
   - id: "disco"
     main: ./cmd/disco
     binary: disco
@@ -41,7 +41,7 @@ builds:
       - -X main.gitTag={{.Tag}}
       - -X main.copyrightYear={{.Env.COPYRIGHT_YEAR}}
     env:
-      - CGO_ENABLED=1
+      - CGO_ENABLED=0
 
 archives:
   - formats: [ 'tar.gz' ]
@@ -179,7 +179,8 @@ dockers_v2:
       "org.opencontainers.image.version": "{{.Tag}}"
       "org.opencontainers.image.licenses": "LGPL-3.0"
     platforms:
-      - '{{if eq .Runtime.Goarch "amd64" }}linux/amd64{{ else if eq .Runtime.Goarch "arm64" }}linux/arm64{{ end}}'
+      - 'linux/arm64'
+      - 'linux/amd64'
 
 docker_digest:
   name_template: "{{ProjectName}}_digest.txt"
