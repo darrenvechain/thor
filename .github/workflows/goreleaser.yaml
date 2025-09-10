@@ -126,6 +126,7 @@ jobs:
         with:
           path: dist/${{ matrix.go-os }}_${{ matrix.go-arch }}
           key: ${{ matrix.go-os }}-${{ needs.validate.outputs.COMMIT_SHA }}${{ needs.validate.outputs.FLAGS }}-${{ matrix.go-arch }}
+          enableCrossOsArchive: true
 
       - name: Set Up Env
         id: env
@@ -198,19 +199,23 @@ jobs:
         with:
           go-version: stable
 
-      - uses: actions/cache@v4
+      - name: Linux (AMD64)
+        uses: actions/cache@v4
         with:
           path: dist/linux_amd64
           key: linux-${{ needs.validate.outputs.COMMIT_SHA }}${{ needs.validate.outputs.FLAGS }}-amd64
       - uses: actions/cache@v4
+        name: Linux (ARM64)
         with:
           path: dist/linux_arm64
           key: linux-${{ needs.validate.outputs.COMMIT_SHA }}${{ needs.validate.outputs.FLAGS }}-arm64
       - uses: actions/cache@v4
+        name: macOS (ARM64)
         with:
           path: dist/darwin_arm64
           key: darwin-${{ needs.validate.outputs.COMMIT_SHA }}${{ needs.validate.outputs.FLAGS }}-arm64
       - uses: actions/cache@v4
+        name: Windows (AMD64)
         with:
           path: dist/windows_amd64
           key: windows-${{ needs.validate.outputs.COMMIT_SHA }}${{ needs.validate.outputs.FLAGS }}-amd64

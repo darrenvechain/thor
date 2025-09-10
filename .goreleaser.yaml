@@ -188,12 +188,3 @@ docker_manifests:
 
 docker_digest:
   name_template: "{{ProjectName}}_digest.txt"
-
-dockerhub:
-  - username: "{{ .Env.DOCKERHUB_USERNAME }}"
-    secret_name: "DOCKERHUB_TOKEN"
-    images:
-      - '{{ .Env.REPOSITORY }}'
-    full_description:
-      from_file:
-        path: ./README.md
