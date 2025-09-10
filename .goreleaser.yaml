@@ -48,7 +48,6 @@ binary_signs:
     args:
       - --batch
       - --yes
-      - --pinentry-mode loopback
       - --passphrase "{{ .Env.GPG_PASSPHRASE }}"
       - --armor
       - --detach-sign
