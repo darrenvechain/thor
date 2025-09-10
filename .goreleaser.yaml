@@ -134,12 +134,12 @@ dockers_v2:
     images:
       - 'ghcr.io/vechain/thor'
       - '{{ if .IsRelease }}vechain/thor{{ end }}'
-    dockerfile: Dockerfile
+    dockerfile: goreleaser.Dockerfile
     tags:
-      - '{{ if eq .Runtime.Goos "linux" }}{{ if not .IsSnapshot }}{{ .Tag }}{{ end }}{{ end }}'
-      - '{{ if eq .Runtime.Goos "linux" }}{{ if .IsNightly }}nightly{{ end }}{{ end }}'
-      - '{{ if eq .Runtime.Goos "linux" }}{{ if .IsRelease }}latest{{ end }}{{ end }}'
-      - '{{ if eq .Runtime.Goos "linux" }}{{ if .IsSnapshot }}{{ .ShortCommit }}-{{ .CommitTimestamp }}{{ end }}{{ end }}'
+      - '{{ if not .IsSnapshot }}{{ .Tag }}{{ end }}'
+      - '{{ if .IsNightly }}nightly{{ end }}'
+      - '{{ if .IsRelease }}latest{{ end }}'
+      - '{{ if .IsSnapshot }}{{ .ShortCommit }}-{{ .CommitTimestamp }}{{ end }}'
     labels:
       "org.opencontainers.image.title": "{{.ProjectName}}"
       "org.opencontainers.image.description": "A general purpose blockchain highly compatible with Ethereum's ecosystem"
