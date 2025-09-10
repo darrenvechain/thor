@@ -156,7 +156,7 @@ dockers_v2:
       - linux/arm64
   - id: "disco"
     images:
-      - 'ghcr.io/vechain/disco"
+      - 'ghcr.io/vechain/disco'
       - '{{ if .IsRelease }}vechain/disco{{ end }}'
     dockerfile: goreleaser.Dockerfile
     build_args:
