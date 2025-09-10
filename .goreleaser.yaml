@@ -142,7 +142,6 @@ dockers:
     skip_push: '{{ if not .IsRelease }}true{{ else }}false{{ end }}'
     image_templates:
       - '{{ if .IsRelease }}ghcr.io/{{ .Env.REPOSITORY }}:{{ .Tag }}-amd64{{ end }}'
-      - '{{ if .IsSnapshot }}ghcr.io/{{ .Env.REPOSITORY }}:{{ .ShortCommit }}-{{ .CommitTimestamp }}-amd64{{ end }}'
     ids:
       - thor
       - disco
@@ -163,7 +162,6 @@ dockers:
     skip_push: '{{ if not .IsRelease }}true{{ else }}false{{ end }}'
     image_templates:
       - '{{ if .IsRelease }}ghcr.io/{{ .Env.REPOSITORY }}:{{ .Tag }}-arm64{{ end }}'
-      - '{{ if .IsSnapshot }}ghcr.io/{{ .Env.REPOSITORY }}:{{ .ShortCommit }}-{{ .CommitTimestamp }}-arm64{{ end }}'
     ids:
       - thor
       - disco
@@ -184,31 +182,25 @@ docker_manifests:
     image_templates:
       - 'ghcr.io/{{ .Env.REPOSITORY }}:{{ .Tag }}-amd64'
       - 'ghcr.io/{{ .Env.REPOSITORY }}:{{ .Tag }}-arm64'
-    skip_push: '{{ if not .IsRelease }}true{{ else }}false{{ end }}'
+    skip_push: '{{ if .IsRelease }}false{{ else }}true{{ end }}'
 
   - name_template: 'ghcr.io/{{ .Env.REPOSITORY }}:latest'
     image_templates:
       - 'ghcr.io/{{ .Env.REPOSITORY }}:{{ .Tag }}-amd64'
       - 'ghcr.io/{{ .Env.REPOSITORY }}:{{ .Tag }}-arm64'
-    skip_push: '{{ if not .IsRelease }}true{{ else }}false{{ end }}'
+    skip_push: '{{ if .IsRelease }}false{{ else }}true{{ end }}'
 
   - name_template: '{{ .Env.REPOSITORY }}:{{ .Tag }}'
     image_templates:
       - 'ghcr.io/{{ .Env.REPOSITORY }}:{{ .Tag }}-amd64'
       - 'ghcr.io/{{ .Env.REPOSITORY }}:{{ .Tag }}-arm64'
-    skip_push: '{{ if not .IsRelease }}true{{ else }}false{{ end }}'
+    skip_push: '{{ if or .IsRelease .IsNightly }}false{{ else }}true{{ end }}'
 
   - name_template: 'ghcr.io/{{ .Env.REPOSITORY }}:{{ .Tag }}'
     image_templates:
       - 'ghcr.io/{{ .Env.REPOSITORY }}:{{ .Tag }}-amd64'
       - 'ghcr.io/{{ .Env.REPOSITORY }}:{{ .Tag }}-arm64'
-    skip_push: '{{ if not .IsRelease }}true{{ else }}false{{ end }}'
-
-  - name_template: 'ghcr.io/{{ .Env.REPOSITORY }}:{{ .ShortCommit }}-{{ .CommitTimestamp }}'
-    image_templates:
-      - 'ghcr.io/{{ .Env.REPOSITORY }}:{{ .ShortCommit }}-{{ .CommitTimestamp }}-amd64'
-      - 'ghcr.io/{{ .Env.REPOSITORY }}:{{ .ShortCommit }}-{{ .CommitTimestamp }}-arm64'
-    skip_push: '{{ if .IsSnapshot }}false{{ else }}true{{ end }}'
+    skip_push: '{{ if or .IsRelease .IsNightly }}false{{ else }}true{{ end }}'
 
 docker_digest:
   name_template: "{{ProjectName}}_digest.txt"
