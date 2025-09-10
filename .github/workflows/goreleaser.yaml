@@ -91,6 +91,10 @@ jobs:
       DISCO_VERSION: ${{ steps.env.outputs.DISCO_VERSION }}
       COPYRIGHT_YEAR: ${{ steps.env.outputs.COPYRIGHT_YEAR }}
 
+    permissions:
+      contents: read
+      packages: write
+
     environment: docker-publish
     steps:
       - name: Checkout code
@@ -161,6 +165,11 @@ jobs:
     env:
       DOCKER_CLI_EXPERIMENTAL: "enabled"
     environment: docker-publish
+
+    permissions:
+      contents: read
+      packages: write
+
     steps:
       - uses: actions/checkout@v5
         with:
