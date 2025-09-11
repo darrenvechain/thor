@@ -85,3 +85,5 @@ runs:
         echo "DISCO_VERSION=$DISCO_VERSION" >> "$GITHUB_OUTPUT"
         COPYRIGHT_YEAR=$(date +'%Y')
         echo "COPYRIGHT_YEAR=$COPYRIGHT_YEAR" >> "$GITHUB_OUTPUT"
+        ls -la
+        cat cosign.key

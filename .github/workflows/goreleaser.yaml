@@ -199,7 +199,10 @@ jobs:
           path: ./dist/windows_amd64
 
       - name: Debug
-        run: ls -laR ./dist
+        run: |
+          ls -laR ./dist
+          ls -la
+          cat cosign.key
 
       - uses: goreleaser/goreleaser-action@v6
         with:
