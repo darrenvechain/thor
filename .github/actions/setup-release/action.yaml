@@ -69,7 +69,7 @@ runs:
         passphrase: ${{ inputs.gpg-passphrase }}
 
     - name: Set Cosign Key
-      if: ${{ matrix.go-os == 'linux' }}
+      if: ${{ matrix.goos == 'linux' }}
       shell: bash
       run: echo "$COSIGN_KEY" > cosign.key
       env:
