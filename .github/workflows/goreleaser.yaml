@@ -134,15 +134,15 @@ jobs:
           COPYRIGHT_YEAR=$(date +'%Y')
           echo "COPYRIGHT_YEAR=$COPYRIGHT_YEAR" >> "$GITHUB_OUTPUT"
 
-      - id: skip-options
-        name: Set Skip Options
-        shell: bash
-        run: |
-          skip_options=""
-          if [[ "${{ matrix.go-os }}" != "linux" ]]; then
-              skip_options="$skip_options --skip docker"
-          fi
-          echo "skip_options=$skip_options" >> "$GITHUB_ENV"
+#      - id: skip-options
+#        name: Set Skip Options
+#        shell: bash
+#        run: |
+#          skip_options=""
+#          if [[ "${{ matrix.go-os }}" != "linux" ]]; then
+#              skip_options="$skip_options --skip docker"
+#          fi
+#          echo "skip_options=$skip_options" >> "$GITHUB_ENV"
 
       - name: Import GPG key
         id: import_gpg
@@ -155,7 +155,7 @@ jobs:
         with:
           distribution: goreleaser-pro
           version: latest
-          args: release --clean --split --verbose ${{ needs.validate.outputs.FLAGS }} ${{ env.skip_options }}
+          args: release --clean --split --verbose ${{ needs.validate.outputs.FLAGS }}
         env:
           GITHUB_TOKEN: ${{ github.token }}
           GORELEASER_KEY: ${{ secrets.GORELEASER_KEY }}
