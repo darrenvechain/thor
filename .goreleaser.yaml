@@ -54,6 +54,17 @@ signs:
     - "--detach-sign"
     - "${artifact}"
 
+binary_signs:
+  - cmd: gpg2
+    args:
+      - "--batch"
+      - "-u"
+      - "{{ .Env.GPG_FINGERPRINT }}"
+      - "--output"
+      - "${signature}"
+      - "--detach-sign"
+      - "${artifact}"
+
 archives:
   - formats: [ 'tar.gz' ]
     wrap_in_directory: true
