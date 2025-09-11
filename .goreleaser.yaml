@@ -43,14 +43,16 @@ builds:
     env:
       - CGO_ENABLED=1
 
-binary_signs:
-  - cmd: gpg
-    args: ["--output", "${signature}", "--detach-sign", "${artifact}"]
-    stdin: "{{ .Env.GPG_PASSPHRASE }}"
-    artifacts: binary
-    ids:
-      - thor
-      - disco
+signs:
+  - cmd: gpg2
+    args:
+    - "--batch"
+    - "-u"
+    - "{{ .Env.GPG_FINGERPRINT }}"
+    - "--output"
+    - "${signature}"
+    - "--detach-sign"
+    - "${artifact}"
 
 archives:
   - formats: [ 'tar.gz' ]
@@ -210,17 +212,3 @@ docker_manifests:
 
 docker_digest:
   name_template: "{{ProjectName}}_digest.txt"
-
-docker_signs:
-  - cmd: gpg
-    args:
-      - --batch
-      - --yes
-      - --pinentry-mode loopback
-      - --passphrase={{ .Env.GPG_PASSPHRASE }}
-      - --armor
-      - --detach-sign
-    artifacts: all
-    ids:
-      - thor
-      - disco

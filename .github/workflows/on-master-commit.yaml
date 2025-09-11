@@ -3,7 +3,7 @@ name: Master / Release CI
 on:
   push:
     branches:
-      - 'master'
+      - 'master2'
       - 'release/*'
       - 'releases/*'
 
