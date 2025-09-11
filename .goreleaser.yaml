@@ -189,4 +189,4 @@ docker_manifests:
     skip_push: '{{ if or .IsRelease .IsNightly }}false{{ else }}true{{ end }}'
 
 docker_digest:
-  name_template: "{{ProjectName}}_digest.txt"
+  name_template: "digests.txt"
