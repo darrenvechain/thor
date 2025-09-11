@@ -112,27 +112,27 @@ source:
   enabled: true
   name_template: '{{ .ProjectName }}-{{ .Tag }}-source'
 
-homebrew_casks:
-  # https://goreleaser.com/customization/homebrew_casks/
-  - name: vechain-thor
-    alternative_names:
-      - vechain-thor@{{ .Tag }}
-    ids:
-      - thor
-      - disco
-    binary: thor
-    skip_upload: '{{ if .IsRelease }}false{{ else }}true{{ end }}'
-    description: A general purpose blockchain highly compatible with Ethereum's ecosystem
-    homepage: 'https://github.com/{{ .Env.REPOSITORY }}'
-    license: LGPL-3.0
-    url:
-      template: "https://github.com/{{ .Env.REPOSITORY }}/releases/download/{{ .Tag }}/thor-{{ .Tag }}-darwin-{{ .Arch }}.tar.gz"
-    repository:
-      owner: vechain
-      name: thor
-      token_type: "github"
-      git:
-        url: 'git@github.com:{{ .Env.REPOSITORY }}.git'
+#homebrew_casks:
+#  # https://goreleaser.com/customization/homebrew_casks/
+#  - name: vechain-thor
+#    alternative_names:
+#      - vechain-thor@{{ .Tag }}
+#    ids:
+#      - thor
+#      - disco
+#    binary: thor
+#    skip_upload: '{{ if .IsRelease }}false{{ else }}true{{ end }}'
+#    description: A general purpose blockchain highly compatible with Ethereum's ecosystem
+#    homepage: 'https://github.com/{{ .Env.REPOSITORY }}'
+#    license: LGPL-3.0
+#    url:
+#      template: "https://github.com/{{ .Env.REPOSITORY }}/releases/download/{{ .Tag }}/thor-{{ .Tag }}-darwin-{{ .Arch }}.tar.gz"
+#    repository:
+#      owner: vechain
+#      name: thor
+#      token_type: "github"
+#      git:
+#        url: 'git@github.com:{{ .Env.REPOSITORY }}.git'
 
 nfpms:
   - id: vechain-thor
