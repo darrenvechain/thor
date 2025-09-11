@@ -99,7 +99,11 @@ jobs:
 
     environment: docker-publish
     steps:
+      - name: Checkout code
+        uses: actions/checkout@v5
+
       - uses: ./.github/actions/setup-release
+        name: Setup Release
         id: setup
         with:
           goos: ${{ matrix.go-os }}
@@ -148,15 +152,17 @@ jobs:
       packages: write
 
     steps:
-      - uses: docker/setup-qemu-action@v3
-      - uses: docker/setup-buildx-action@v3
-      - uses: sigstore/cosign-installer@v3.9.2
-      - uses: anchore/sbom-action/download-syft@v0.20.5
+      - name: Checkout code
+        uses: actions/checkout@v5
 
       - uses: ./.github/actions/setup-release
         id: setup
         with:
           goos: linux
+
+      - uses: docker/setup-qemu-action@v3
+      - uses: docker/setup-buildx-action@v3
+      - uses: anchore/sbom-action/download-syft@v0.20.5
 
       - name: Linux (AMD64)
         uses: actions/download-artifact@v5
