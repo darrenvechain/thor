@@ -92,7 +92,7 @@ snapshot:
 
 checksum:
   disable: false
-  name_template: '{{ .ProjectName }}-{{ .Tag }}-checksums.txt'
+  name_template: 'checksums.txt'
 
 release:
   skip_upload: false
