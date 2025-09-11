@@ -98,7 +98,6 @@ release:
     - disco
     - thor
   mode: append
-  include_meta: true
   prerelease: '{{ .IsNightly }}true{{ else }}false{{ end }}'
   make_latest: '{{ if .IsRelease }}true{{ else }}false{{ end }}'
   header: |
