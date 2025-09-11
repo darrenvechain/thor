@@ -64,17 +64,12 @@ binary_signs:
       - "${signature}"
       - "--detach-sign"
       - "${artifact}"
+    output: true
 
 docker_signs:
-  - cmd: gpg
-    args:
-      - "--batch"
-      - "-u"
-      - "{{ .Env.GPG_FINGERPRINT }}"
-      - "--output"
-      - "${signature}"
-      - "--detach-sign"
-      - "${artifact}"
+  - artifacts: all
+    stdin: "{{ .Env.COSIGN_PASSWORD }}"
+    output: true
 
 archives:
   - formats: [ 'tar.gz' ]

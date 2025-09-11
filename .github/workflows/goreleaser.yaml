@@ -31,6 +31,11 @@ jobs:
         # This step validates that the tag is an official release
         id: set-flags
         run: |
+          if [[ "${{ github.ref }}" != refs/tags/* ]]; then
+              echo "This workflow only runs on tags"
+              exit 1
+          fi
+          
           prerelease=$(gh release view ${{ github.ref_name }} --json isPrerelease | jq -r '.isPrerelease')
           
           version="${{ github.ref_name }}"
@@ -142,22 +147,19 @@ jobs:
           COPYRIGHT_YEAR=$(date +'%Y')
           echo "COPYRIGHT_YEAR=$COPYRIGHT_YEAR" >> "$GITHUB_OUTPUT"
 
-#      - id: skip-options
-#        name: Set Skip Options
-#        shell: bash
-#        run: |
-#          skip_options=""
-#          if [[ "${{ matrix.go-os }}" != "linux" ]]; then
-#              skip_options="$skip_options --skip docker"
-#          fi
-#          echo "skip_options=$skip_options" >> "$GITHUB_ENV"
-
       - name: Import GPG key
         id: import_gpg
         uses: crazy-max/ghaction-import-gpg@v6
         with:
           gpg_private_key: ${{ secrets.GPG_PRIVATE_KEY }}
           passphrase: ${{ secrets.GPG_PASSPHRASE }}
+
+      - name: Set Cosign Key
+        if: ${{ matrix.go-os == 'linux' }}
+        run: |
+          echo "$COSIGN_KEY" | base64 -d > cosign.key
+        env:
+          COSIGN_KEY: ${{ secrets.COSIGN_KEY }}
 
       - uses: goreleaser/goreleaser-action@v6
         with:
@@ -175,6 +177,8 @@ jobs:
           REPOSITORY: ${{ github.repository }}
           GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
           GPG_FINGERPRINT: ${{ steps.import_gpg.outputs.fingerprint }}
+          COSIGN_KEY: ${{ secrets.COSIGN_KEY }}
+          COSIGN_PASSWORD: ${{ secrets.COSIGN_PASSWORD }}
 
       - uses: actions/upload-artifact@v4
         if: always()
@@ -258,6 +262,12 @@ jobs:
           gpg_private_key: ${{ secrets.GPG_PRIVATE_KEY }}
           passphrase: ${{ secrets.GPG_PASSPHRASE }}
 
+      - name: Set Cosign Key
+        run: |
+          echo "$COSIGN_KEY" | base64 -d > cosign.key
+        env:
+          COSIGN_KEY: ${{ secrets.COSIGN_KEY }}
+
       - uses: goreleaser/goreleaser-action@v6
         with:
           distribution: goreleaser-pro
@@ -275,6 +285,7 @@ jobs:
           DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
           DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
           GPG_FINGERPRINT: ${{ steps.import_gpg.outputs.fingerprint }}
+          COSIGN_PASSWORD: ${{ secrets.COSIGN_PASSWORD }}
 
       - uses: actions/attest-build-provenance@v3
         with:
