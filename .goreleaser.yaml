@@ -75,7 +75,7 @@ archives:
   - formats: [ 'tar.gz' ]
     wrap_in_directory: true
     format_overrides:
-      - goos: windows
+        - goos: windows
         formats: [ 'zip' ]
     name_template: '{{ .ProjectName }}-{{ .Tag }}-{{ .Os }}-{{ .Arch }}{{ if .Arm }}v{{ .Arm }}{{ end }}'
     files:
@@ -92,7 +92,7 @@ checksum:
 release:
   skip_upload: false
   github:
-    owner: vecahin
+    owner: darrenvechain
     name: thor
   ids:
     - disco
