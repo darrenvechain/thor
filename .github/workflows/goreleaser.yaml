@@ -155,7 +155,7 @@ jobs:
     environment: docker-publish
 
     permissions:
-      contents: read
+      contents: write
       packages: write
 
     steps:
