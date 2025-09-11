@@ -92,7 +92,7 @@ checksum:
 release:
   skip_upload: false
   github:
-    owner: darrenvecahin
+    owner: darrenvechain
     name: thor
   ids:
     - disco

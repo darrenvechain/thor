@@ -39,7 +39,6 @@ jobs:
           fi
           
           prerelease=$(gh release view ${{ github.ref_name }} --json isPrerelease | jq -r '.isPrerelease')
-          
           version="${{ github.ref_name }}"
           
           if [ "$prerelease" == "true" ]; then
