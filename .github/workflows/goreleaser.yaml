@@ -165,7 +165,7 @@ jobs:
         name: Setup Release
         id: setup
         with:
-          goos: ${{ matrix.go-os }}
+          goos: linux
           dockerhub-username: ${{ secrets.DOCKERHUB_USERNAME }}
           dockerhub-token: ${{ secrets.DOCKERHUB_TOKEN }}
           github-token: ${{ github.token }}
