@@ -4,6 +4,24 @@ inputs:
   goos:
     description: The node network of which the colors are to be retrieved
     required: true
+  dockerhub-username:
+    description: Docker Hub username
+    required: false
+  dockerhub-token:
+    description: Docker Hub token
+    required: false
+  github-token:
+    description: GitHub token
+    required: false
+  gpg-passphrase:
+    description: The passphrase for the GPG key used for signing
+    required: false
+  gpg-private-key:
+    description: The private GPG key used for signing
+    required: false
+  cosign-key:
+    description: The private Cosign key used for signing
+    required: false
 outputs:
   thor_version:
     description: The live color
@@ -34,28 +52,28 @@ runs:
       with:
         registry: ghcr.io
         username: ${{ github.actor }}
-        password: ${{ secrets.GITHUB_TOKEN }}
+        password: ${{ inputs.github-token}}
 
     - name: Log in to Docker Hub
       uses: docker/login-action@v3
       if: ${{ inputs.goos == 'linux' }}
       with:
-        username: ${{ secrets.DOCKERHUB_USERNAME }}
-        password: ${{ secrets.DOCKERHUB_TOKEN }}
+        username: ${{ inputs.dockerhub-username }}
+        password: ${{ inputs.dockerhub-token }}
 
     - name: Import GPG key
       id: import_gpg
       uses: crazy-max/ghaction-import-gpg@v6
       with:
-        gpg_private_key: ${{ secrets.GPG_PRIVATE_KEY }}
-        passphrase: ${{ secrets.GPG_PASSPHRASE }}
+        gpg_private_key: ${{ inputs.gpg-private-key }}
+        passphrase: ${{ inputs.gpg-passphrase }}
 
     - name: Set Cosign Key
       if: ${{ matrix.go-os == 'linux' }}
       shell: bash
       run: echo "$COSIGN_KEY" > cosign.key
       env:
-        COSIGN_KEY: ${{ secrets.COSIGN_KEY }}
+        COSIGN_KEY: ${{ inputs.cosign-key }}
 
     - name: Set Up Env
       id: env

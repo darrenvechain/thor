@@ -107,6 +107,12 @@ jobs:
         id: setup
         with:
           goos: ${{ matrix.go-os }}
+          dockerhub-username: ${{ secrets.DOCKERHUB_USERNAME }}
+          dockerhub-token: ${{ secrets.DOCKERHUB_TOKEN }}
+          github-token: ${{ github.token }}
+          gpg-passphrase: ${{ secrets.GPG_PASSPHRASE }}
+          gpg-private-key: ${{ secrets.GPG_PRIVATE_KEY }}
+          cosign-key: ${{ secrets.COSIGN_KEY }}
 
       - uses: goreleaser/goreleaser-action@v6
         with:
@@ -156,9 +162,16 @@ jobs:
         uses: actions/checkout@v5
 
       - uses: ./.github/actions/setup-release
+        name: Setup Release
         id: setup
         with:
-          goos: linux
+          goos: ${{ matrix.go-os }}
+          dockerhub-username: ${{ secrets.DOCKERHUB_USERNAME }}
+          dockerhub-token: ${{ secrets.DOCKERHUB_TOKEN }}
+          github-token: ${{ github.token }}
+          gpg-passphrase: ${{ secrets.GPG_PASSPHRASE }}
+          gpg-private-key: ${{ secrets.GPG_PRIVATE_KEY }}
+          cosign-key: ${{ secrets.COSIGN_KEY }}
 
       - uses: docker/setup-qemu-action@v3
       - uses: docker/setup-buildx-action@v3
