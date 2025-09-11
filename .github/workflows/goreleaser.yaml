@@ -110,7 +110,7 @@ jobs:
           goos: ${{ matrix.go-os }}
           dockerhub-username: ${{ secrets.DOCKERHUB_USERNAME }}
           dockerhub-token: ${{ secrets.DOCKERHUB_TOKEN }}
-          github-token: ${{ github.token }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
           gpg-passphrase: ${{ secrets.GPG_PASSPHRASE }}
           gpg-private-key: ${{ secrets.GPG_PRIVATE_KEY }}
           cosign-key: ${{ secrets.COSIGN_KEY }}
@@ -121,7 +121,7 @@ jobs:
           version: latest
           args: release --clean --split --verbose ${{ needs.validate.outputs.FLAGS }}
         env:
-          GITHUB_TOKEN: ${{ github.token }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GORELEASER_KEY: ${{ secrets.GORELEASER_KEY }}
           GOOS: ${{ matrix.go-os }}
           GOARCH: ${{ matrix.go-arch }}
@@ -169,7 +169,7 @@ jobs:
           goos: linux
           dockerhub-username: ${{ secrets.DOCKERHUB_USERNAME }}
           dockerhub-token: ${{ secrets.DOCKERHUB_TOKEN }}
-          github-token: ${{ github.token }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
           gpg-passphrase: ${{ secrets.GPG_PASSPHRASE }}
           gpg-private-key: ${{ secrets.GPG_PRIVATE_KEY }}
           cosign-key: ${{ secrets.COSIGN_KEY }}
@@ -211,7 +211,7 @@ jobs:
           version: latest
           args: continue --merge --verbose ${{ needs.validate.outputs.FLAGS }}
         env:
-          GITHUB_TOKEN: ${{ github.token }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GORELEASER_KEY: ${{ secrets.GORELEASER_KEY }}
           GOOS: ${{ matrix.go-os }}
           GOARCH: ${{ matrix.go-arch }}
