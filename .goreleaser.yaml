@@ -73,11 +73,24 @@ docker_signs:
 
 archives:
   - formats: [ 'tar.gz' ]
-    wrap_in_directory: true
+    id: thor
+    ids:
+      - thor
     format_overrides:
       - goos: windows
         formats: [ 'zip' ]
-    name_template: '{{ .ProjectName }}-{{ .Tag }}-{{ .Os }}-{{ .Arch }}{{ if .Arm }}v{{ .Arm }}{{ end }}'
+    name_template: 'thor-{{ .Tag }}-{{ .Os }}-{{ .Arch }}'
+    files:
+      - LICENSE
+      - README.md
+  - formats: [ 'tar.gz' ]
+    id: disco
+    ids:
+      - disco
+    format_overrides:
+      - goos: windows
+        formats: [ 'zip' ]
+    name_template: 'disco-{{ .Tag }}-{{ .Os }}-{{ .Arch }}'
     files:
       - LICENSE
       - README.md
