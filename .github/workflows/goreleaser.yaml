@@ -92,10 +92,6 @@ jobs:
           - runs-on: windows-latest
             go-arch: amd64
             go-os: windows
-    outputs:
-      THOR_VERSION: ${{ steps.env.outputs.THOR_VERSION }}
-      DISCO_VERSION: ${{ steps.env.outputs.DISCO_VERSION }}
-      COPYRIGHT_YEAR: ${{ steps.env.outputs.COPYRIGHT_YEAR }}
 
     permissions:
       contents: read
@@ -103,63 +99,10 @@ jobs:
 
     environment: docker-publish
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v5
-
-      - name: Set up Go
-        uses: actions/setup-go@v6
+      - uses: ./.github/actions/setup-release
+        id: setup
         with:
-          go-version: 1.24
-
-      - name: Log in to GHCR
-        uses: docker/login-action@v3
-        if: ${{ matrix.go-os == 'linux' }}
-        with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Log in to Docker Hub
-        uses: docker/login-action@v3
-        if: ${{ matrix.go-os == 'linux' }}
-        with:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_TOKEN }}
-
-      - uses: actions/setup-go@v6
-        with:
-          go-version: stable
-
-      - uses: actions/cache@v4
-        with:
-          path: dist/${{ matrix.go-os }}_${{ matrix.go-arch }}
-          key: ${{ matrix.go-os }}-${{ needs.validate.outputs.COMMIT_SHA }}${{ needs.validate.outputs.FLAGS }}-${{ matrix.go-arch }}
-          enableCrossOsArchive: true
-
-      - name: Set Up Env
-        id: env
-        shell: bash
-        run: |
-          THOR_VERSION=$(cat ./cmd/thor/VERSION)
-          echo "THOR_VERSION=$THOR_VERSION" >> "$GITHUB_OUTPUT"
-          DISCO_VERSION=$(cat ./cmd/disco/VERSION)
-          echo "DISCO_VERSION=$DISCO_VERSION" >> "$GITHUB_OUTPUT"
-          COPYRIGHT_YEAR=$(date +'%Y')
-          echo "COPYRIGHT_YEAR=$COPYRIGHT_YEAR" >> "$GITHUB_OUTPUT"
-
-      - name: Import GPG key
-        id: import_gpg
-        uses: crazy-max/ghaction-import-gpg@v6
-        with:
-          gpg_private_key: ${{ secrets.GPG_PRIVATE_KEY }}
-          passphrase: ${{ secrets.GPG_PASSPHRASE }}
-
-      - name: Set Cosign Key
-        if: ${{ matrix.go-os == 'linux' }}
-        run: |
-          echo "$COSIGN_KEY" | base64 -d > cosign.key
-        env:
-          COSIGN_KEY: ${{ secrets.COSIGN_KEY }}
+          goos: ${{ matrix.go-os }}
 
       - uses: goreleaser/goreleaser-action@v6
         with:
@@ -171,12 +114,12 @@ jobs:
           GORELEASER_KEY: ${{ secrets.GORELEASER_KEY }}
           GOOS: ${{ matrix.go-os }}
           GOARCH: ${{ matrix.go-arch }}
-          THOR_VERSION: ${{ steps.env.outputs.THOR_VERSION }}
-          DISCO_VERSION: ${{ steps.env.outputs.DISCO_VERSION }}
-          COPYRIGHT_YEAR: ${{ steps.env.outputs.COPYRIGHT_YEAR }}
+          THOR_VERSION: ${{ steps.setup.outputs.thor_version }}
+          DISCO_VERSION: ${{ steps.setup.outputs.disco_version }}
+          COPYRIGHT_YEAR: ${{ steps.setup.outputs.copyright_year }}
           REPOSITORY: ${{ github.repository }}
           GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
-          GPG_FINGERPRINT: ${{ steps.import_gpg.outputs.fingerprint }}
+          GPG_FINGERPRINT: ${{ steps.setup.outputs.gpg_fingerprint }}
           COSIGN_KEY: ${{ secrets.COSIGN_KEY }}
           COSIGN_PASSWORD: ${{ secrets.COSIGN_PASSWORD }}
 
@@ -205,31 +148,15 @@ jobs:
       packages: write
 
     steps:
-      - uses: actions/checkout@v5
-        with:
-          fetch-depth: 0
-
       - uses: docker/setup-qemu-action@v3
       - uses: docker/setup-buildx-action@v3
       - uses: sigstore/cosign-installer@v3.9.2
       - uses: anchore/sbom-action/download-syft@v0.20.5
 
-      - name: Log in to GHCR
-        uses: docker/login-action@v3
+      - uses: ./.github/actions/setup-release
+        id: setup
         with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Log in to Docker Hub
-        uses: docker/login-action@v3
-        with:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_TOKEN }}
-
-      - uses: actions/setup-go@v6
-        with:
-          go-version: stable
+          goos: linux
 
       - name: Linux (AMD64)
         uses: actions/download-artifact@v5
@@ -255,19 +182,6 @@ jobs:
       - name: Debug
         run: ls -laR ./dist
 
-      - name: Import GPG key
-        id: import_gpg
-        uses: crazy-max/ghaction-import-gpg@v6
-        with:
-          gpg_private_key: ${{ secrets.GPG_PRIVATE_KEY }}
-          passphrase: ${{ secrets.GPG_PASSPHRASE }}
-
-      - name: Set Cosign Key
-        run: |
-          echo "$COSIGN_KEY" | base64 -d > cosign.key
-        env:
-          COSIGN_KEY: ${{ secrets.COSIGN_KEY }}
-
       - uses: goreleaser/goreleaser-action@v6
         with:
           distribution: goreleaser-pro
@@ -278,13 +192,13 @@ jobs:
           GORELEASER_KEY: ${{ secrets.GORELEASER_KEY }}
           GOOS: ${{ matrix.go-os }}
           GOARCH: ${{ matrix.go-arch }}
-          THOR_VERSION: ${{ needs.prepare.outputs.THOR_VERSION }}
-          DISCO_VERSION: ${{ needs.prepare.outputs.DISCO_VERSION }}
-          COPYRIGHT_YEAR: ${{ needs.prepare.outputs.COPYRIGHT_YEAR }}
+          THOR_VERSION: ${{ steps.setup.outputs.thor_version }}
+          DISCO_VERSION: ${{ steps.setup.outputs.disco_version }}
+          COPYRIGHT_YEAR: ${{ steps.setup.outputs.copyright_year }}
           REPOSITORY: ${{ github.repository }}
-          DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
-          DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
-          GPG_FINGERPRINT: ${{ steps.import_gpg.outputs.fingerprint }}
+          GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
+          GPG_FINGERPRINT: ${{ steps.setup.outputs.gpg_fingerprint }}
+          COSIGN_KEY: ${{ secrets.COSIGN_KEY }}
           COSIGN_PASSWORD: ${{ secrets.COSIGN_PASSWORD }}
 
       - uses: actions/attest-build-provenance@v3
