@@ -74,6 +74,7 @@ jobs:
       fail-fast: true
       matrix:
         include:
+          # see actions/download-artifact in release job if modifying these
           - runs-on: ubuntu-latest
             go-arch: amd64
             go-os: linux

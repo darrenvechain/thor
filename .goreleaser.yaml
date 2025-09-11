@@ -126,6 +126,7 @@ dockers:
     skip_push: '{{ if not .IsRelease }}true{{ else }}false{{ end }}'
     image_templates:
       - '{{ if .IsRelease }}ghcr.io/{{ .Env.REPOSITORY }}:{{ .Tag }}-amd64{{ end }}'
+      - '{{ if .IsRelease }}{{ .Env.REPOSITORY }}:{{ .Tag }}-amd64{{ end }}'
     ids:
       - thor
       - disco
@@ -146,6 +147,7 @@ dockers:
     skip_push: '{{ if not .IsRelease }}true{{ else }}false{{ end }}'
     image_templates:
       - '{{ if .IsRelease }}ghcr.io/{{ .Env.REPOSITORY }}:{{ .Tag }}-arm64{{ end }}'
+      - '{{ if .IsRelease }}{{ .Env.REPOSITORY }}:{{ .Tag }}-arm64{{ end }}'
     ids:
       - thor
       - disco
@@ -164,8 +166,8 @@ dockers:
 docker_manifests:
   - name_template: '{{ .Env.REPOSITORY }}:latest'
     image_templates:
-      - 'ghcr.io/{{ .Env.REPOSITORY }}:{{ .Tag }}-amd64'
-      - 'ghcr.io/{{ .Env.REPOSITORY }}:{{ .Tag }}-arm64'
+      - '{{ .Env.REPOSITORY }}:{{ .Tag }}-amd64'
+      - '{{ .Env.REPOSITORY }}:{{ .Tag }}-arm64'
     skip_push: '{{ if .IsRelease }}false{{ else }}true{{ end }}'
 
   - name_template: 'ghcr.io/{{ .Env.REPOSITORY }}:latest'
@@ -176,8 +178,8 @@ docker_manifests:
 
   - name_template: '{{ .Env.REPOSITORY }}:{{ .Tag }}'
     image_templates:
-      - 'ghcr.io/{{ .Env.REPOSITORY }}:{{ .Tag }}-amd64'
-      - 'ghcr.io/{{ .Env.REPOSITORY }}:{{ .Tag }}-arm64'
+      - '{{ .Env.REPOSITORY }}:{{ .Tag }}-amd64'
+      - '{{ .Env.REPOSITORY }}:{{ .Tag }}-arm64'
     skip_push: '{{ if or .IsRelease .IsNightly }}false{{ else }}true{{ end }}'
 
   - name_template: 'ghcr.io/{{ .Env.REPOSITORY }}:{{ .Tag }}'
