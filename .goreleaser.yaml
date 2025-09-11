@@ -112,55 +112,9 @@ source:
   enabled: true
   name_template: '{{ .ProjectName }}-{{ .Tag }}-source'
 
-#homebrew_casks:
-#  # https://goreleaser.com/customization/homebrew_casks/
-#  - name: vechain-thor
-#    alternative_names:
-#      - vechain-thor@{{ .Tag }}
-#    ids:
-#      - thor
-#      - disco
-#    binary: thor
-#    skip_upload: '{{ if .IsRelease }}false{{ else }}true{{ end }}'
-#    description: A general purpose blockchain highly compatible with Ethereum's ecosystem
-#    homepage: 'https://github.com/{{ .Env.REPOSITORY }}'
-#    license: LGPL-3.0
-#    url:
-#      template: "https://github.com/{{ .Env.REPOSITORY }}/releases/download/{{ .Tag }}/thor-{{ .Tag }}-darwin-{{ .Arch }}.tar.gz"
-#    repository:
-#      owner: vechain
-#      name: thor
-#      token_type: "github"
-#      git:
-#        url: 'git@github.com:{{ .Env.REPOSITORY }}.git'
-
-nfpms:
-  - id: vechain-thor
-    package_name: '{{ .Env.REPOSITORY }}'
-    description: A general purpose blockchain highly compatible with Ethereum's ecosystem
-    homepage: 'https://github.com/{{ .Env.REPOSITORY }}'
-    if: '{{ eq .Os "linux" }}'
-    file_name_template: "{{ .ProjectName }}-{{ .Tag }}-{{ .Os }}-{{ .Arch }}{{ if .Arm }}v{{ .Arm }}{{ end }}"
-    license: GPLv3
-    ids:
-      - disco
-      - thor
-    maintainer: protocol@vechain.org
-    vendor: vechain
-    formats:
-      - deb
-      - rpm
-      - apk
-    umask: 0o022
-    contents:
-      - src: LICENSE
-        dst: /usr/share/doc/thor/copyright
-      - src: README.md
-        dst: /usr/share/doc/thor/README.md
-    rpm:
-      group: Unspecified
-
 # TODO
+#homebrew_casks:
+#nfpms:
 #cloudsmiths:
 #snapcrafts:
 #npms:
