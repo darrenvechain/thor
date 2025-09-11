@@ -90,7 +90,7 @@ archives:
     format_overrides:
       - goos: windows
         formats: [ 'zip' ]
-    name_template: 'disco-{{ .Tag }}-{{ .Os }}-{{ .Arch }}'
+    name_template: 'disco-{{ .Env.DISCO_VERSION }}-{{ .Os }}-{{ .Arch }}'
     files:
       - LICENSE
       - README.md
