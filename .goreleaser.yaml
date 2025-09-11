@@ -44,7 +44,7 @@ builds:
       - CGO_ENABLED=1
 
 signs:
-  - cmd: gpg2
+  - cmd: gpg
     args:
     - "--batch"
     - "-u"
@@ -55,7 +55,18 @@ signs:
     - "${artifact}"
 
 binary_signs:
-  - cmd: gpg2
+  - cmd: gpg
+    args:
+      - "--batch"
+      - "-u"
+      - "{{ .Env.GPG_FINGERPRINT }}"
+      - "--output"
+      - "${signature}"
+      - "--detach-sign"
+      - "${artifact}"
+
+docker_signs:
+  - cmd: gpg
     args:
       - "--batch"
       - "-u"
