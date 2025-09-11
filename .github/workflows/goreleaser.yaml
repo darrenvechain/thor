@@ -96,7 +96,7 @@ jobs:
             go-os: windows
 
     permissions:
-      contents: read
+      contents: write
       packages: write
 
     environment: docker-publish
