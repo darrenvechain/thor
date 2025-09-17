@@ -54,8 +54,10 @@ jobs:
       - lint
       - license-check
     permissions:
-      contents: read
+      contents: write
       packages: write
+      id-token: write
+      attestations: write
 
   notify-slack:
     name: Notify Slack
