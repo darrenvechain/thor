@@ -45,6 +45,7 @@ builds:
 
 signs:
   - cmd: gpg
+    if: '{{ if .IsRelease }}true{{ else }}false{{ end }}'
     args:
     - "--batch"
     - "-u"
@@ -56,6 +57,7 @@ signs:
 
 binary_signs:
   - cmd: gpg
+    if: '{{ if .IsRelease }}true{{ else }}false{{ end }}'
     args:
       - "--batch"
       - "-u"
@@ -68,6 +70,7 @@ binary_signs:
 
 docker_signs:
   - artifacts: all
+    if: '{{ if .IsRelease }}true{{ else }}false{{ end }}'
     stdin: "{{ .Env.COSIGN_PASSWORD }}"
     output: true
 
@@ -99,11 +102,11 @@ snapshot:
   version_template: SNAPSHOT-{{ .Commit }}
 
 checksum:
-  disable: false
+  disable: '{{ if .IsRelease }}false{{ else }}true{{ end }}'
   name_template: 'checksums.txt'
 
 release:
-  skip_upload: false
+  skip_upload: '{{ if .IsRelease }}false{{ else }}true{{ end }}'
   github:
     owner: vechain
     name: thor
@@ -127,10 +130,12 @@ dockers:
   - goarch: amd64
     goos: linux
     skip_build: false
-    skip_push: '{{ if not .IsRelease }}true{{ else }}false{{ end }}'
     image_templates:
+      # Use both ghcr.io and Docker Hub for releases
       - '{{ if .IsRelease }}ghcr.io/{{ .Env.REPOSITORY }}:{{ .Tag }}-amd64{{ end }}'
       - '{{ if .IsRelease }}{{ .Env.REPOSITORY }}:{{ .Tag }}-amd64{{ end }}'
+      # Use only ghcr.io for snapshots
+      - '{{ if .IsSnapshot }}ghcr.io/{{ .Env.REPOSITORY }}:{{ .Env.SNAPSHOT_TAG }}-amd64{{ end }}'
     ids:
       - thor
       - disco
@@ -148,10 +153,12 @@ dockers:
   - goarch: arm64
     goos: linux
     skip_build: false
-    skip_push: '{{ if not .IsRelease }}true{{ else }}false{{ end }}'
     image_templates:
+      # Use both ghcr.io and Docker Hub for releases
       - '{{ if .IsRelease }}ghcr.io/{{ .Env.REPOSITORY }}:{{ .Tag }}-arm64{{ end }}'
       - '{{ if .IsRelease }}{{ .Env.REPOSITORY }}:{{ .Tag }}-arm64{{ end }}'
+      # Use only ghcr.io for snapshots
+      - '{{ if .IsSnapshot }}ghcr.io/{{ .Env.REPOSITORY }}:{{ .Env.SNAPSHOT_TAG }}-arm64{{ end }}'
     ids:
       - thor
       - disco
@@ -168,6 +175,7 @@ dockers:
       - "--platform=linux/arm64"
 
 docker_manifests:
+  # Use both ghcr.io and Docker Hub for releases
   - name_template: '{{ .Env.REPOSITORY }}:latest'
     image_templates:
       - '{{ .Env.REPOSITORY }}:{{ .Tag }}-amd64'
@@ -191,6 +199,19 @@ docker_manifests:
       - 'ghcr.io/{{ .Env.REPOSITORY }}:{{ .Tag }}-amd64'
       - 'ghcr.io/{{ .Env.REPOSITORY }}:{{ .Tag }}-arm64'
     skip_push: '{{ if or .IsRelease .IsNightly }}false{{ else }}true{{ end }}'
+
+  # Use only ghcr.io for snapshots, ie master branch or feature branches
+  - name_template: 'ghcr.io/{{ .Env.REPOSITORY }}:{{ .Env.SNAPSHOT_TAG }}'
+    image_templates:
+      - '{{ if .IsSnapshot }}ghcr.io/{{ .Env.REPOSITORY }}:{{ .Env.SNAPSHOT_TAG }}-arm64{{ end }}'
+      - '{{ if .IsSnapshot }}ghcr.io/{{ .Env.REPOSITORY }}:{{ .Env.SNAPSHOT_TAG }}-amd64{{ end }}'
+    skip_push: '{{ if .IsSnapshot }}false{{ else }}true{{ end }}'
+
+  - name_template: 'ghcr.io/{{ .Env.REPOSITORY }}:master-latest'
+    image_templates:
+      - '{{ if .IsSnapshot }}ghcr.io/{{ .Env.REPOSITORY }}:{{ .Env.SNAPSHOT_TAG }}-arm64{{ end }}'
+      - '{{ if .IsSnapshot }}ghcr.io/{{ .Env.REPOSITORY }}:{{ .Env.SNAPSHOT_TAG }}-amd64{{ end }}'
+    skip_push: '{{ if eq .Branch "master" }}false{{ else }}true{{ end }}'
 
 docker_digest:
   name_template: "digests.txt"
