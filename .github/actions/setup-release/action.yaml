@@ -99,6 +99,8 @@ runs:
         COPYRIGHT_YEAR=$(date +'%Y')
         echo "COPYRIGHT_YEAR=$COPYRIGHT_YEAR" >> "$GITHUB_OUTPUT"
         
+        echo "event_name=${{ github.event_name }}"
+        
         # if triggered by workflow_dispatch, ie a feature branch build
         if [[ "${{ github.event_name }}" == "workflow_dispatch" || "${{ github.event_name }}" == "pull_request" ]]; then
             # Sanitize branch name by replacing / with -
@@ -113,7 +115,7 @@ runs:
         
         # if triggered from another workflow, verify it is master
         if [[ "${{ github.event_name }}" == "workflow_call" ]]; then
-          if [[ "${{ github.ref }}" != refs/heads/master ]]; then
+          if [[ "${{ github.ref_name }}" != "master" ]]; then
             echo "Branch is not master, exiting..."
             exit 1
           fi
