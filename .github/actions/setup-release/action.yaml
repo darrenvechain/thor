@@ -60,7 +60,7 @@ runs:
 
     - name: Log in to GHCR
       uses: docker/login-action@v3
-      if: ${{ inputs.goos == 'linux' }}
+      if: ${{ inputs.goos == 'linux' && github.event_name != 'pull_request' }}
       with:
         registry: ghcr.io
         username: ${{ github.actor }}
@@ -98,9 +98,9 @@ runs:
         echo "DISCO_VERSION=$DISCO_VERSION" >> "$GITHUB_OUTPUT"
         COPYRIGHT_YEAR=$(date +'%Y')
         echo "COPYRIGHT_YEAR=$COPYRIGHT_YEAR" >> "$GITHUB_OUTPUT"
-
+        
         # if triggered by workflow_dispatch, ie a feature branch build
-        if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
+        if [[ "${{ github.event_name }}" == "workflow_dispatch" || "${{ github.event_name }}" == "pull_request" ]]; then
             echo "FLAGS=--snapshot" >> $GITHUB_OUTPUT
             
             # Sanitize branch name by replacing / with -

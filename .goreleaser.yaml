@@ -116,6 +116,7 @@ release:
   mode: append
   prerelease: '{{ if .IsNightly }}true{{ else }}false{{ end }}'
   make_latest: '{{ if .IsRelease }}true{{ else }}false{{ end }}'
+  draft: false
   header: |
     Thor is the official Golang client for VeChainThor, the public blockchain powering the VeChain ecosystem. VeChainThor is designed for real-world adoption, enabling scalable, low-cost, and sustainable applications.
 
@@ -130,7 +131,7 @@ dockers:
   - goarch: amd64
     goos: linux
     skip_build: false
-    skip_push: {{ .Env.SKIP_DOCKER_PUSH }}
+    skip_push: '{{ .Env.SKIP_DOCKER_PUSH }}'
     image_templates:
       # Use both ghcr.io and Docker Hub for releases
       - '{{ if .IsRelease }}ghcr.io/{{ .Env.REPOSITORY }}:{{ .Tag }}-amd64{{ end }}'
@@ -154,7 +155,7 @@ dockers:
   - goarch: arm64
     goos: linux
     skip_build: false
-    skip_push: {{ .Env.SKIP_DOCKER_PUSH }}
+    skip_push: '{{ .Env.SKIP_DOCKER_PUSH }}'
     image_templates:
       # Use both ghcr.io and Docker Hub for releases
       - '{{ if .IsRelease }}ghcr.io/{{ .Env.REPOSITORY }}:{{ .Tag }}-arm64{{ end }}'
