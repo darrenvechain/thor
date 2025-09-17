@@ -182,13 +182,13 @@ docker_manifests:
     image_templates:
       - '{{ .Env.REPOSITORY }}:{{ .Tag }}-amd64'
       - '{{ .Env.REPOSITORY }}:{{ .Tag }}-arm64'
-    skip_push: '{{ if eq .Env.IS_OFFICIAL_RELEASE }}true{{ else }}false{{ end }}'
+    skip_push: '{{ if eq .Env.IS_OFFICIAL_RELEASE "true" }}true{{ else }}false{{ end }}'
 
   - name_template: 'ghcr.io/{{ .Env.REPOSITORY }}:latest'
     image_templates:
       - 'ghcr.io/{{ .Env.REPOSITORY }}:{{ .Tag }}-amd64'
       - 'ghcr.io/{{ .Env.REPOSITORY }}:{{ .Tag }}-arm64'
-    skip_push: '{{ if eq .Env.IS_OFFICIAL_RELEASE }}true{{ else }}false{{ end }}'
+    skip_push: '{{ if eq .Env.IS_OFFICIAL_RELEASE "true" }}true{{ else }}false{{ end }}'
 
   - name_template: '{{ .Env.REPOSITORY }}:{{ .Tag }}'
     image_templates:
