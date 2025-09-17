@@ -108,7 +108,7 @@ runs:
             short_sha=$(echo $GITHUB_SHA | cut -c1-7)
             echo "TAG=${sanitized_branch}-${short_sha}" >> "$GITHUB_OUTPUT"
         
-            echo "FLAGS=--snapshot" >> $GITHUB_OUTPUT
+            echo "FLAGS=--draft" >> $GITHUB_OUTPUT
             echo "Creating docker images for a feature branch..."
             exit 0
         fi
@@ -119,7 +119,7 @@ runs:
           short_sha=$(echo $GITHUB_SHA | cut -c1-7)
         
           echo "TAG=master-${tag_date}-${short_sha}" >> "$GITHUB_OUTPUT"
-          echo "FLAGS=--snapshot" >> $GITHUB_OUTPUT
+          echo "FLAGS=--draft" >> $GITHUB_OUTPUT
           echo "Creating docker images for master..."
           exit 0
         fi
