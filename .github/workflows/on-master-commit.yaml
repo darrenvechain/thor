@@ -48,11 +48,12 @@ jobs:
     name: Publish Docker Image
     uses: ./.github/workflows/goreleaser.yaml
     secrets: inherit
-    needs:
-      - run-unit-tests
-      - run-e2e-tests
-      - lint
-      - license-check
+    # TODO: re-enable when needed
+#    needs:
+#      - run-unit-tests
+#      - run-e2e-tests
+#      - lint
+#      - license-check
     permissions:
       # TODO: are these really needed?
       contents: write

@@ -114,9 +114,8 @@ release:
     - disco
     - thor
   mode: append
-  prerelease: '{{ if .IsNightly }}true{{ else }}false{{ end }}'
-  make_latest: '{{ if .IsRelease }}true{{ else }}false{{ end }}'
-  draft: false
+  prerelease: '{{ if eq .Env.IS_OFFICIAL_RELEASE }}false{{ else }}true{{ end }}'
+  make_latest: '{{ if eq .Env.IS_OFFICIAL_RELEASE }}true{{ else }}false{{ end }}'
   header: |
     Thor is the official Golang client for VeChainThor, the public blockchain powering the VeChain ecosystem. VeChainThor is designed for real-world adoption, enabling scalable, low-cost, and sustainable applications.
 
@@ -137,7 +136,7 @@ dockers:
       - '{{ if .IsRelease }}ghcr.io/{{ .Env.REPOSITORY }}:{{ .Tag }}-amd64{{ end }}'
       - '{{ if .IsRelease }}{{ .Env.REPOSITORY }}:{{ .Tag }}-amd64{{ end }}'
       # Use only ghcr.io for snapshots
-      - '{{ if .IsSnapshot }}ghcr.io/{{ .Env.REPOSITORY }}:{{ .Env.SNAPSHOT_TAG }}-amd64{{ end }}'
+      - '{{ if .IsNightly }}ghcr.io/{{ .Env.REPOSITORY }}:{{ .Env.SNAPSHOT_TAG }}-amd64{{ end }}'
     ids:
       - thor
       - disco
@@ -161,7 +160,7 @@ dockers:
       - '{{ if .IsRelease }}ghcr.io/{{ .Env.REPOSITORY }}:{{ .Tag }}-arm64{{ end }}'
       - '{{ if .IsRelease }}{{ .Env.REPOSITORY }}:{{ .Tag }}-arm64{{ end }}'
       # Use only ghcr.io for snapshots
-      - '{{ if .IsSnapshot }}ghcr.io/{{ .Env.REPOSITORY }}:{{ .Env.SNAPSHOT_TAG }}-arm64{{ end }}'
+      - '{{ if .IsNightly }}ghcr.io/{{ .Env.REPOSITORY }}:{{ .Env.SNAPSHOT_TAG }}-arm64{{ end }}'
     ids:
       - thor
       - disco
@@ -183,37 +182,37 @@ docker_manifests:
     image_templates:
       - '{{ .Env.REPOSITORY }}:{{ .Tag }}-amd64'
       - '{{ .Env.REPOSITORY }}:{{ .Tag }}-arm64'
-    skip_push: '{{ if .IsRelease }}false{{ else }}true{{ end }}'
+    skip_push: '{{ if eq .Env.IS_OFFICIAL_RELEASE }}true{{ else }}false{{ end }}'
 
   - name_template: 'ghcr.io/{{ .Env.REPOSITORY }}:latest'
     image_templates:
       - 'ghcr.io/{{ .Env.REPOSITORY }}:{{ .Tag }}-amd64'
       - 'ghcr.io/{{ .Env.REPOSITORY }}:{{ .Tag }}-arm64'
-    skip_push: '{{ if .IsRelease }}false{{ else }}true{{ end }}'
+    skip_push: '{{ if eq .Env.IS_OFFICIAL_RELEASE }}true{{ else }}false{{ end }}'
 
   - name_template: '{{ .Env.REPOSITORY }}:{{ .Tag }}'
     image_templates:
       - '{{ .Env.REPOSITORY }}:{{ .Tag }}-amd64'
       - '{{ .Env.REPOSITORY }}:{{ .Tag }}-arm64'
-    skip_push: '{{ if or .IsRelease .IsNightly }}false{{ else }}true{{ end }}'
+    skip_push: '{{ if .IsRelease }}false{{ else }}true{{ end }}'
 
   - name_template: 'ghcr.io/{{ .Env.REPOSITORY }}:{{ .Tag }}'
     image_templates:
       - 'ghcr.io/{{ .Env.REPOSITORY }}:{{ .Tag }}-amd64'
       - 'ghcr.io/{{ .Env.REPOSITORY }}:{{ .Tag }}-arm64'
-    skip_push: '{{ if or .IsRelease .IsNightly }}false{{ else }}true{{ end }}'
+    skip_push: '{{ if or .IsRelease }}false{{ else }}true{{ end }}'
 
   # Use only ghcr.io for snapshots, ie master branch or feature branches
   - name_template: 'ghcr.io/{{ .Env.REPOSITORY }}:{{ .Env.SNAPSHOT_TAG }}'
     image_templates:
-      - '{{ if .IsSnapshot }}ghcr.io/{{ .Env.REPOSITORY }}:{{ .Env.SNAPSHOT_TAG }}-arm64{{ end }}'
-      - '{{ if .IsSnapshot }}ghcr.io/{{ .Env.REPOSITORY }}:{{ .Env.SNAPSHOT_TAG }}-amd64{{ end }}'
-    skip_push: '{{ if .IsSnapshot }}false{{ else }}true{{ end }}'
+      - '{{ if .IsNightly }}ghcr.io/{{ .Env.REPOSITORY }}:{{ .Env.SNAPSHOT_TAG }}-arm64{{ end }}'
+      - '{{ if .IsNightly }}ghcr.io/{{ .Env.REPOSITORY }}:{{ .Env.SNAPSHOT_TAG }}-amd64{{ end }}'
+    skip_push: '{{ if .IsNightly }}false{{ else }}true{{ end }}'
 
   - name_template: 'ghcr.io/{{ .Env.REPOSITORY }}:master-latest'
     image_templates:
-      - '{{ if .IsSnapshot }}ghcr.io/{{ .Env.REPOSITORY }}:{{ .Env.SNAPSHOT_TAG }}-arm64{{ end }}'
-      - '{{ if .IsSnapshot }}ghcr.io/{{ .Env.REPOSITORY }}:{{ .Env.SNAPSHOT_TAG }}-amd64{{ end }}'
+      - '{{ if .IsNightly }}ghcr.io/{{ .Env.REPOSITORY }}:{{ .Env.SNAPSHOT_TAG }}-arm64{{ end }}'
+      - '{{ if .IsNightly }}ghcr.io/{{ .Env.REPOSITORY }}:{{ .Env.SNAPSHOT_TAG }}-amd64{{ end }}'
     skip_push: '{{ if eq .Branch "master" }}false{{ else }}true{{ end }}'
 
 docker_digest:

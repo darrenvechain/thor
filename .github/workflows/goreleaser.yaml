@@ -71,6 +71,7 @@ jobs:
           COSIGN_PASSWORD: ${{ secrets.COSIGN_PASSWORD }}
           SNAPSHOT_TAG: ${{ steps.setup.outputs.snapshot_tag }}
           SKIP_DOCKER_PUSH: ${{ github.event_name == 'pull_request' && 'true' || 'false' }}
+          IS_OFFICIAL_RELEASE: ${{ steps.setup.outputs.is_official_release }}
 
       - uses: actions/upload-artifact@v4
         if: always()
@@ -163,6 +164,7 @@ jobs:
           COSIGN_PASSWORD: ${{ secrets.COSIGN_PASSWORD }}
           SNAPSHOT_TAG: ${{ steps.setup.outputs.snapshot_tag }}
           SKIP_DOCKER_PUSH: ${{ github.event_name == 'pull_request' && 'true' || 'false' }}
+          IS_OFFICIAL_RELEASE: ${{ steps.setup.outputs.is_official_release }}
 
       - uses: actions/attest-build-provenance@v3
         if: startsWith(github.ref, 'refs/tags/')

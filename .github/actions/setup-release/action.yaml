@@ -41,6 +41,9 @@ outputs:
   flags:
     description: Flags to pass to goreleaser
     value: ${{ steps.env.outputs.FLAGS }}
+  is_official_release:
+    description: Whether this is an official release
+    value: ${{ steps.env.outputs.IS_OFFICIAL_RELEASE }}
 
 runs:
   using: composite
@@ -99,28 +102,27 @@ runs:
         COPYRIGHT_YEAR=$(date +'%Y')
         echo "COPYRIGHT_YEAR=$COPYRIGHT_YEAR" >> "$GITHUB_OUTPUT"
         
+        echo "event_name=${{ github.event_name }}"
+        
         # if triggered by workflow_dispatch, ie a feature branch build
         if [[ "${{ github.event_name }}" == "workflow_dispatch" || "${{ github.event_name }}" == "pull_request" ]]; then
-            echo "FLAGS=--snapshot" >> $GITHUB_OUTPUT
-            
             # Sanitize branch name by replacing / with -
             sanitized_branch=$(echo "${{ github.ref_name }}" | sed 's|/|-|g')
             short_sha=$(echo $GITHUB_SHA | cut -c1-7)
             echo "TAG=${sanitized_branch}-${short_sha}" >> "$GITHUB_OUTPUT"
+        
+            echo "FLAGS=--nightly" >> $GITHUB_OUTPUT
             echo "Creating docker images for a feature branch..."
             exit 0
         fi
         
         # if triggered from another workflow, verify it is master
-        if [[ "${{ github.event_name }}" == "workflow_call" ]]; then
-          if [[ "${{ github.ref }}" != refs/heads/master ]]; then
-            echo "Branch is not master, exiting..."
-            exit 1
-          fi
+        if [[ "${{ github.event_name }}" == "push" && "${{ github.ref_name }}" == "master" ]]; then
           tag_date=$(date +'%Y%m%d')
           short_sha=$(echo $GITHUB_SHA | cut -c1-7)
-          echo "FLAGS=--snapshot" >> $GITHUB_OUTPUT
+        
           echo "TAG=master-${tag_date}-${short_sha}" >> "$GITHUB_OUTPUT"
+          echo "FLAGS=--nightly" >> $GITHUB_OUTPUT
           echo "Creating docker images for master..."
           exit 0
         fi
@@ -136,7 +138,7 @@ runs:
         version="${{ github.ref_name }}"
         
         if [ "$prerelease" == "true" ]; then
-          echo "FLAGS=--nightly" >> $GITHUB_OUTPUT
+          echo "FLAGS=" >> $GITHUB_OUTPUT
       
           # if it does not contain 'rc', it's invalid
           if [[ "${{ github.ref_name }}" != *-rc* ]]; then
@@ -150,6 +152,7 @@ runs:
           echo "FLAGS=" >> $GITHUB_OUTPUT
           node -e "if (!/^v\d+\.\d+\.\d+$/.test('${{ github.ref_name }}')) { console.error('Invalid version format. Expected: vX.Y.Z'); process.exit(1); }"
           version="${version#v}"  # Remove the "v" prefix from the tag
+          echo "IS_OFFICIAL_RELEASE=true" >> $GITHUB_OUTPUT
         fi
         
         thor_version=$(cat cmd/thor/VERSION)
