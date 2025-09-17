@@ -102,7 +102,7 @@ snapshot:
   version_template: SNAPSHOT-{{ .Commit }}
 
 checksum:
-  disable: '{{ if .IsRelease }}false{{ else }}true{{ end }}'
+  disable: false
   name_template: 'checksums.txt'
 
 release:
