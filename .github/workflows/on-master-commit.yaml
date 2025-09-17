@@ -54,6 +54,7 @@ jobs:
       - lint
       - license-check
     permissions:
+      # TODO: are these really needed?
       contents: write
       packages: write
       id-token: write
