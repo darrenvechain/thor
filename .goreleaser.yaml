@@ -108,7 +108,7 @@ checksum:
 release:
   skip_upload: '{{ if .IsRelease }}false{{ else }}true{{ end }}'
   github:
-    owner: vechain
+    owner: darrenvechain
     name: thor
   ids:
     - disco
