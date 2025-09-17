@@ -114,11 +114,7 @@ runs:
         fi
         
         # if triggered from another workflow, verify it is master
-        if [[ "${{ github.event_name }}" == "workflow_call" ]]; then
-          if [[ "${{ github.ref_name }}" != "master" ]]; then
-            echo "Branch is not master, exiting..."
-            exit 1
-          fi
+        if [[ "${{ github.event_name }}" == "push" && "${{ github.ref_name }}" != "master" ]]; then
           tag_date=$(date +'%Y%m%d')
           short_sha=$(echo $GITHUB_SHA | cut -c1-7)
         
