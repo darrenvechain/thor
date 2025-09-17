@@ -136,7 +136,7 @@ dockers:
       - '{{ if .IsRelease }}ghcr.io/{{ .Env.REPOSITORY }}:{{ .Tag }}-amd64{{ end }}'
       - '{{ if .IsRelease }}{{ .Env.REPOSITORY }}:{{ .Tag }}-amd64{{ end }}'
       # Use only ghcr.io for snapshots
-      - '{{ if .IsDraft }}ghcr.io/{{ .Env.REPOSITORY }}:{{ .Env.SNAPSHOT_TAG }}-amd64{{ end }}'
+      - '{{ if .IsNightly }}ghcr.io/{{ .Env.REPOSITORY }}:{{ .Env.SNAPSHOT_TAG }}-amd64{{ end }}'
     ids:
       - thor
       - disco
@@ -160,7 +160,7 @@ dockers:
       - '{{ if .IsRelease }}ghcr.io/{{ .Env.REPOSITORY }}:{{ .Tag }}-arm64{{ end }}'
       - '{{ if .IsRelease }}{{ .Env.REPOSITORY }}:{{ .Tag }}-arm64{{ end }}'
       # Use only ghcr.io for snapshots
-      - '{{ if .IsDraft }}ghcr.io/{{ .Env.REPOSITORY }}:{{ .Env.SNAPSHOT_TAG }}-arm64{{ end }}'
+      - '{{ if .IsNightly }}ghcr.io/{{ .Env.REPOSITORY }}:{{ .Env.SNAPSHOT_TAG }}-arm64{{ end }}'
     ids:
       - thor
       - disco
@@ -205,14 +205,14 @@ docker_manifests:
   # Use only ghcr.io for snapshots, ie master branch or feature branches
   - name_template: 'ghcr.io/{{ .Env.REPOSITORY }}:{{ .Env.SNAPSHOT_TAG }}'
     image_templates:
-      - '{{ if .IsDraft }}ghcr.io/{{ .Env.REPOSITORY }}:{{ .Env.SNAPSHOT_TAG }}-arm64{{ end }}'
-      - '{{ if .IsDraft }}ghcr.io/{{ .Env.REPOSITORY }}:{{ .Env.SNAPSHOT_TAG }}-amd64{{ end }}'
-    skip_push: '{{ if .IsDraft }}false{{ else }}true{{ end }}'
+      - '{{ if .IsNightly }}ghcr.io/{{ .Env.REPOSITORY }}:{{ .Env.SNAPSHOT_TAG }}-arm64{{ end }}'
+      - '{{ if .IsNightly }}ghcr.io/{{ .Env.REPOSITORY }}:{{ .Env.SNAPSHOT_TAG }}-amd64{{ end }}'
+    skip_push: '{{ if .IsNightly }}false{{ else }}true{{ end }}'
 
   - name_template: 'ghcr.io/{{ .Env.REPOSITORY }}:master-latest'
     image_templates:
-      - '{{ if .IsDraft }}ghcr.io/{{ .Env.REPOSITORY }}:{{ .Env.SNAPSHOT_TAG }}-arm64{{ end }}'
-      - '{{ if .IsDraft }}ghcr.io/{{ .Env.REPOSITORY }}:{{ .Env.SNAPSHOT_TAG }}-amd64{{ end }}'
+      - '{{ if .IsNightly }}ghcr.io/{{ .Env.REPOSITORY }}:{{ .Env.SNAPSHOT_TAG }}-arm64{{ end }}'
+      - '{{ if .IsNightly }}ghcr.io/{{ .Env.REPOSITORY }}:{{ .Env.SNAPSHOT_TAG }}-amd64{{ end }}'
     skip_push: '{{ if eq .Branch "master" }}false{{ else }}true{{ end }}'
 
 docker_digest:
