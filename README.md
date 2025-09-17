@@ -29,6 +29,7 @@
     <a href="https://www.reddit.com/r/Vechain"><img src="https://img.shields.io/badge/Reddit-FF4500?style=for-the-badge&logo=reddit&logoColor=white"/></a>
 </p>
 
+
 ---
 
 # Thor: The VeChainThor Client
