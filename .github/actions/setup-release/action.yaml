@@ -103,6 +103,7 @@ runs:
         echo "COPYRIGHT_YEAR=$COPYRIGHT_YEAR" >> "$GITHUB_OUTPUT"
         
         echo "event_name=${{ github.event_name }}"
+        echo "IS_OFFICIAL_RELEASE=false" >> $GITHUB_OUTPUT
         
         # if triggered by workflow_dispatch, ie a feature branch build
         if [[ "${{ github.event_name }}" == "workflow_dispatch" || "${{ github.event_name }}" == "pull_request" ]]; then
