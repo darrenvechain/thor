@@ -146,7 +146,7 @@ jobs:
         with:
           distribution: goreleaser-pro
           version: latest
-          args: continue --merge --verbose ${{ steps.setup.outputs.flags }}
+          args: continue --merge --verbose
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GORELEASER_KEY: ${{ secrets.GORELEASER_KEY }}

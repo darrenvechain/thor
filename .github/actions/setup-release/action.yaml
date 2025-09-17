@@ -102,8 +102,11 @@ runs:
         # if triggered by workflow_dispatch, ie a feature branch build
         if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
             echo "FLAGS=--snapshot" >> $GITHUB_OUTPUT
+            
+            # Sanitize branch name by replacing / with -
             sanitized_branch=$(echo "${{ github.ref_name }}" | sed 's|/|-|g')
-            echo "TAG=${sanitized_branch}-${{ github.sha }}" >> "$GITHUB_OUTPUT"
+            short_sha=$(echo $GITHUB_SHA | cut -c1-7)
+            echo "TAG=${sanitized_branch}-${short_sha}" >> "$GITHUB_OUTPUT"
             echo "Creating docker images for a feature branch..."
             exit 0
         fi
