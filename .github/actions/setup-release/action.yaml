@@ -101,7 +101,7 @@ runs:
 
         # if triggered by workflow_dispatch, ie a feature branch build
         if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
-            echo "FLAGS=--snapshot" >> $GITHUB_ENV
+            echo "FLAGS=--snapshot" >> $GITHUB_OUTPUT
             echo "TAG=${{ github.ref_name }}-${{ github.sha }}" >> "$GITHUB_OUTPUT"
             echo "Creating docker images for a feature branch..."
             exit 0
@@ -115,7 +115,7 @@ runs:
           fi
           tag_date=$(date +'%Y%m%d')
           short_sha=$(echo $GITHUB_SHA | cut -c1-7)
-          echo "FLAGS=--snapshot" >> $GITHUB_ENV
+          echo "FLAGS=--snapshot" >> $GITHUB_OUTPUT
           echo "TAG=master-${tag_date}-${short_sha}" >> "$GITHUB_OUTPUT"
           echo "Creating docker images for master..."
           exit 0
@@ -132,7 +132,7 @@ runs:
         version="${{ github.ref_name }}"
         
         if [ "$prerelease" == "true" ]; then
-          echo "FLAGS=--nightly" >> $GITHUB_ENV
+          echo "FLAGS=--nightly" >> $GITHUB_OUTPUT
       
           # if it does not contain 'rc', it's invalid
           if [[ "${{ github.ref_name }}" != *-rc* ]]; then
@@ -143,7 +143,7 @@ runs:
           version="${version#v}"  # Remove the "v" prefix from the tag
           version="${version%%-rc.*}" # Remove the "-rc.*" suffix from the tag
         else
-          echo "FLAGS=" >> $GITHUB_ENV
+          echo "FLAGS=" >> $GITHUB_OUTPUT
           node -e "if (!/^v\d+\.\d+\.\d+$/.test('${{ github.ref_name }}')) { console.error('Invalid version format. Expected: vX.Y.Z'); process.exit(1); }"
           version="${version#v}"  # Remove the "v" prefix from the tag
         fi
