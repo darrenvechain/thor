@@ -70,6 +70,7 @@ jobs:
           COSIGN_KEY: ${{ secrets.COSIGN_KEY }}
           COSIGN_PASSWORD: ${{ secrets.COSIGN_PASSWORD }}
           SNAPSHOT_TAG: ${{ steps.setup.outputs.snapshot_tag }}
+          SKIP_DOCKER_PUSH: ${{ github.event_name == 'pull_request' && 'true' || 'false' }}
 
       - uses: actions/upload-artifact@v4
         if: always()
@@ -89,6 +90,8 @@ jobs:
     env:
       DOCKER_CLI_EXPERIMENTAL: "enabled"
     environment: ${{ startsWith(github.ref, 'refs/tags/') && 'docker-publish' || '' }}
+
+    if: ${{ github.event_name != 'pull_request' }}
 
     permissions:
       contents: write
@@ -159,12 +162,15 @@ jobs:
           COSIGN_KEY: ${{ secrets.COSIGN_KEY }}
           COSIGN_PASSWORD: ${{ secrets.COSIGN_PASSWORD }}
           SNAPSHOT_TAG: ${{ steps.setup.outputs.snapshot_tag }}
+          SKIP_DOCKER_PUSH: ${{ github.event_name == 'pull_request' && 'true' || 'false' }}
 
       - uses: actions/attest-build-provenance@v3
+        if: startsWith(github.ref, 'refs/tags/')
         with:
           subject-checksums: ./dist/checksums.txt
 
       - uses: actions/attest-build-provenance@v3
+        if: startsWith(github.ref, 'refs/tags/')
         with:
           subject-checksums: ./dist/digests.txt
 

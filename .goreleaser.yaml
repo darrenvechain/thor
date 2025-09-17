@@ -130,6 +130,7 @@ dockers:
   - goarch: amd64
     goos: linux
     skip_build: false
+    skip_push: {{ .Env.SKIP_DOCKER_PUSH }}
     image_templates:
       # Use both ghcr.io and Docker Hub for releases
       - '{{ if .IsRelease }}ghcr.io/{{ .Env.REPOSITORY }}:{{ .Tag }}-amd64{{ end }}'
@@ -153,6 +154,7 @@ dockers:
   - goarch: arm64
     goos: linux
     skip_build: false
+    skip_push: {{ .Env.SKIP_DOCKER_PUSH }}
     image_templates:
       # Use both ghcr.io and Docker Hub for releases
       - '{{ if .IsRelease }}ghcr.io/{{ .Env.REPOSITORY }}:{{ .Tag }}-arm64{{ end }}'
